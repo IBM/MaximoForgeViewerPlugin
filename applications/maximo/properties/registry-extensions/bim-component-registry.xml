@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+ -->
+<component-registry basedir="webclient\components" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation='../component-registry.xsd'>
+
+		<component-descriptor name="bimviewer" instance-class="psdi.webclient.components.BIMViewer">
+		<property-list>
+			<property name="jsp-filename">
+			   <default-value>bimviewer</default-value>
+			</property>
+			<property name="id">
+				<flag name="final"/>
+			</property>
+			<property name="visible">
+				<default-value>true</default-value>
+			</property>
+			<property name="dataattribute" />
+			<property name="datasrc"/>
+			<property name="defaultrender">
+				<default-value>false</default-value>
+			</property>
+
+			<property name="tabgroup">
+				<default-value>maintabs</default-value>
+			</property>
+			<property name="tab">
+				<default-value>view</default-value>
+			</property>
+			<property name="manage_visibility">
+				<default-value>false</default-value>
+			</property>
+			<property name="modelattribute" />
+
+			<property name="height"/>
+			<property name="width"/>
+			<property name="topoffset"/>
+			<property name="leftoffset"/>
+			<property name="multiselect"/>
+			<property name="foreground_color"/>
+			<property name="background_color"/>
+			<property name="highlight_color"/>
+			<property name="boarder_color"/>
+			<property name="side_pannel_width">
+				<default-value>350</default-value>
+			</property>
+			<property name="toolbar_height">
+				<default-value>32</default-value>
+			</property>
+			<property name="selection_enabled">
+				<default-value>true</default-value>
+			</property>
+			
+			<property name="msg_no_model">
+				<default-value>
+				There is no model available for the asset or location you are viewing.
+				</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="msg_no_activex">
+				<default-value>
+				&lt;STRONG&gt;
+				You must use Internet Explorer on Windows to see the ActiveX control.
+				&lt;/STRONG&gt;
+				&lt;p&gt;
+				Alternatively, If you are using IE, your security settings may be too restrictive to allow the 
+				control to install.	
+				&lt;p&gt;
+				If the ActiveX control installs but no model is displayed,  try switching to a tab other than view, pressing F5
+				and returning to the View tab.				 
+				</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="msg_search_failed">
+				<default-value>Item not found:</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="msg_not_in_maximo">
+				<default-value>
+				Select asset does not have a Maximo asset ID
+				</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="msg_loading_file">
+				<default-value>Loading</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="msg_memory">
+				<default-value>
+				NavisWorks control out of memory
+				</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="msg_not_in_model">
+				<default-value>
+				The current Maximo item was not found in the model
+				</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="msg_no_inspect">
+				<default-value>
+				No asset is selected to inspect
+				</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="msg_not_init">
+				<default-value>
+				Error: Control not initialized
+				</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			
+			<property name="msg_not_asset">
+				<default-value>
+				The selected item is not a Maximo asset.
+				</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="msg_not_location">
+				<default-value>
+				The selected item is not a Maximo location.
+				</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			<property name="msg_of">
+				<default-value>of</default-value>
+				<flag name="translatable"/>
+			</property>
+
+			<property name="search_btn">
+				<default-value>Search</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="new_wo_btn">
+				<default-value>Create a work order with the selected asset</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="new_wo_pic_btn">
+				<default-value>
+				Create a work order with the selected asset and attach a screen capture
+				</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="display_wo_btn">
+				<default-value>
+				Search for and display work orders and preventive maintenance
+				</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			<property name="inspect_asset_btn">
+				<default-value>Inspect asset details</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="create_sr_btn">
+				<default-value>Create new service request</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			<property name="system_new_btn">
+				<default-value>Create a new system from the current selection</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="system_display_btn">
+				<default-value>Display the components of a system as the current selection</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="system_update_btn">
+				<default-value>Update or replace the members of the selected system with the current selection</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			<property name="selection_add_btn">
+				<default-value>Add selected assets and locations to the work order or ticket</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="selection_remove_btn">
+				<default-value>Remove selected assets and locations from the work order or ticket</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			<property name="select_asset_btn">
+				<default-value>Jump to Asset</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="select_location_btn">
+				<default-value>Jump to Location</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			<property name="refresh_btn">
+				<default-value>Refresh view</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="resize_btn">
+				<default-value>Resize</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			<property name="mode_model">
+				<default-value>Model</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="mode_navigate">
+				<default-value>Navigate</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="mode_measure">
+				<default-value>Measure</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="mode_redline">
+				<default-value>Redline</default-value>
+				<flag name="translatable"/>
+			</property>
+
+			<property name="model_load">
+				<default-value>Specify a model for this location</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="label_views">
+				<default-value>Views:</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="goto_loc_btn">
+				<default-value>Set Maximo location to the model location</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="lable_model">
+				<default-value>Models:</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			<property name="selection_mode_btn">
+				<default-value>Set single or multi select mode</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="auto_zoom_mode_btn">
+				<default-value>Enable or disable auto zoom to selection</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			<property name="model_sets">
+				<default-value>Selection Sets</default-value>
+				<flag name="translatable"/>
+			</property>
+
+			<property name="nav_select">
+				<default-value>Select</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="nav_zoom">
+				<default-value>Zoom</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="nav_zoom_box">
+				<default-value>Zoom Box</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="nav_pan">
+				<default-value>Pan</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="nav_orbit">
+				<default-value>Orbit</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="nav_turntable">
+				<default-value>Turn-table</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="nav_look">
+				<default-value>Look</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="nav_examine">
+				<default-value>Examine</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="nav_walk">
+				<default-value>Walk</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="nav_fly">
+				<default-value>Fly</default-value>
+				<flag name="translatable"/>
+			</property>
+
+			<property name="sel_prev_btn">
+				<default-value>Zoom to previous selected item</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="sel_next_btn">
+				<default-value>Zoom to next selected item</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="zoom_in_btn">
+				<default-value>Zoom In</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="zoom_out_btn">
+				<default-value>Zoom Out</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			<property name="measure_p2p">
+				<default-value>Point to point</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="measure_p2manyp">
+				<default-value>Point to Many points</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="measure_pstring">
+				<default-value>Point string</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="measure_cumulativep">
+				<default-value>Cumulative points</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="measure_angle">
+				<default-value>Angle</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="measure_area">
+				<default-value>Area</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="measure_clear">
+				<default-value>Clear</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			<property name="redline_text">
+				<default-value>Text</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="redline_elipse">
+				<default-value>Ellipse</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="redline_cloud">
+				<default-value>Cloud</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="redline_free">
+				<default-value>Free form line</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="redline_line">
+				<default-value>Line</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="redline_line_string">
+				<default-value>String of Lines</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="redline_erase">
+				<default-value>Erase</default-value>
+				<flag name="translatable"/>
+			</property>
+			
+			<property name="properties_Title">
+				<default-value>&lt;b&gt;Properties&lt;b&gt;</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="properties_Close">
+				<default-value>Close</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="properties_attribute_lbl">
+				<default-value>Attribute</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="properties_name_lbl">
+				<default-value>Name</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="properties_value_lbl">
+				<default-value>Value</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="properties_class_lbl">
+				<default-value>Class</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="poperties_Sash">
+				<default-value>Display properties side panel:</default-value>
+				<flag name="translatable"/>
+			</property>
+
+			<property name="resize_title">
+				<default-value>Select size:</default-value>
+				<flag name="translatable"/>
+			</property>
+			<property name="resize_default">
+				<default-value>Default</default-value>
+				<flag name="translatable"/>
+			</property>
+
+		</property-list>
+	</component-descriptor>
+
+</component-registry>

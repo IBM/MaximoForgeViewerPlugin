@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+ -->
+<control-registry basedir="webclient\controls" package="psdi.webclient.controls"
+		xsi:noNamespaceSchemaLocation='../control-registry.xsd'
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<control-descriptor name="bimtree" descriptor-class="psdi.webclient.system.runtime.DatasrcDescriptor" instance-class="psdi.webclient.controls.BIMTree">
+		<property-list>
+			<property name="alwaysrefresh">
+				<default-value>true</default-value>
+			</property>
+			<property name="beanclass">
+				<flag name="nonconditional" />
+			</property>
+			<property name="checkfornewnodes">
+				<default-value>false</default-value>
+			</property>
+			<property name="classname" />
+			<property name="dataattribute">
+				<flag name="final" />
+			</property>
+			<property name="datasrc">
+				<flag name="nonconditional" />
+				<flag name="global" />
+			</property>
+			<property name="debug">
+				<flag name="global" />
+			</property>
+			<property name="designermboname">
+				<flag name="nonconditional" />
+			</property>
+			<property name="display">
+				<default-value>true</default-value>
+				<flag name="global" />
+			</property>
+			<property name="expandallnodes">
+				<default-value>false</default-value>
+			</property>	
+			<property name="height">
+				<default-value>100%</default-value>
+			</property>
+			<property name="id">
+				<flag name="final" />
+			</property>
+			<property name="ignorestructurechange">
+				<default-value>false</default-value>
+			</property>
+			<property name="keyattribute" />
+			<property name="keyvalue" />
+			<property name="label">
+				<flag name="translatable" />
+			</property>
+			<property name="labelcss" />
+			<property name="licensekey">
+				<flag name="final" />
+			</property>
+			<property name="maxchildren">
+				<default-value>50</default-value>
+			</property>
+			<property name="mboname">
+				<flag name="nonconditional" />
+			</property>
+			<property name="objectname" />
+			<property name="openfirstlevel">
+				<default-value>true</default-value>
+			</property>
+			<property name="orderby" />
+			<property name="parentdatasrc">
+				<flag name="final" />
+				<flag name="nonconditional" />
+			</property>
+			<property name="relationship">
+				<flag name="nonconditional" />
+			</property>
+			<property name="restrictactionon" />
+			<property name="returnattribute" />
+			<property name="selectfirstnode">
+				<default-value>false</default-value>
+			</property>
+			<property name="selectimage">
+				<default-value>drill_select.gif</default-value>
+			</property>
+			<property name="sigoption">
+				<flag name="nonconditional" />
+				<flag name="final" />
+			</property>
+			<property name="sigoptiondatasrc">
+				<flag name="nonconditional" />
+				<flag name="final" />
+			</property>
+			<property name="supportmarkedfordelete">
+				<default-value>false</default-value>
+			</property>			
+			<property name="textcss">
+				<flag name="global" />
+				<flag name="final" />
+				<default-value>text</default-value>
+			</property>
+			<property name="treefielddelimiter">
+				<default-value>:</default-value>
+			</property>
+			<property name="usedatasrc" />
+			<property name="visible">
+				<default-value>true</default-value>
+			</property>
+			<property name="width">
+				<default-value>100%</default-value>
+			</property>
+		</property-list>
+		<component-list>
+			<components id="${name}_components_h" layout="horizontal">
+				<tree id="${name}_tree" label="@{label}" selectimage="@{selectimage}" datasrc="@{datasrc}" supportmarkedfordelete="supportmarkedfordelete" expandallnodes="@{expandallnodes}" visible="@{visible}" beanclass="@{beanclass}" cssclass="@{classname}" mboname="@{mboname}" usedatasrc="@{usedatasrc}" keyvalue="@{usedatasrc}" openfirstlevel="@{openfirstlevel}" height="@{height}" relationship="@{relationship}" parentdatasrc="@{parentdatasrc}" selectfirstnode="@{selectfirstnode}" objectname="@{objectname}" dataattribute="@{dataattribute}" maxchildren="@{maxchildren}" restrictactionon="@{restrictactionon}" keyattribute="@{keyattribute}" width="@{width}" returnattribute="@{returnattribute}" handleaction="@{handleaction}" alwaysrefresh="@{alwaysrefresh}" textcss="@{textcss}">
+					<children id="${name}_children" layout="none" />
+				</tree>
+			</components>
+		</component-list>
+		<containers>
+			<container name="dialog" />
+			<container name="section" />
+			<container name="sectioncol" />
+			<container name="tab" />
+		</containers>
+	</control-descriptor>
+
+	<control-descriptor name="bimviewer">
+		<property-list>
+			<property name="id">
+				<flag name="final"/>
+			</property>
+			<property name="dataattribute">
+				<flag name="final" />
+			</property>
+			<property name="datasrc">
+				<flag name="nonconditional" />
+				<flag name="global" />
+			</property>
+			<property name="modelattribute">
+				<flag name="final" />
+			</property>
+			<property name="height"/>
+			<property name="width"/>
+			<property name="topoffset"/>
+			<property name="leftoffset"/>
+			<property name="multiselect"/>
+			<property name="side_pannel_width"/>
+			<property name="foreground_color"/>
+			<property name="background_color"/>
+			<property name="highlight_color"/>
+			<property name="boarder_color"/>
+			<property name="tabgroup"/>
+			<property name="tab"/>
+			<property name="manage_visibility"/>
+			<property name="selection_enabled"/>
+
+
+
+		</property-list>
+		<component-list>
+			<components id="${name}_components_v" layout="vertical" >
+				<components id="${name}_components_h" layout="horizontal" >
+					<bimviewer id="${name}_model" dataattribute="@{dataattribute}" modelattribute="@{modelattribute}" 
+							   height="@{height}" width="@{width}" topoffset="@{topoffset}" leftoffset="@{leftoffset}" multiselect="@{multiselect}" 
+							   side_pannel_width="@{side_pannel_width}" 
+					           foreground_color="@{foreground_color}" background_color="@{background_color}" highlight_color="@{highlight_color}" boarder_color="@{boarder_color}" 
+							   tabgroup="@{tabgroup}" tab="@{tab}" manage_visibility="@{manage_visibility}"  selection_enabled="@{selection_enabled}"/>
+				</components>
+			</components>
+		</component-list>
+		<containers>
+			<container name="section"/>
+		</containers>
+	</control-descriptor>
+	
+</control-registry>

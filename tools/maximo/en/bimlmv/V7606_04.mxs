@@ -1,0 +1,1882 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+-->
+<updatescript version="6.0.0">
+	<app apptype="webclient" id="bimmodels">
+		<add container="bimmodels" control="dialog">
+			<set property="datasrc" value="MAINRECORD"/>
+			<set property="id" value="LMV_SAVE"/>
+			<set property="label" value="Manage Saved Views"/>
+			<set property="mboname" value="BUILDINGMODEL"/>
+		</add>
+		<add container="LMV_SAVE" control="section">
+			<set property="id" value="savedview_bannergrid"/>
+		</add>
+		<add container="savedview_bannergrid" control="sectionrow">
+			<set property="id" value="savedview_grid1"/>
+		</add>
+		<add container="savedview_grid1" control="sectioncol">
+			<set property="id" value="savedview_grid1_1"/>
+		</add>
+		<add container="savedview_grid1_1" control="multiparttextbox">
+			<set property="dataattribute" value="location"/>
+			<set property="defaultfocus" value="true"/>
+			<set property="descdataattribute" value="description"/>
+			<set property="descinputmode" value="readonly"/>
+			<set property="id" value="savedview_bannergrid_1"/>
+		</add>
+		<add container="savedview_grid1" control="sectioncol">
+			<set property="id" value="savedview_grid1_2"/>
+		</add>
+		<add container="savedview_grid1_2" control="textbox">
+			<set property="dataattribute" value="siteid"/>
+			<set property="id" value="savedview_bannergrid_3"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="LMV_SAVE" control="table">
+			<set property="id" value="savedview_table"/>
+			<set property="label" value="Saved Views"/>
+			<set property="relationship" value="SAVEDVIEWS"/>
+		</add>
+		<add container="savedview_table" control="tablebody">
+			<set property="displayrowsperpage" value="10"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="false"/>
+			<set property="id" value="savedview_tablebody"/>
+		</add>
+		<add container="savedview_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="savedview_filter"/>
+			<set property="mxevent" value="toggledetailstate"/>
+			<set property="mxevent_desc" value="Show Detail"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="savedview_tablebody" control="tablecol">
+			<set property="dataattribute" value="description"/>
+			<set property="id" value="savedview_tablebody_description"/>
+			<set property="sortable" value="true"/>
+		</add>
+		<add container="savedview_tablebody" control="tablecol">
+			<set property="dataattribute" value="owner"/>
+			<set property="id" value="savedview_tablebody_owner"/>
+			<set property="sortable" value="true"/>
+		</add>
+		<add container="savedview_tablebody" control="tablecol">
+			<set property="dataattribute" value="shared"/>
+			<set property="id" value="savedview_tablebody_shared"/>
+			<set property="sortable" value="true"/>
+		</add>
+		<add container="savedview_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="hidden" value="false"/>
+			<set property="id" value="savedview_tablebody_delete"/>
+			<set property="mxevent" value="toggledeleterow"/>
+			<set property="mxevent_desc" value="Mark Row for Delete"/>
+			<set property="mxevent_icon" value="btn_garbage.gif"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="savedview_table" control="tabledetails">
+			<set property="id" value="savedview_TableDetails"/>
+		</add>
+		<add container="savedview_TableDetails" control="textbox">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="id" value="savedview_TableDetails_desc"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="savedview_TableDetails" control="section">
+			<set property="id" value="savedview_TableDetails_1"/>
+		</add>
+		<add container="savedview_TableDetails_1" control="sectionrow">
+			<set property="id" value="savedview_TableDetails_1_1"/>
+		</add>
+		<add container="savedview_TableDetails_1_1" control="sectioncol">
+			<set property="id" value="savedview_TableDetails_1_1_1"/>
+		</add>
+		<add container="savedview_TableDetails_1_1_1" control="textbox">
+			<set property="dataattribute" value="owner"/>
+			<set property="id" value="savedview_TableDetails_owner"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="savedview_TableDetails_1_1" control="sectioncol">
+			<set property="id" value="savedview_TableDetails_1_1_2"/>
+		</add>
+		<add container="savedview_TableDetails_1_1_2" control="checkbox">
+			<set property="dataattribute" value="SHARED"/>
+			<set property="id" value="savedview_TableDetails_shared"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="LMV_SAVE" control="buttongroup">
+			<set property="id" value="savedview_bg_1"/>
+		</add>
+		<add container="savedview_bg_1" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="savedview_ok"/>
+			<set property="label" value="OK"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add container="savedview_bg_1" control="pushbutton">
+			<set property="id" value="savedview_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add before="LMV_SAVE" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ViewableRegisterBean"/>
+			<set property="id" value="LMV_VIEW_REGISTER"/>
+			<set property="label" value="Register Model as Viewable"/>
+			<set property="mboname" value="BIMLMVVIEWABLE"/>
+		</add>
+		<add container="LMV_VIEW_REGISTER" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="viewable_register_details"/>
+		</add>
+		<add container="viewable_register_details" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="viewable_register_1"/>
+		</add>
+		<add container="viewable_register_1" control="sectionrow">
+			<set property="id" value="viewable_register1_1"/>
+		</add>
+		<add container="viewable_register1_1" control="sectioncol">
+			<set property="id" value="viewable_register_1_1_2"/>
+		</add>
+		<add container="viewable_register_1_1_2" control="textbox">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="id" value="viewable_register_siteid"/>
+			<set property="lookup" value="site"/>
+		</add>
+		<add container="viewable_register1_1" control="sectioncol">
+			<set property="id" value="viewable_register_1_1_3"/>
+		</add>
+		<add container="viewable_register_1_1_3" control="textbox">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="id" value="viewable_register_orgid"/>
+			<set property="lookup" value="org"/>
+		</add>
+		<add container="viewable_register_details" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="viewable_register_2"/>
+		</add>
+		<add container="viewable_register_2" control="sectionrow">
+			<set property="id" value="viewable_register2_1"/>
+		</add>
+		<add container="viewable_register2_1" control="sectioncol">
+			<set property="id" value="viewable_register_2_1_2"/>
+		</add>
+		<add container="viewable_register_2_1_2" control="textbox">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="id" value="viewable_register_objectkey"/>
+			<set property="lookup" value="bimmodel"/>
+		</add>
+		<add container="viewable_register_2" control="sectionrow">
+			<set property="id" value="viewable_register2_2"/>
+		</add>
+		<add container="viewable_register2_2" control="sectioncol">
+			<set property="id" value="viewable_register_2_1_3"/>
+		</add>
+		<add container="viewable_register_2_1_3" control="textbox">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="id" value="viewable_register_desc"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="LMV_VIEW_REGISTER" control="buttongroup">
+			<set property="id" value="viewable_register"/>
+		</add>
+		<add container="viewable_register" control="pushbutton">
+			<set property="id" value="viewable_register_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add container="viewable_register" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="viewable_register_ok"/>
+			<set property="label" value="OK"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add before="LMV_VIEW_REGISTER" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ViewableAttachBean"/>
+			<set property="id" value="LMV_VIEW_ATTACH"/>
+			<set property="label" value="Link to Viewable"/>
+			<set property="mboname" value="BIMLMVVIEWABLE"/>
+		</add>
+		<add container="LMV_VIEW_ATTACH" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="viewable_arrach_details"/>
+		</add>
+		<add container="viewable_arrach_details" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="viewable_arrach_1"/>
+		</add>
+		<add container="viewable_arrach_1" control="sectionrow">
+			<set property="id" value="viewable_arrach1_1"/>
+		</add>
+		<add container="viewable_arrach1_1" control="sectioncol">
+			<set property="id" value="viewable_arrach_1_1_2"/>
+		</add>
+		<add container="viewable_arrach_1_1_2" control="textbox">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="id" value="viewable_arrach_siteid"/>
+			<set property="lookup" value="site"/>
+		</add>
+		<add container="viewable_arrach1_1" control="sectioncol">
+			<set property="id" value="viewable_arrach_1_1_3"/>
+		</add>
+		<add container="viewable_arrach_1_1_3" control="textbox">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="id" value="viewable_arrach_orgid"/>
+			<set property="lookup" value="org"/>
+		</add>
+		<add container="viewable_arrach_details" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="viewable_arrach_2"/>
+		</add>
+		<add container="viewable_arrach_2" control="sectionrow">
+			<set property="id" value="viewable_arrach2_1"/>
+		</add>
+		<add container="viewable_arrach2_1" control="sectioncol">
+			<set property="id" value="viewable_arrach_2_1_2"/>
+		</add>
+		<add container="viewable_arrach_2_1_2" control="textbox">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="id" value="viewable_arrach_objectkey"/>
+			<set property="lookup" value="bimmodel"/>
+		</add>
+		<add container="viewable_arrach_2" control="sectionrow">
+			<set property="id" value="viewable_arrach2_2"/>
+		</add>
+		<add container="viewable_arrach2_2" control="sectioncol">
+			<set property="id" value="viewable_arrach_2_2_2"/>
+		</add>
+		<add container="viewable_arrach_2_2_2" control="textbox">
+			<set property="dataattribute" value="MODELURN"/>
+			<set property="id" value="viewable_arrach_modelurn"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="viewable_arrach_2" control="sectionrow">
+			<set property="id" value="viewable_arrach2_4"/>
+		</add>
+		<add container="viewable_arrach2_4" control="sectioncol">
+			<set property="id" value="viewable_arrach_2_4_2"/>
+		</add>
+		<add container="viewable_arrach_2_4_2" control="textbox">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="id" value="viewable_arrach_desc"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="LMV_VIEW_ATTACH" control="buttongroup">
+			<set property="id" value="viewable_arrach"/>
+		</add>
+		<add container="viewable_arrach" control="pushbutton">
+			<set property="id" value="viewable_arrach_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add container="viewable_arrach" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="viewable_arrach_ok"/>
+			<set property="label" value="OK"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add before="LMV_VIEW_ATTACH" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ViewableManageBean"/>
+			<set property="id" value="LMV_VIEW"/>
+			<set property="label" value="Manage Viewable Models"/>
+			<set property="mboname" value="BIMLMVVIEWABLE"/>
+		</add>
+		<add container="LMV_VIEW" control="table">
+			<set property="id" value="viewable_manage_tbl"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="viewable_manage_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="8"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="viewable_manage_tablebody"/>
+		</add>
+		<add container="viewable_manage_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="viewable_manage_tbl_detail"/>
+			<set property="mxevent" value="toggledetailstate"/>
+			<set property="mxevent_desc" value="Show Detail"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="viewable_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="viewable_manage_tbl_objectkey"/>
+		</add>
+		<add container="viewable_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="viewable_manage_tbl_site"/>
+			<set property="lookup" value="site"/>
+		</add>
+		<add container="viewable_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="viewable_manage_tbl_org"/>
+			<set property="lookup" value="org"/>
+		</add>
+		<add container="viewable_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="ONLINE"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="viewable_manage_tbl_online"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="viewable_manage_tbl_unlink"/>
+			<set property="mxevent" value="detatchViewable"/>
+			<set property="mxevent_desc" value="Unlink from Model"/>
+			<set property="mxevent_icon" value="bim/unlink.png"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="viewable_manage_tbl" control="tabledetails">
+			<set property="border" value="false"/>
+			<set property="id" value="viewable_manage_tbl_details"/>
+		</add>
+		<add container="viewable_manage_tbl_details" control="tabgroup">
+			<set property="id" value="viewable_manage_tbl_tabs"/>
+			<set property="style" value="form"/>
+		</add>
+		<add container="viewable_manage_tbl_tabs" control="tab">
+			<set property="default" value="true"/>
+			<set property="id" value="viewable_manage_tab_main"/>
+			<set property="label" value="Main"/>
+		</add>
+		<add container="viewable_manage_tab_main" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="viewable_manage_tbl_1"/>
+		</add>
+		<add container="viewable_manage_tbl_1" control="sectionrow">
+			<set property="id" value="viewable_manage_tbl_1_1"/>
+		</add>
+		<add container="viewable_manage_tbl_1_1" control="sectioncol">
+			<set property="id" value="viewable_manage_tbl_1_1_2"/>
+		</add>
+		<add container="viewable_manage_tbl_1_1_2" control="textbox">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="id" value="viewable_manage_tbl_details_objectkey"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tbl_1_1" control="sectioncol">
+			<set property="id" value="viewable_manage_tbl_1_1_3"/>
+		</add>
+		<add container="viewable_manage_tbl_1_1_3" control="textbox">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="id" value="viewable_manage_tbl_details_siteid"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tbl_1_1" control="sectioncol">
+			<set property="id" value="viewable_manage_tbl_1_1_4"/>
+		</add>
+		<add container="viewable_manage_tbl_1_1_4" control="textbox">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="id" value="viewable_manage_tbl_details_orgid"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tab_main" control="textbox">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="id" value="viewable_manage_tbl_details_desc"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="viewable_manage_tab_main" control="textbox">
+			<set property="dataattribute" value="MODELURN"/>
+			<set property="id" value="viewable_manage_tbl_details_modelurn"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tab_main" control="textbox">
+			<set property="dataattribute" value="BASE64URN"/>
+			<set property="id" value="viewable_manage_tbl_details_viewableurn"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tab_main" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="viewable_manage_tbl_2"/>
+		</add>
+		<add container="viewable_manage_tbl_2" control="sectionrow">
+			<set property="id" value="viewable_manage_tbl_2_1"/>
+		</add>
+		<add container="viewable_manage_tbl_2_1" control="sectioncol">
+			<set property="id" value="cviewable_manage_tbl_2_1_1"/>
+		</add>
+		<add container="cviewable_manage_tbl_2_1_1" control="textbox">
+			<set property="dataattribute" value="PROGRESS"/>
+			<set property="id" value="viewable_manage_tbl_details_progress"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tbl_2_1" control="sectioncol">
+			<set property="id" value="viewable_manage_tbl_2_1_2"/>
+		</add>
+		<add container="viewable_manage_tbl_2_1_2" control="textbox">
+			<set property="dataattribute" value="STATUS"/>
+			<set property="id" value="viewable_manage_tbl_details_status"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tbl_2_1" control="sectioncol">
+			<set property="id" value="viewable_manage_tbl_2_1_3"/>
+		</add>
+		<add container="viewable_manage_tbl_2_1_3" control="textbox">
+			<set property="dataattribute" value="SUCCESS"/>
+			<set property="id" value="viewable_manage_tbl_details_success"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tbl_2_1" control="sectioncol">
+			<set property="id" value="viewable_manage_tbl_2_1_4"/>
+		</add>
+		<add container="viewable_manage_tbl_2_1_4" control="pushbutton">
+			<set property="id" value="viewable_manage_tbl_details_refresh_btn"/>
+			<set property="label" value="Refresh"/>
+			<set property="mxevent" value="refresh"/>
+		</add>
+		<add container="viewable_manage_tab_main" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="viewable_manage_tbl_3"/>
+		</add>
+		<add container="viewable_manage_tbl_3" control="sectionrow">
+			<set property="id" value="viewable_manage_tbl_3_1"/>
+		</add>
+		<add container="viewable_manage_tbl_3_1" control="sectioncol">
+			<set property="id" value="cviewable_manage_tbl_3_1_1"/>
+		</add>
+		<add container="cviewable_manage_tbl_3_1_1" control="textbox">
+			<set property="dataattribute" value="STARTEDAT"/>
+			<set property="id" value="viewable_manage_tbl_details_startedat"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tbl_3_1" control="sectioncol">
+			<set property="id" value="viewable_manage_tbl_3_1_2"/>
+		</add>
+		<add container="viewable_manage_tbl_3_1_2" control="textbox">
+			<set property="dataattribute" value="HASTHUMBNAIL"/>
+			<set property="id" value="viewable_manage_tbl_details_hasthumbnail"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tab_main" control="textbox">
+			<set property="dataattribute" value="GUID"/>
+			<set property="id" value="viewable_manage_tbl_details_giud"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tab_main" control="textbox">
+			<set property="dataattribute" value="LASTERROR"/>
+			<set property="id" value="viewable_manage_tbl_lasterror"/>
+			<set property="inputmode" value="readonly"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="viewable_manage_tbl_tabs" control="tab">
+			<set property="id" value="viewable_manage_tab_details"/>
+			<set property="label" value="Details"/>
+		</add>
+		<add container="viewable_manage_tab_details" control="multilinetextbox">
+			<set property="columns" value="70"/>
+			<set property="dataattribute" value="DETAILS"/>
+			<set property="hidetooltip" value="true"/>
+			<set property="id" value="viewable_manage_details"/>
+			<set property="inputmode" value="readonly"/>
+			<set property="rows" value="12"/>
+		</add>
+		<add container="viewable_manage_tbl" control="buttongroup">
+			<set property="id" value="viewable_manage_tbl__btn_1"/>
+		</add>
+		<add container="viewable_manage_tbl__btn_1" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="viewable_manage_entry_tbl_btn_create"/>
+			<set property="label" value="Register Viewable"/>
+			<set property="mxevent" value="registerViewable"/>
+		</add>
+		<add container="viewable_manage_tbl__btn_1" control="pushbutton">
+			<set property="default" value="false"/>
+			<set property="id" value="viewable_manage_entry_tbl_btn_attach"/>
+			<set property="label" value="Link to Viewable"/>
+			<set property="mxevent" value="attachViewable"/>
+		</add>
+		<add container="LMV_VIEW" control="buttongroup">
+			<set property="id" value="viewable_manage_bg"/>
+		</add>
+		<add container="viewable_manage_bg" control="pushbutton">
+			<set property="id" value="viewable_manage_bg_cancel"/>
+			<set property="label" value="Close"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add before="LMV_VIEW" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ModelApproveDeleteBean"/>
+			<set property="id" value="LMV_MODEL_APPROVE_DELETE"/>
+			<set property="label" value="Delete Model?"/>
+			<set property="width" value="300"/>
+		</add>
+		<add container="LMV_MODEL_APPROVE_DELETE" control="section">
+			<set property="description" value="Do you want to delete the model forom the Autodesk cloud?"/>
+			<set property="id" value="model_approve_delete_1"/>
+		</add>
+		<add container="model_approve_delete_1" control="buttongroup">
+			<set property="id" value="model_approve_delete_btn"/>
+		</add>
+		<add container="model_approve_delete_btn" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="model_approve_delete_ok"/>
+			<set property="label" value="Delete"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add container="model_approve_delete_btn" control="pushbutton">
+			<set property="id" value="model_approve_delete_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add before="LMV_MODEL_APPROVE_DELETE" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ModelUploadSelectBean"/>
+			<set property="id" value="LMV_MODEL_UPLOAD_FILE"/>
+			<set property="label" value="Select Model File"/>
+		</add>
+		<add container="LMV_MODEL_UPLOAD_FILE" control="uploadfile">
+			<set property="cancellabel" value="Cancel"/>
+			<set property="event" value="loadModelFile"/>
+			<set property="id" value="model_upload_file_select"/>
+			<set property="label" value="Browse for Model:"/>
+			<set property="maxfilesize" value="200"/>
+			<set property="oklabel" value="OK"/>
+		</add>
+		<add before="LMV_MODEL_UPLOAD_FILE" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ModelUploadBean"/>
+			<set property="id" value="LMV_MODEL_UPLOAD"/>
+			<set property="label" value="Upload Model"/>
+			<set property="mboname" value="BIMLMVMODEL"/>
+		</add>
+		<add container="LMV_MODEL_UPLOAD" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="model_upload_1"/>
+		</add>
+		<add container="model_upload_1" control="sectionrow">
+			<set property="id" value="model_upload1_1"/>
+		</add>
+		<add container="model_upload1_1" control="sectioncol">
+			<set property="id" value="model_upload_1_1_2"/>
+		</add>
+		<add container="model_upload_1_1_2" control="textbox">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="id" value="model_upload_siteid"/>
+			<set property="lookup" value="site"/>
+		</add>
+		<add container="model_upload1_1" control="sectioncol">
+			<set property="id" value="model_upload_1_1_3"/>
+		</add>
+		<add container="model_upload_1_1_3" control="textbox">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="id" value="model_upload_orgid"/>
+			<set property="lookup" value="org"/>
+		</add>
+		<add container="LMV_MODEL_UPLOAD" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="model_upload_3"/>
+		</add>
+		<add container="model_upload_3" control="sectionrow">
+			<set property="id" value="model_upload3_1"/>
+		</add>
+		<add container="model_upload3_1" control="sectioncol">
+			<set property="id" value="model_upload_3_1_2"/>
+		</add>
+		<add container="model_upload_3_1_2" control="textbox">
+			<set property="dataattribute" value="BUCKETKEY"/>
+			<set property="id" value="model_upload_bucket"/>
+			<set property="inputmode" value="required"/>
+			<set property="lookup" value="bimbucket"/>
+		</add>
+		<add container="model_upload_3" control="sectionrow">
+			<set property="id" value="model_upload_3_2"/>
+		</add>
+		<add container="model_upload_3_2" control="sectioncol">
+			<set property="id" value="model_upload_3_2_2"/>
+		</add>
+		<add container="model_upload_3_2_2" control="textbox">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="id" value="model_upload_desc"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="LMV_MODEL_UPLOAD" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="model_upload_2"/>
+		</add>
+		<add container="model_upload_2" control="sectionrow">
+			<set property="id" value="model_upload_2_1"/>
+		</add>
+		<add container="model_upload_2_1" control="sectioncol">
+			<set property="id" value="model_upload_2_1_2"/>
+		</add>
+		<add container="model_upload_2_1_2" control="textbox">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="id" value="model_upload_object"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_upload_2_1" control="sectioncol">
+			<set property="id" value="model_upload_2_1_3"/>
+		</add>
+		<add container="model_upload_2_1_3" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="model_upload_select_file_btn"/>
+			<set property="label" value="Select Model File"/>
+			<set property="mxevent" value="LMV_MODEL_UPLOAD_FILE"/>
+		</add>
+		<add container="LMV_MODEL_UPLOAD" control="checkbox">
+			<set property="dataattribute" value="AUTOREG"/>
+			<set property="id" value="model_upload_autoreg"/>
+		</add>
+		<add container="LMV_MODEL_UPLOAD" control="buttongroup">
+			<set property="id" value="model_upload_bg"/>
+		</add>
+		<add container="model_upload_bg" control="pushbutton">
+			<set property="id" value="model_upload_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add container="model_upload_bg" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="model_upload_ok"/>
+			<set property="label" value="OK"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add before="LMV_MODEL_UPLOAD" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ModelAttachBean"/>
+			<set property="id" value="LMV_MODEL_ATTACH"/>
+			<set property="label" value="Link to Model"/>
+		</add>
+		<add container="LMV_MODEL_ATTACH" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="model_attach_details"/>
+		</add>
+		<add container="model_attach_details" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="model_attach_1"/>
+		</add>
+		<add container="model_attach_1" control="sectionrow">
+			<set property="id" value="model_attach1_1"/>
+		</add>
+		<add container="model_attach1_1" control="sectioncol">
+			<set property="id" value="model_attach_1_1_1"/>
+		</add>
+		<add container="model_attach_1_1_1" control="textbox">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="id" value="model_attach_siteid"/>
+			<set property="lookup" value="site"/>
+		</add>
+		<add container="model_attach1_1" control="sectioncol">
+			<set property="id" value="model_attach_1_1_2"/>
+		</add>
+		<add container="model_attach_1_1_2" control="textbox">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="id" value="model_attach_orgid"/>
+			<set property="lookup" value="org"/>
+		</add>
+		<add container="model_attach_details" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="model_attach_2"/>
+		</add>
+		<add container="model_attach_2" control="sectionrow">
+			<set property="id" value="model_attach2_1"/>
+		</add>
+		<add container="model_attach2_1" control="sectioncol">
+			<set property="id" value="model_attach_2_1_1"/>
+		</add>
+		<add container="model_attach_2_1_1" control="textbox">
+			<set property="dataattribute" value="BUCKETKEY"/>
+			<set property="id" value="model_attach_bucket"/>
+			<set property="inputmode" value="required"/>
+			<set property="lookup" value="bimbucket"/>
+		</add>
+		<add container="model_attach_2" control="sectionrow">
+			<set property="id" value="model_attach_2_3"/>
+		</add>
+		<add container="model_attach_2_3" control="sectioncol">
+			<set property="id" value="model_attach_2_3_1"/>
+		</add>
+		<add container="model_attach_2_3_1" control="textbox">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="id" value="model_attach_desc"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="model_attach_2" control="sectionrow">
+			<set property="id" value="model_attach_2_2"/>
+		</add>
+		<add container="model_attach_2_2" control="sectioncol">
+			<set property="id" value="model_attach_2_2_1"/>
+		</add>
+		<add container="model_attach_2_2_1" control="textbox">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="id" value="model_attach_object"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="LMV_MODEL_ATTACH" control="checkbox">
+			<set property="dataattribute" value="AUTOLINK"/>
+			<set property="id" value="model_attach_autolink"/>
+		</add>
+		<add container="LMV_MODEL_ATTACH" control="buttongroup">
+			<set property="id" value="model_attach_bg"/>
+		</add>
+		<add container="model_attach_bg" control="pushbutton">
+			<set property="id" value="model_attach_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add container="model_attach_bg" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="model_attach_ok"/>
+			<set property="label" value="OK"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add before="LMV_MODEL_ATTACH" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ModelLinkBean"/>
+			<set property="id" value="LMV_MODEL_LINK"/>
+			<set property="label" value="Link"/>
+			<set property="mboname" value="BIMLMVMODELLINK"/>
+		</add>
+		<add container="LMV_MODEL_LINK" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="model_link_1"/>
+		</add>
+		<add container="model_link_1" control="sectionrow">
+			<set property="id" value="model_link1_1"/>
+		</add>
+		<add container="model_link1_1" control="sectioncol">
+			<set property="id" value="model_link_1_1_1"/>
+		</add>
+		<add container="model_link_1_1_1" control="textbox">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="id" value="model_link_site"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_link1_1" control="sectioncol">
+			<set property="id" value="model_link_1_1_2"/>
+		</add>
+		<add container="model_link_1_1_2" control="textbox">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="id" value="model_link_org"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="LMV_MODEL_LINK" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="model_link_2"/>
+		</add>
+		<add container="model_link_2" control="sectionrow">
+			<set property="id" value="model_link_2_1"/>
+		</add>
+		<add container="model_link_2_1" control="sectioncol">
+			<set property="id" value="model_link_2_1_1"/>
+		</add>
+		<add container="model_link_2_1_1" control="textbox">
+			<set property="dataattribute" value="CHILDKEY"/>
+			<set property="id" value="model_link_object"/>
+			<set property="lookup" value="bimmodel"/>
+		</add>
+		<add container="model_link_2" control="sectionrow">
+			<set property="id" value="model_link_2_2"/>
+		</add>
+		<add container="model_link_2_2" control="sectioncol">
+			<set property="id" value="model_link_2_2_1"/>
+		</add>
+		<add container="model_link_2_2_1" control="textbox">
+			<set property="dataattribute" value="CHILDURN"/>
+			<set property="id" value="model_link_modelurn"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="LMV_MODEL_LINK" control="buttongroup">
+			<set property="id" value="model_link_btn"/>
+		</add>
+		<add container="model_link_btn" control="pushbutton">
+			<set property="id" value="model_link_btn_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add container="model_link_btn" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="model_link_btn_ok"/>
+			<set property="label" value="OK"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add before="LMV_MODEL_LINK" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ModelManageBean"/>
+			<set property="id" value="LMV_MODEL"/>
+			<set property="label" value="Manage Models"/>
+			<set property="mboname" value="BIMLMVMODEL"/>
+		</add>
+		<add container="LMV_MODEL" control="table">
+			<set property="id" value="model_manage_tbl"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="model_manage_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="8"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="model_manage_tablebody"/>
+		</add>
+		<add container="model_manage_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="model_manage_tbl_detail"/>
+			<set property="mxevent" value="toggledetailstate"/>
+			<set property="mxevent_desc" value="Show Detail"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="model_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="model_manage_tbl_id"/>
+			<set property="length" value="30"/>
+		</add>
+		<add container="model_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="BUCKETKEY"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="model_manage_tbl_key"/>
+			<set property="length" value="30"/>
+			<set property="lookup" value="bimbucket"/>
+		</add>
+		<add container="model_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="model_manage_tbl_site"/>
+			<set property="lookup" value="site"/>
+		</add>
+		<add container="model_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="model_manage_tbl_org"/>
+			<set property="lookup" value="org"/>
+		</add>
+		<add container="model_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="ONLINE"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="model_manage_tbl_online"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="model_manage_tbl_unlink"/>
+			<set property="mxevent" value="detatchModel"/>
+			<set property="mxevent_desc" value="Unlink from Model"/>
+			<set property="mxevent_icon" value="bim/unlink.png"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="model_manage_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="model_manage_tbl_delete"/>
+			<set property="mxevent" value="deleteModelDlg"/>
+			<set property="mxevent_desc" value="Delete Model"/>
+			<set property="mxevent_icon" value="btn_garbage.gif"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="model_manage_tbl" control="tabledetails">
+			<set property="border" value="false"/>
+			<set property="id" value="model_manage_tbl_details"/>
+		</add>
+		<add container="model_manage_tbl_details" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="model_manage_tbl_1"/>
+		</add>
+		<add container="model_manage_tbl_1" control="sectionrow">
+			<set property="id" value="model_manage_tbl_1_1"/>
+		</add>
+		<add container="model_manage_tbl_1_1" control="sectioncol">
+			<set property="id" value="cmodel_manage_tbl_1_1_1"/>
+		</add>
+		<add container="cmodel_manage_tbl_1_1_1" control="textbox">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="id" value="model_manage_tbl_details_id"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_tbl_1_1" control="sectioncol">
+			<set property="id" value="cmodel_manage_tbl_1_1_2"/>
+		</add>
+		<add container="cmodel_manage_tbl_1_1_2" control="textbox">
+			<set property="dataattribute" value="BUCKETKEY"/>
+			<set property="id" value="model_manage_tbl_details_key"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_tbl_1_1" control="sectioncol">
+			<set property="id" value="model_manage_tbl_1_1_3"/>
+		</add>
+		<add container="model_manage_tbl_1_1_3" control="textbox">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="id" value="model_manage_tbl_details_siteid"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_tbl_1_1" control="sectioncol">
+			<set property="id" value="model_manage_tbl_1_1_4"/>
+		</add>
+		<add container="model_manage_tbl_1_1_4" control="textbox">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="id" value="model_manage_tbl_details_orgid"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_tbl_1" control="sectionrow">
+			<set property="id" value="model_manage_tbl_1_2"/>
+		</add>
+		<add container="model_manage_tbl_1_2" control="sectioncol">
+			<set property="id" value="cmodel_manage_tbl_1_2_1"/>
+		</add>
+		<add container="cmodel_manage_tbl_1_2_1" control="textbox">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="id" value="model_manage_tbl_details_desc"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="model_manage_tbl_1" control="sectionrow">
+			<set property="id" value="model_manage_tbl_1_3"/>
+		</add>
+		<add container="model_manage_tbl_1_3" control="sectioncol">
+			<set property="id" value="model_manage_tbl_1_3_1"/>
+		</add>
+		<add container="model_manage_tbl_1_3_1" control="textbox">
+			<set property="dataattribute" value="CONTENTTYPE"/>
+			<set property="id" value="model_manage_tbl_details_type"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_tbl_1_3" control="sectioncol">
+			<set property="id" value="model_manage_tbl_1_3_2"/>
+		</add>
+		<add container="model_manage_tbl_1_3_2" control="textbox">
+			<set property="dataattribute" value="SHA1"/>
+			<set property="id" value="model_manage_tbl_details_sha1"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_tbl_1_3" control="sectioncol">
+			<set property="id" value="cmodel_manage_tbl_1_3_3"/>
+		</add>
+		<add container="cmodel_manage_tbl_1_3_3" control="textbox">
+			<set property="dataattribute" value="SIZE"/>
+			<set property="id" value="model_manage_tbl_details_size"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_tbl_1" control="sectionrow">
+			<set property="id" value="model_manage_tbl_1_4"/>
+		</add>
+		<add container="model_manage_tbl_1_4" control="sectioncol">
+			<set property="id" value="cmodel_manage_tbl_1_4_1"/>
+		</add>
+		<add container="cmodel_manage_tbl_1_4_1" control="textbox">
+			<set property="dataattribute" value="MODELURN"/>
+			<set property="id" value="model_manage_tbl_details_urn"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_tbl_1_4" control="sectioncol">
+			<set property="id" value="model_manage_tbl_1_4_2"/>
+		</add>
+		<add container="model_manage_tbl_1_4_2" control="textbox">
+			<set property="dataattribute" value="URL"/>
+			<set property="id" value="model_manage_tbl_details_url"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_tbl_1" control="sectionrow">
+			<set property="id" value="model_manage_tbl_1_5"/>
+		</add>
+		<add container="model_manage_tbl_1_5" control="sectioncol">
+			<set property="id" value="cmodel_manage_tbl_1_5_1"/>
+		</add>
+		<add container="cmodel_manage_tbl_1_5_1" control="textbox">
+			<set property="dataattribute" value="LASTERROR"/>
+			<set property="id" value="model_manage_tbl_details_lasterror"/>
+			<set property="inputmode" value="readonly"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="model_manage_tbl_details" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="model_manage_tbl_4"/>
+		</add>
+		<add container="model_manage_tbl_4" control="sectionrow">
+			<set property="id" value="model_manage_tbl_4_1"/>
+		</add>
+		<add container="model_manage_tbl_4_1" control="sectioncol">
+			<set property="id" value="cmodel_manage_tbl_4_1_1"/>
+		</add>
+		<add container="cmodel_manage_tbl_4_1_1" control="table">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ModelUploadStatussBean"/>
+			<set property="id" value="model_manage_upload_tbl"/>
+			<set property="label" value="Upload History"/>
+			<set property="relationship" value="UPLOADSTATUS"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="model_manage_upload_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="4"/>
+			<set property="filterable" value="false"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="model_manage_upload_tablebody"/>
+		</add>
+		<add container="model_manage_upload_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="model_manage_upload_tbl_detail"/>
+			<set property="mxevent" value="toggledetailstate"/>
+			<set property="mxevent_desc" value="Show Detail"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="model_manage_upload_tablebody" control="tablecol">
+			<set property="dataattribute" value="UPLOADTIME"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="model_manage_upload_tbl_time"/>
+			<set property="length" value="30"/>
+		</add>
+		<add container="model_manage_upload_tablebody" control="tablecol">
+			<set property="dataattribute" value="STATUS"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="model_manage_upload_tbl_status"/>
+			<set property="length" value="30"/>
+		</add>
+		<add container="model_manage_upload_tbl" control="tabledetails">
+			<set property="border" value="false"/>
+			<set property="id" value="model_manage_upload_tbl_details"/>
+		</add>
+		<add container="model_manage_upload_tbl_details" control="tabgroup">
+			<set property="id" value="model_manage_upload_tbl_tabs"/>
+			<set property="style" value="form"/>
+		</add>
+		<add container="model_manage_upload_tbl_tabs" control="tab">
+			<set property="default" value="true"/>
+			<set property="id" value="model_manage_upload_tab_main"/>
+			<set property="label" value="Main"/>
+		</add>
+		<add container="model_manage_upload_tab_main" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="model_manage_upload_tab_main_1"/>
+		</add>
+		<add container="model_manage_upload_tab_main_1" control="sectionrow">
+			<set property="id" value="model_manage_upload_tab_main_1_1"/>
+		</add>
+		<add container="model_manage_upload_tab_main_1_1" control="sectioncol">
+			<set property="id" value="model_manage_upload_tab_main_1_1_1"/>
+		</add>
+		<add container="model_manage_upload_tab_main_1_1_1" control="textbox">
+			<set property="dataattribute" value="STATUS"/>
+			<set property="id" value="model_manage_upload_tab_main_status"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_upload_tab_main_1_1" control="sectioncol">
+			<set property="id" value="model_manage_upload_tab_main_1_1_2"/>
+		</add>
+		<add container="model_manage_upload_tab_main_1_1_2" control="textbox">
+			<set property="dataattribute" value="PERCENTCOMP"/>
+			<set property="id" value="model_manage_upload_tab_main_percent"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_upload_tab_main_1" control="sectionrow">
+			<set property="id" value="model_manage_upload_tab_main_1_2"/>
+		</add>
+		<add container="model_manage_upload_tab_main_1_2" control="sectioncol">
+			<set property="id" value="model_manage_upload_tab_main_1_2_1"/>
+		</add>
+		<add container="model_manage_upload_tab_main_1_2_1" control="textbox">
+			<set property="dataattribute" value="IMPORTEDBY"/>
+			<set property="id" value="model_manage_upload_tab_main_uploadby"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_upload_tab_main_1_2" control="sectioncol">
+			<set property="id" value="model_manage_upload_tab_main_1_2_2"/>
+		</add>
+		<add container="model_manage_upload_tab_main_1_2_2" control="textbox">
+			<set property="dataattribute" value="UPLOADTIME"/>
+			<set property="id" value="model_manage_upload_tab_main_upload"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_upload_tbl_tabs" control="tab">
+			<set property="id" value="model_manage_upload_tab_main_log"/>
+			<set property="label" value="Log Records"/>
+		</add>
+		<add container="model_manage_upload_tab_main_log" control="multilinetextbox">
+			<set property="columns" value="40"/>
+			<set property="dataattribute" value="LOG"/>
+			<set property="hidetooltip" value="true"/>
+			<set property="id" value="model_manage_upload_tab_log_log"/>
+			<set property="inputmode" value="readonly"/>
+			<set property="rows" value="4"/>
+		</add>
+		<add container="model_manage_upload_tbl" control="buttongroup">
+			<set property="id" value="model_manage_upload_tbl_btn_1"/>
+		</add>
+		<add container="model_manage_upload_tbl_btn_1" control="pushbutton">
+			<set property="id" value="model_manage_entry_tbl_btn_refresh"/>
+			<set property="label" value="Refresh"/>
+			<set property="mxevent" value="refreshStatus"/>
+		</add>
+		<add container="model_manage_tbl_4_1" control="sectioncol">
+			<set property="id" value="model_manage_tbl_4_1_2"/>
+		</add>
+		<add container="model_manage_tbl_4_1_2" control="table">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ModelLinkTableBean"/>
+			<set property="id" value="model_manage_link_tbl"/>
+			<set property="label" value="Linked Model Files"/>
+			<set property="relationship" value="MODELLINK"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="model_manage_link_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="4"/>
+			<set property="filterable" value="false"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="model_manage_link_tablebody"/>
+		</add>
+		<add container="model_manage_link_tablebody" control="tablecol">
+			<set property="dataattribute" value="CHILDKEY"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="model_manage_link_tbl_child"/>
+			<set property="length" value="30"/>
+		</add>
+		<add container="model_manage_link_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="model_manage_link_tbl_delete"/>
+			<set property="mxevent" value="deleteLink"/>
+			<set property="mxevent_desc" value="Delete Link"/>
+			<set property="mxevent_icon" value="btn_garbage.gif"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="model_manage_link_tbl" control="buttongroup">
+			<set property="id" value="model_manage_link_tbl_btn_1"/>
+		</add>
+		<add container="model_manage_link_tbl_btn_1" control="pushbutton">
+			<set property="id" value="model_manage_entry_tbl_btn_link"/>
+			<set property="label" value="Link"/>
+			<set property="mxevent" value="link"/>
+		</add>
+		<add container="model_manage_tbl" control="buttongroup">
+			<set property="id" value="model_manage_tbl__btn_1"/>
+		</add>
+		<add container="model_manage_tbl__btn_1" control="pushbutton">
+			<set property="id" value="model_manage_entry_tbl_btn_upload"/>
+			<set property="label" value="Upload Model"/>
+			<set property="mxevent" value="uploadModel"/>
+		</add>
+		<add container="model_manage_tbl__btn_1" control="pushbutton">
+			<set property="default" value="false"/>
+			<set property="id" value="model_manage_entry_tbl_btn_attach"/>
+			<set property="label" value="Link to Model"/>
+			<set property="mxevent" value="attachModel"/>
+		</add>
+		<add container="LMV_MODEL" control="buttongroup">
+			<set property="id" value="model_manage_bg"/>
+		</add>
+		<add container="model_manage_bg" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="model_manage_bg_cancel"/>
+			<set property="label" value="Close"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add before="LMV_MODEL" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.BucketGrantBean"/>
+			<set property="id" value="LMV_BUCKET_GRANT"/>
+			<set property="label" value="Grant Access"/>
+			<set property="mboname" value="BIMLMVBUCKETACCESS"/>
+		</add>
+		<add container="LMV_BUCKET_GRANT" control="textbox">
+			<set property="dataattribute" value="SERVICEID"/>
+			<set property="id" value="bucket_grant_service_id"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="LMV_BUCKET_GRANT" control="combobox">
+			<set property="dataattribute" value="ACCESS"/>
+			<set property="id" value="bucket_grant_access"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="LMV_BUCKET_GRANT" control="buttongroup">
+			<set property="id" value="bucket_grant"/>
+		</add>
+		<add container="bucket_grant" control="pushbutton">
+			<set property="id" value="bucket_grant_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add container="bucket_grant" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="bucket_grant_ok"/>
+			<set property="label" value="OK"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add before="LMV_BUCKET_GRANT" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.BucketAttachBean"/>
+			<set property="id" value="LMV_BUCKET_ATTACH"/>
+			<set property="label" value="Link to Storage"/>
+			<set property="mboname" value="BIMLMVBUCKET"/>
+		</add>
+		<add container="LMV_BUCKET_ATTACH" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="bucket_attachdetails"/>
+		</add>
+		<add container="bucket_attachdetails" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="bucket_attach_1"/>
+		</add>
+		<add container="bucket_attach_1" control="sectionrow">
+			<set property="id" value="bucket_attach1_1"/>
+		</add>
+		<add container="bucket_attach1_1" control="sectioncol">
+			<set property="id" value="bucket_attach_1_1_2"/>
+		</add>
+		<add container="bucket_attach_1_1_2" control="textbox">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="id" value="bucket_attach_siteid"/>
+			<set property="lookup" value="site"/>
+		</add>
+		<add container="bucket_attach1_1" control="sectioncol">
+			<set property="id" value="bucket_attach_1_1_3"/>
+		</add>
+		<add container="bucket_attach_1_1_3" control="textbox">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="id" value="bucket_attach_orgid"/>
+			<set property="lookup" value="org"/>
+		</add>
+		<add container="bucket_attachdetails" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="bucket_attachdetails_2"/>
+		</add>
+		<add container="bucket_attachdetails_2" control="sectionrow">
+			<set property="id" value="bucket_attach_2_1"/>
+		</add>
+		<add container="bucket_attach_2_1" control="sectioncol">
+			<set property="id" value="cbucket_attach_2_1_1"/>
+		</add>
+		<add container="cbucket_attach_2_1_1" control="textbox">
+			<set property="dataattribute" value="BUCKETKEY"/>
+			<set property="id" value="bucket_attach_key"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="bucket_attach_2_1" control="sectioncol">
+			<set property="id" value="cbucket_attach_2_1_2"/>
+		</add>
+		<add container="cbucket_attach_2_1_2" control="checkbox">
+			<set property="dataattribute" value="ISAPPENDKEY"/>
+			<set property="id" value="bucket_attach_append_key"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="bucket_attachdetails" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="bucket_attachdetails_3"/>
+		</add>
+		<add container="bucket_attachdetails_3" control="sectionrow">
+			<set property="id" value="bucket_attach_3_1"/>
+		</add>
+		<add container="bucket_attach_3_1" control="sectioncol">
+			<set property="id" value="cbucket_attach_3_1_1"/>
+		</add>
+		<add container="cbucket_attach_3_1_1" control="textbox">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="id" value="bucket_attach_desc"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="LMV_BUCKET_ATTACH" control="buttongroup">
+			<set property="id" value="bucket_attach"/>
+		</add>
+		<add container="bucket_attach" control="pushbutton">
+			<set property="id" value="bucket_attach_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add container="bucket_attach" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="bucket_attach_ok"/>
+			<set property="label" value="OK"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add before="LMV_BUCKET_ATTACH" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.BucketCreateBean"/>
+			<set property="id" value="LMV_BUCKET_CREATE"/>
+			<set property="label" value="Create Storage"/>
+			<set property="mboname" value="BIMLMVBUCKET"/>
+		</add>
+		<add container="LMV_BUCKET_CREATE" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="bucket_createdetails"/>
+		</add>
+		<add container="bucket_createdetails" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="bucket_create_1"/>
+		</add>
+		<add container="bucket_create_1" control="sectionrow">
+			<set property="id" value="bucket_create1_1"/>
+		</add>
+		<add container="bucket_create1_1" control="sectioncol">
+			<set property="id" value="bucket_create_1_1_2"/>
+		</add>
+		<add container="bucket_create_1_1_2" control="textbox">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="id" value="bucket_create_siteid"/>
+			<set property="lookup" value="site"/>
+		</add>
+		<add container="bucket_create1_1" control="sectioncol">
+			<set property="id" value="bucket_create_1_1_3"/>
+		</add>
+		<add container="bucket_create_1_1_3" control="textbox">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="id" value="bucket_create_orgid"/>
+			<set property="lookup" value="org"/>
+		</add>
+		<add container="bucket_createdetails" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="bucket_create_3"/>
+		</add>
+		<add container="bucket_create_3" control="sectionrow">
+			<set property="id" value="bucket_create_3_1"/>
+		</add>
+		<add container="bucket_create_3_1" control="sectioncol">
+			<set property="id" value="bucket_create_3_1_1"/>
+		</add>
+		<add container="bucket_create_3_1_1" control="textbox">
+			<set property="dataattribute" value="BUCKETKEY"/>
+			<set property="id" value="bucket_create_key"/>
+		</add>
+		<add container="bucket_createdetails" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="bucket_create_2"/>
+		</add>
+		<add container="bucket_create_2" control="sectionrow">
+			<set property="id" value="bucket_create_2_1"/>
+		</add>
+		<add container="bucket_create_2_1" control="sectioncol">
+			<set property="id" value="cbucket_create_2_1_1"/>
+		</add>
+		<add container="cbucket_create_2_1_1" control="checkbox">
+			<set property="dataattribute" value="ISAPPENDKEY"/>
+			<set property="id" value="bucket_append_key"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="bucket_create_2_1" control="sectioncol">
+			<set property="id" value="cbucket_create_2_1_2"/>
+		</add>
+		<add container="cbucket_create_2_1_2" control="combobox">
+			<set property="dataattribute" value="POLICYKEY"/>
+			<set property="id" value="bucket_policy_key"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="bucket_createdetails" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="bucket_create_5"/>
+		</add>
+		<add container="bucket_create_5" control="sectionrow">
+			<set property="id" value="bucket_create_5_1"/>
+		</add>
+		<add container="bucket_create_5_1" control="sectioncol">
+			<set property="id" value="cbucket_create_5_1_1"/>
+		</add>
+		<add container="cbucket_create_5_1_1" control="textbox">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="id" value="bucket_create_desc"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="LMV_BUCKET_CREATE" control="buttongroup">
+			<set property="id" value="bucket_create"/>
+		</add>
+		<add container="bucket_create" control="pushbutton">
+			<set property="id" value="bucket_create_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add container="bucket_create" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="bucket_create_ok"/>
+			<set property="label" value="OK"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add before="LMV_BUCKET_CREATE" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.BucketManageBean"/>
+			<set property="id" value="LMV_BUCKET"/>
+			<set property="label" value="Manage Model Storage"/>
+			<set property="mboname" value="BIMLMVBUCKET"/>
+		</add>
+		<add container="LMV_BUCKET" control="table">
+			<set property="id" value="bucket_manage_tbl"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="bucket_manage_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="8"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="bucket_manage_tablebody"/>
+		</add>
+		<add container="bucket_manage_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="bucket_manage_tbl_detail"/>
+			<set property="mxevent" value="toggledetailstate"/>
+			<set property="mxevent_desc" value="Show Detail"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="bucket_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="BUCKETKEY"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tbl_key"/>
+		</add>
+		<add container="bucket_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="POLICYKEY"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tbl_policykey"/>
+		</add>
+		<add container="bucket_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tbl_site"/>
+			<set property="lookup" value="site"/>
+		</add>
+		<add container="bucket_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tbl_org"/>
+			<set property="lookup" value="org"/>
+		</add>
+		<add container="bucket_manage_tablebody" control="tablecol">
+			<set property="dataattribute" value="ONLINE"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tbl_online"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="bucket_manage_tbl_unlink"/>
+			<set property="mxevent" value="detatchStorage"/>
+			<set property="mxevent_desc" value="Unlink from Storage"/>
+			<set property="mxevent_icon" value="bim/unlink.png"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="bucket_manage_tbl" control="tabledetails">
+			<set property="border" value="false"/>
+			<set property="id" value="bucket_manage_tbl_details"/>
+		</add>
+		<add container="bucket_manage_tbl_details" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="bucket_manage_tbl_1"/>
+		</add>
+		<add container="bucket_manage_tbl_1" control="sectionrow">
+			<set property="id" value="bucket_manage_tbl_1_1"/>
+		</add>
+		<add container="bucket_manage_tbl_1_1" control="sectioncol">
+			<set property="id" value="cbucket_manage_tbl_1_1_1"/>
+		</add>
+		<add container="cbucket_manage_tbl_1_1_1" control="textbox">
+			<set property="dataattribute" value="BUCKETKEY"/>
+			<set property="id" value="bucket_manage_tbl_details_key"/>
+		</add>
+		<add container="bucket_manage_tbl_1_1" control="sectioncol">
+			<set property="id" value="cbucket_manage_tbl_1_1_2"/>
+		</add>
+		<add container="cbucket_manage_tbl_1_1_2" control="textbox">
+			<set property="dataattribute" value="POLICYKEY"/>
+			<set property="id" value="bucket_manage_tbl_details_policykey"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tbl_1_1" control="sectioncol">
+			<set property="id" value="bucket_manage_tbl_1_1_3"/>
+		</add>
+		<add container="bucket_manage_tbl_1_1_3" control="textbox">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="id" value="bucket_manage_tbl_details_siteid"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tbl_1_1" control="sectioncol">
+			<set property="id" value="bucket_manage_tbl_1_1_4"/>
+		</add>
+		<add container="bucket_manage_tbl_1_1_4" control="textbox">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="id" value="bucket_manage_tbl_details_orgid"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tbl_1" control="sectionrow">
+			<set property="id" value="bucket_manage_tbl_1_2"/>
+		</add>
+		<add container="bucket_manage_tbl_1_2" control="sectioncol">
+			<set property="id" value="cbucket_manage_tbl_1_2_1"/>
+		</add>
+		<add container="cbucket_manage_tbl_1_2_1" control="textbox">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="id" value="bucket_manage_tbl_details_desc"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="bucket_manage_tbl_details" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="bucket_manage_tbl_2"/>
+		</add>
+		<add container="bucket_manage_tbl_2" control="sectionrow">
+			<set property="id" value="bucket_manage_tbl_2_1"/>
+		</add>
+		<add container="bucket_manage_tbl_2_1" control="sectioncol">
+			<set property="id" value="bucket_manage_tbl_2_1_1"/>
+		</add>
+		<add container="bucket_manage_tbl_2_1_1" control="textbox">
+			<set property="dataattribute" value="OWNER"/>
+			<set property="id" value="bucket_manage_tbl_details_ownerkey"/>
+		</add>
+		<add container="bucket_manage_tbl_2_1" control="sectioncol">
+			<set property="id" value="bucket_manage_tbl_2_1_2"/>
+		</add>
+		<add container="bucket_manage_tbl_2_1_2" control="textbox">
+			<set property="dataattribute" value="CREATEDATE"/>
+			<set property="id" value="bucket_manage_tbl_details_createdate"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tbl_2_1" control="sectioncol">
+			<set property="id" value="bucket_manage_tbl_2_1_3"/>
+		</add>
+		<add container="bucket_manage_tbl_2_1_3" control="checkbox">
+			<set property="dataattribute" value="ISAPPENDKEY"/>
+			<set property="id" value="bucket_manage_tbl_append"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tbl_2" control="sectionrow">
+			<set property="id" value="bucket_manage_tbl_2_2"/>
+		</add>
+		<add container="bucket_manage_tbl_2_2" control="sectioncol">
+			<set property="id" value="bucket_manage_tbl_2_2_1"/>
+		</add>
+		<add container="bucket_manage_tbl_2_2_1" control="textbox">
+			<set property="dataattribute" value="LASTERROR"/>
+			<set property="id" value="bucket_manage_tbl_lasterror"/>
+			<set property="inputmode" value="readonly"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<add container="bucket_manage_tbl_details" control="table">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.BucketAccessBean"/>
+			<set property="displayrowsperpage" value="4"/>
+			<set property="id" value="bucket_manage_access_tbl"/>
+			<set property="label" value="Rights"/>
+			<set property="relationship" value="ACCESS"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="bucket_manage_access_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="8"/>
+			<set property="filterable" value="false"/>
+			<set property="id" value="bucket_manage_access_tbl_body"/>
+		</add>
+		<add container="bucket_manage_access_tbl_body" control="tablecol">
+			<set property="dataattribute" value="SERVICEID"/>
+			<set property="id" value="bucket_manage_access_tbl_key"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_access_tbl_body" control="tablecol">
+			<set property="dataattribute" value="ACCESS"/>
+			<set property="id" value="bucket_manage_access_tbl_access"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_access_tbl_body" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="bucket_manage_access_tbl_access_revoke"/>
+			<set property="mxevent" value="revokeAccess"/>
+			<set property="mxevent_desc" value="Revoke Access"/>
+			<set property="mxevent_icon" value="btn_garbage.gif"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="bucket_manage_access_tbl" control="buttongroup">
+			<set property="id" value="bucket_manage_access_tbl__btn_1"/>
+		</add>
+		<add container="bucket_manage_access_tbl__btn_1" control="pushbutton">
+			<set property="default" value="false"/>
+			<set property="id" value="bucket_manage_entry_tbl_btn_grant"/>
+			<set property="label" value="Grant Access"/>
+			<set property="mxevent" value="grantAccess"/>
+		</add>
+		<add container="bucket_manage_tbl" control="buttongroup">
+			<set property="id" value="bucket_manage_tbl__btn_1"/>
+		</add>
+		<add container="bucket_manage_tbl__btn_1" control="pushbutton">
+			<set property="default" value="false"/>
+			<set property="id" value="bucket_manage_entry_tbl_btn_create"/>
+			<set property="label" value="Create Storage"/>
+			<set property="mxevent" value="createStorage"/>
+		</add>
+		<add container="bucket_manage_tbl__btn_1" control="pushbutton">
+			<set property="default" value="false"/>
+			<set property="id" value="bucket_manage_entry_tbl_btn_attach"/>
+			<set property="label" value="Link to Storage"/>
+			<set property="mxevent" value="attachStorage"/>
+		</add>
+		<add container="LMV_BUCKET" control="buttongroup">
+			<set property="id" value="bucket_manage_bg"/>
+		</add>
+		<add container="bucket_manage_bg" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="bucket_manage_bg_cancel"/>
+			<set property="label" value="Close"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add container="main" control="section">
+			<set property="border" value="true"/>
+			<set property="collapsed" value="false"/>
+			<set property="display" value="false"/>
+			<set property="id" value="lmv_main"/>
+		</add>
+		<add container="lmv_main" control="section">
+			<set property="collapsed" value="false"/>
+			<set property="id" value="managemodel_lmv_1"/>
+		</add>
+		<add container="managemodel_lmv_1" control="sectionrow">
+			<set property="id" value="managemodel_lmv_1_1"/>
+		</add>
+		<add container="managemodel_lmv_1_1" control="sectioncol">
+			<set property="id" value="managemodel_lmv_1_1_1"/>
+		</add>
+		<add container="managemodel_lmv_1_1_1" control="textbox">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="id" value="managemodel_lmv_objectkey"/>
+			<set property="lookup" value="bimviewable"/>
+		</add>
+		<add container="managemodel_lmv_1_1" control="sectioncol">
+			<set property="id" value="managemodel_lmv_1_1_2"/>
+		</add>
+		<add container="managemodel_lmv_1_1_2" control="textbox">
+			<set property="dataattribute" value="ATTRIBUTENAME"/>
+			<set property="id" value="managemodel_lmv_search"/>
+			<set property="inputmode" value="required"/>
+			<set property="label" value="ID Attribute"/>
+		</add>
+		<add container="lmv_main" control="section">
+			<set property="collapsed" value="false"/>
+			<set property="id" value="managemodel_lmv_2"/>
+		</add>
+		<add container="managemodel_lmv_2" control="sectionrow">
+			<set property="id" value="managemodel_lmv_2_1"/>
+		</add>
+		<add container="managemodel_lmv_2_1" control="sectioncol">
+			<set property="id" value="managemodel_lmv_2_1_1"/>
+		</add>
+		<add container="managemodel_lmv_2_1_1" control="multilinetextbox">
+			<set property="columns" value="80"/>
+			<set property="dataattribute" value="URL"/>
+			<set property="id" value="managemodel_lmv_url"/>
+			<set property="inputmode" value="required"/>
+			<set property="rows" value="3"/>
+		</add>
+		<add before="searchmore_buttongroup" container="searchmore" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="searchmore_3"/>
+			<set property="label" value="Default views"/>
+		</add>
+		<add container="searchmore_3" control="sectionrow">
+			<set property="id" value="searchmore_grid4_4"/>
+		</add>
+		<add container="searchmore_grid4_4" control="sectioncol">
+			<set property="id" value="searchmore_grid4_5"/>
+		</add>
+		<add container="searchmore_grid4_5" control="textbox">
+			<set property="dataattribute" value="LOCATIONVIEW"/>
+			<set property="id" value="searchmore_location_view"/>
+		</add>
+		<add container="searchmore_grid4_5" control="textbox">
+			<set property="dataattribute" value="LOOKUPVIEW"/>
+			<set property="id" value="searchmore_lookup_view"/>
+		</add>
+		<add container="searchmore_grid4_4" control="sectioncol">
+			<set property="id" value="searchmore_grid4_6"/>
+		</add>
+		<add container="searchmore_grid4_6" control="textbox">
+			<set property="dataattribute" value="ASSETVIEW"/>
+			<set property="id" value="searchmore_asset_view"/>
+		</add>
+		<add container="searchmore_grid4_6" control="textbox">
+			<set property="dataattribute" value="WORKORDERVIEW"/>
+			<set property="id" value="searchmore_work_order_view"/>
+		</add>
+		<add before="searchmore_3" container="searchmore" control="section">
+			<set property="id" value="searchmore_2"/>
+		</add>
+		<add container="searchmore_2" control="sectionrow">
+			<set property="id" value="searchmore_table_1_grid3_1a"/>
+		</add>
+		<add container="searchmore_table_1_grid3_1a" control="sectioncol">
+			<set property="id" value="searchmore_grid3_1_1c"/>
+		</add>
+		<add container="searchmore_grid3_1_1c" control="section">
+			<set property="id" value="searchmore_table_1_grid3_1"/>
+		</add>
+		<add container="searchmore_table_1_grid3_1" control="sectionrow">
+			<set property="id" value="searchmore_grid3_3"/>
+		</add>
+		<add container="searchmore_grid3_3" control="sectioncol">
+			<set property="id" value="searchmore_grid3_3_1"/>
+		</add>
+		<add container="searchmore_grid3_3_1" control="textbox">
+			<set property="dataattribute" value="ATTRIBUTECLASS"/>
+			<set property="id" value="searchmore_grid3_3_1_1"/>
+		</add>
+		<add container="searchmore_grid3_3_1" control="textbox">
+			<set property="dataattribute" value="ATTRIBUTENAME"/>
+			<set property="id" value="searchmore_grid3_3_1_2"/>
+		</add>
+		<add container="searchmore_grid3_3" control="sectioncol">
+			<set property="id" value="searchmore_grid1_3_2"/>
+		</add>
+		<add container="searchmore_grid1_3_2" control="textbox">
+			<set property="dataattribute" value="PARAMCLASS"/>
+			<set property="id" value="searchmore_grid3_3_2_1"/>
+		</add>
+		<add container="searchmore_grid1_3_2" control="textbox">
+			<set property="dataattribute" value="PARAMNAME"/>
+			<set property="id" value="searchmore_grid3_3_2_2"/>
+		</add>
+	</app>
+	<app apptype="webclient" id="location">
+		<add container="bim_addmodel_tabledetails" control="section">
+			<set property="collapsed" value="false"/>
+			<set property="display" value="false"/>
+			<set property="id" value="addmodel_lmv_main"/>
+		</add>
+		<add container="addmodel_lmv_main" control="section">
+			<set property="collapsed" value="false"/>
+			<set property="id" value="addmodel_lmv_1"/>
+			<set property="label" value="Details"/>
+		</add>
+		<add container="addmodel_lmv_1" control="sectionrow">
+			<set property="id" value="addmodel_lmv_1_1"/>
+		</add>
+		<add container="addmodel_lmv_1_1" control="sectioncol">
+			<set property="id" value="addmodel_lmv_1_1_1"/>
+		</add>
+		<add container="addmodel_lmv_1_1_1" control="textbox">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="id" value="addmodel_lmv_objectkey"/>
+			<set property="lookup" value="bimviewable"/>
+		</add>
+		<add container="addmodel_lmv_1_1" control="sectioncol">
+			<set property="id" value="addmodel_lmv_1_1_2"/>
+		</add>
+		<add container="addmodel_lmv_1_1_2" control="textbox">
+			<set property="dataattribute" value="ATTRIBUTENAME"/>
+			<set property="id" value="addmodel_lmv_search"/>
+			<set property="inputmode" value="required"/>
+			<set property="label" value="ID Attribute"/>
+		</add>
+		<add container="addmodel_lmv_main" control="section">
+			<set property="collapsed" value="false"/>
+			<set property="id" value="addmodel_lmv_2"/>
+			<set property="label" value="Details"/>
+		</add>
+		<add container="addmodel_lmv_2" control="sectionrow">
+			<set property="id" value="addmodel_lmv_2_1"/>
+		</add>
+		<add container="addmodel_lmv_2_1" control="sectioncol">
+			<set property="id" value="addmodel_lmv_2_1_1"/>
+		</add>
+		<add container="addmodel_lmv_2_1_1" control="multilinetextbox">
+			<set property="columns" value="80"/>
+			<set property="dataattribute" value="URL"/>
+			<set property="id" value="addmodel_lmv_url"/>
+			<set property="inputmode" value="readonly"/>
+			<set property="rows" value="3"/>
+		</add>
+	</app>
+	<systemlib apptype="webclient" id="lookups">
+		<add container="lookups" control="table">
+			<set property="id" value="bimviewable"/>
+			<set property="inputmode" value="readonly"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="bimviewable" control="tablebody">
+			<set property="displayrowsperpage" value="20"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="bimmodel_lookup_tablebody"/>
+		</add>
+		<add container="bimmodel_lookup_tablebody" control="tablecol">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="id" value="bimmodel_lookup_objectkey"/>
+			<set property="mxevent" value="selectrecord"/>
+			<set property="mxevent_desc" value="Go To %1"/>
+			<set property="sortable" value="true"/>
+			<set property="type" value="link"/>
+		</add>
+		<add container="bimmodel_lookup_tablebody" control="tablecol">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="id" value="bimmodel_lookup_desc"/>
+			<set property="mxevent" value="selectrecord"/>
+			<set property="mxevent_desc" value="Go To %1"/>
+			<set property="sortable" value="true"/>
+			<set property="type" value="link"/>
+		</add>
+		<add before="bimviewable" container="lookups" control="table">
+			<set property="id" value="bimmodel"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="bimmodel" control="tablebody">
+			<set property="displayrowsperpage" value="20"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="bimlmvmodel_lookup_tablebody"/>
+		</add>
+		<add container="bimlmvmodel_lookup_tablebody" control="tablecol">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="id" value="bimlmvmodel_lookup_onjectkey"/>
+			<set property="mxevent" value="selectrecord"/>
+			<set property="mxevent_desc" value="Go To %1"/>
+			<set property="sortable" value="true"/>
+			<set property="type" value="link"/>
+		</add>
+		<add container="bimlmvmodel_lookup_tablebody" control="tablecol">
+			<set property="dataattribute" value="siteid"/>
+			<set property="id" value="bimlmvmodel_lookup_site"/>
+			<set property="mxevent" value="selectrecord"/>
+			<set property="mxevent_desc" value="Go To %1"/>
+			<set property="sortable" value="true"/>
+			<set property="type" value="link"/>
+		</add>
+		<add container="bimlmvmodel_lookup_tablebody" control="tablecol">
+			<set property="dataattribute" value="orgid"/>
+			<set property="id" value="bimlmvmodel_lookup_org"/>
+			<set property="mxevent" value="selectrecord"/>
+			<set property="mxevent_desc" value="Go To %1"/>
+			<set property="sortable" value="true"/>
+			<set property="type" value="link"/>
+		</add>
+		<add before="bimmodel" container="lookups" control="table">
+			<set property="id" value="bimbucket"/>
+			<set property="inputmode" value="readonly"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="bimbucket" control="tablebody">
+			<set property="displayrowsperpage" value="20"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="bimlmvbucket_lookup_tablebody"/>
+		</add>
+		<add container="bimlmvbucket_lookup_tablebody" control="tablecol">
+			<set property="dataattribute" value="BUCKETKEY"/>
+			<set property="id" value="bimlmvbucket_lookup_bucketkey"/>
+			<set property="mxevent" value="selectrecord"/>
+			<set property="mxevent_desc" value="Go To %1"/>
+			<set property="sortable" value="true"/>
+			<set property="type" value="link"/>
+		</add>
+		<add container="bimlmvbucket_lookup_tablebody" control="tablecol">
+			<set property="dataattribute" value="POLICYKEY"/>
+			<set property="id" value="bimlmvbucket_lookup_"/>
+			<set property="mxevent" value="selectrecord"/>
+			<set property="mxevent_desc" value="Go To %1"/>
+			<set property="sortable" value="true"/>
+			<set property="type" value="link"/>
+		</add>
+		<add container="bimlmvbucket_lookup_tablebody" control="tablecol">
+			<set property="dataattribute" value="siteid"/>
+			<set property="id" value="bimlmvbucket_lookup_site"/>
+			<set property="mxevent" value="selectrecord"/>
+			<set property="mxevent_desc" value="Go To %1"/>
+			<set property="sortable" value="true"/>
+			<set property="type" value="link"/>
+		</add>
+		<add container="bimlmvbucket_lookup_tablebody" control="tablecol">
+			<set property="dataattribute" value="orgid"/>
+			<set property="id" value="bimlmvbucket_lookup_org"/>
+			<set property="mxevent" value="selectrecord"/>
+			<set property="mxevent_desc" value="Go To %1"/>
+			<set property="sortable" value="true"/>
+			<set property="type" value="link"/>
+		</add>
+	</systemlib>
+</updatescript>

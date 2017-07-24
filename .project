@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>MaximoForgeViewerPlugin</name>
+	<comment></comment>
+	<projects>
+		<project>WebSphere Application Server Liberty</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.wst.common.project.facet.core.builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.wst.validation.validationbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
+		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
+		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>maximouiweb</name>
+			<type>2</type>
+			<locationURI>MAXIMOUIWEB</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>MAXIMOUIWEB</name>
+			<value>file:/B:/Source/maximo_7608_EAR/maximouiweb/WEB-INF/classes</value>
+		</variable>
+	</variableList>
+</projectDescription>

@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+-->
+<!DOCTYPE script SYSTEM "script.dtd">
+<script author="Doug Wood" scriptname="Maximo for Buildings 7.5">
+	<description>Maximo for Buildings 7.5 Design Specifications application</description>
+	<statements>
+	
+		<!-- 
+		================================================================================
+		- BIM Design SPecification
+		- COBie Type tab is mapped to this.
+		================================================================================ 
+		-->
+
+
+ 		<!--
+		- BIM Design Specification view
+		-->
+		<define_view name="BIMDesignSpec" classname="psdi.app.bim.product.BIMDesignSpecSet" service="BIM" extends="BIMProductBase"
+			type="org" description="View on BIMProduct for design specifications">
+			<view_column table="BIMPRODUCTBASE" column="BIMPRODUCTBASEID" view_column="BIMPRODUCTBASEID" />
+			<view_column table="BIMPRODUCTBASE" column="BIMASSETTYPE" view_column="BIMASSETTYPE" />
+			<view_column table="BIMPRODUCTBASE" column="CHANGEBY" view_column="CHANGEBY" />
+			<view_column table="BIMPRODUCTBASE" column="CHANGEDATE" view_column="CHANGEDATE" />
+			<view_column table="BIMPRODUCTBASE" column="CLASSSTRUCTUREID" view_column="CLASSSTRUCTUREID" />
+			<view_column table="BIMPRODUCTBASE" column="DESIGNSPEC" view_column="DESIGNSPEC" />
+			<view_column table="BIMPRODUCTBASE" column="HASLD" view_column="HASLD" />
+			<view_column table="BIMPRODUCTBASE" column="ITEMNUM" view_column="ITEMNUM" />
+			<view_column table="BIMPRODUCTBASE" column="ITEMSETID" view_column="ITEMSETID" />
+			<view_column table="BIMPRODUCTBASE" column="LANGCODE" view_column="LANGCODE" />
+			<view_column table="BIMPRODUCTBASE" column="MODELID" view_column="MODELID" />
+			<view_column table="BIMPRODUCTBASE" column="NAME" view_column="NAME" />
+			<view_column table="BIMPRODUCTBASE" column="OrgID" view_column="OrgID" />
+			<view_column table="BIMPRODUCTBASE" column="PRODUCTID" view_column="PRODUCTID" />
+			<view_column table="BIMPRODUCTBASE" column="ROWSTAMP" view_column="ROWSTAMP" />
+			<view_column table="BIMPRODUCTBASE" column="STATUS" view_column="STATUS" />
+			<view_column table="BIMPRODUCTBASE" column="STATUSDATE" view_column="STATUSDATE" />
+			
+			<view_column table="BIMPRODUCTBASE" column="DESCRIPTION" view_column="DESCRIPTION" />
+			<view_column table="BIMPRODUCTBASE" column="DESCRIPTION_LONGDESCRIPTION" view_column="DESCRIPTION_LONGDESCRIPTION" />
+
+			<view_column table="BIMPRODUCTBASE" column="CREATEDBY" view_column="CREATEDBY" />
+			<view_column table="BIMPRODUCTBASE" column="CREATEDON" view_column="CREATEDON" />
+			<view_column table="BIMPRODUCTBASE" column="CATEGORY" view_column="CATEGORY" />
+			
+			<view_column table="BIMPRODUCTBASE" column="ACCESSIBILITYPERFORMANCE" view_column="ACCESSIBILITYPERFORMANCE" />
+			<view_column table="BIMPRODUCTBASE" column="CODEPERFORMANCE" view_column="CODEPERFORMANCE" />
+			<view_column table="BIMPRODUCTBASE" column="COLOR" view_column="COLOR" />
+			<view_column table="BIMPRODUCTBASE" column="CONSTITUENTS" view_column="CONSTITUENTS" />
+			<view_column table="BIMPRODUCTBASE" column="DURATIONUNIT" view_column="DURATIONUNIT" />
+			<view_column table="BIMPRODUCTBASE" column="EXPECTEDLIFE" view_column="EXPECTEDLIFE" />
+			<view_column table="BIMPRODUCTBASE" column="FEATURES" view_column="FEATURES" />
+			<view_column table="BIMPRODUCTBASE" column="FEATURES_LONGDESCRIPTION" view_column="FEATURES_LONGDESCRIPTION" />
+			<view_column table="BIMPRODUCTBASE" column="FINISH" view_column="FINISH" />
+			<view_column table="BIMPRODUCTBASE" column="GRADE" view_column="GRADE" />
+			<view_column table="BIMPRODUCTBASE" column="HEIGHTUNITS" view_column="HEIGHTUNITS" />
+			<view_column table="BIMPRODUCTBASE" column="LABORWARRANTYDURATION" view_column="LABORWARRANTYDURATION" />
+			<view_column table="BIMPRODUCTBASE" column="LENGTHUNITS" view_column="LENGTHUNITS" />
+			<view_column table="BIMPRODUCTBASE" column="MATERIAL" view_column="MATERIAL" />
+			<view_column table="BIMPRODUCTBASE" column="NOMINALHEIGHT" view_column="NOMINALHEIGHT" />
+			<view_column table="BIMPRODUCTBASE" column="NOMINALLENGTH" view_column="NOMINALLENGTH" />
+			<view_column table="BIMPRODUCTBASE" column="NOMINALWEIGHT" view_column="NOMINALWEIGHT" />
+			<view_column table="BIMPRODUCTBASE" column="NOMINALWIDTH" view_column="NOMINALWIDTH" />
+			<view_column table="BIMPRODUCTBASE" column="PRODUCTSIZE" view_column="PRODUCTSIZE" />
+			<view_column table="BIMPRODUCTBASE" column="PARTSWARRANTDURATION" view_column="PARTSWARRANTDURATION" />
+			<view_column table="BIMPRODUCTBASE" column="SHAPE" view_column="SHAPE" />
+			<view_column table="BIMPRODUCTBASE" column="SUSTAINABILITYPERFORMANCE" view_column="SUSTAINABILITYPERFORMANCE" />
+			<view_column table="BIMPRODUCTBASE" column="WARRANTYDESC" view_column="WARRANTYDESC" />
+			<view_column table="BIMPRODUCTBASE" column="WARRANTYDESC_LONGDESCRIPTION" view_column="WARRANTYDESC_LONGDESCRIPTION" />
+			<view_column table="BIMPRODUCTBASE" column="WARRANTYDURATIONUNIT" view_column="WARRANTYDURATIONUNIT" />
+			<view_column table="BIMPRODUCTBASE" column="WEIGHTUNITS" view_column="WEIGHTUNITS" />
+			<view_column table="BIMPRODUCTBASE" column="WIDTHUNITS" view_column="WIDTHUNITS" />
+
+			<view_column table="BIMPRODUCTBASE" column="EQ01" view_column="EQ01" />
+			<view_column table="BIMPRODUCTBASE" column="EQ02" view_column="EQ02" />
+			<view_column table="BIMPRODUCTBASE" column="EQ03" view_column="EQ03" />
+			<view_column table="BIMPRODUCTBASE" column="EQ4" view_column="EQ4" />
+			<view_column table="BIMPRODUCTBASE" column="EQ5" view_column="EQ5" />
+			<view_column table="BIMPRODUCTBASE" column="EQ6" view_column="EQ6" />
+			<view_column table="BIMPRODUCTBASE" column="EQ7" view_column="EQ7" />
+			<view_column table="BIMPRODUCTBASE" column="EQ8" view_column="EQ8" />
+			<view_column table="BIMPRODUCTBASE" column="EQ9" view_column="EQ9" />
+
+
+			<view_select>
+				bimproductbase.bimproductbaseid, 
+				bimproductbase.bimassettype, 
+				bimproductbase.changeby, 
+				bimproductbase.changedate, 
+				bimproductbase.classstructureid, 
+				bimproductbase.designspec, 
+				bimproductbase.itemnum, 
+				bimproductbase.itemsetid, 
+				bimproductbase.langcode, 
+				bimproductbase.modelid, 
+				bimproductbase.name, 
+				bimproductbase.orgid, 
+				bimproductbase.productid, 
+				bimproductbase.rowstamp, 
+				bimproductbase.status, 
+				bimproductbase.statusdate, 
+				
+				bimproductbase.description, 
+				bimproductbase.hasld, 
+				
+				bimproductbase.accessibilityperformance, 
+				bimproductbase.category, 
+				bimproductbase.codeperformance, 
+				bimproductbase.color, 
+				bimproductbase.constituents, 
+				bimproductbase.createdby, 
+				bimproductbase.createdon, 
+				bimproductbase.durationunit, 
+				
+				bimproductbase.expectedlife, 
+				bimproductbase.features, 
+				bimproductbase.finish, 
+				bimproductbase.grade, 
+				bimproductbase.heightunits, 
+				bimproductbase.laborwarrantyduration, 
+				bimproductbase.lengthunits, 
+				bimproductbase.material, 
+				bimproductbase.nominalheight, 
+				bimproductbase.nominallength, 
+				bimproductbase.nominalweight, 
+				bimproductbase.nominalwidth, 
+				bimproductbase.partswarrantduration, 
+				bimproductbase.productsize, 
+				bimproductbase.shape, 
+				bimproductbase.sustainabilityperformance, 
+				bimproductbase.warrantydesc, 
+				bimproductbase.warrantydurationunit, 
+				bimproductbase.weightunits,
+				bimproductbase.widthunits,
+				
+				bimproductbase.eq01, 
+				bimproductbase.eq02, 
+				bimproductbase.eq03, 
+				bimproductbase.eq4, 
+				bimproductbase.eq5, 
+				bimproductbase.eq6, 
+				bimproductbase.eq7, 
+				bimproductbase.eq8, 
+				bimproductbase.eq9
+			</view_select>
+			<view_from>bimproductbase</view_from>
+			<view_where>designspec=1</view_where>
+		</define_view>
+		
+        <create_relationship parent="BIMDESIGNSPEC" name="BIMPRODUCTSPECCLASS"
+			child="BIMPRODUCTBASESPEC"
+			whereclause="productid=:productid and classstructureid=:classstructureid and orgid = :orgid"
+			remarks="Relationship to the BIMPRODUCT table, used to find the bimproduct specifications which contain the asset's individual attributes and values to characterize the location. (asset.productid= bimproductbasespec.productid and asset.classstructureid =bimproductbasespec.classstructureid). The resulting set will contain zero or more objects. " />
+		
+		<create_relationship parent="BIMDESIGNSPEC" name="CLASSSTRUCTURE"
+			child="CLASSSTRUCTURE" whereclause="classstructureid = :classstructureid"
+			remarks="Relationship to the ClassStructure table, used to find the class structure which contains the design specification type ClassStructureId. (bimproduct.classstructureid =classstructure.classstructureid). The resulting set will contain zero or one object." />
+
+		<create_relationship parent="BIMDESIGNSPEC" name="CLASSANCESTOR"
+			child="BIMDESIGNSPEC" whereclause="classstructureid = :classstructureid and designspec=1"
+			remarks="Relationship to the classancestor table, used to find the ancestor records for a given classstructure. (person.classstructureid = classancestor.classstructureid). The resulting set will contain zero or more objects." />
+
+        <create_relationship parent="BIMDESIGNSPEC" name="CLASSSPEC"
+			child="CLASSSPEC"
+			whereclause="classstructureid =:classstructureid"
+			remarks="Relationship to the ClassSpec table, used to find all class specifications for a given design specification. (classspec.classstructureid = bimproduct.classstructureid). This resulting set will contain zero or more objects." />
+
+		<create_relationship parent="BIMDESIGNSPEC" name="BOOKMARK"
+			child="BOOKMARK" whereclause="app='DESIGNSPEC' and keyvalue=:BIMPRODUCTBASEID"
+			remarks="Relationship to the bookmark records, used to find the bookmark records for a given asset." />
+
+		<create_relationship parent="BIMDESIGNSPEC" name="DOCLINKS"
+			child="DOCLINKS" whereclause="ownertable = 'BIMDESIGNSPEC' and ownerid = :BIMPRODUCTBASEID"
+			remarks="Relationship to the DocLinks table, used to find all documents for a given product. (ownertable = 'BIMDESIGNSPEC' and ownerid = :BIMPRODUCTBASEID). The resulting set will contain zero or more objects." />
+
+		<create_relationship parent="BIMDESIGNSPEC" name="PRODSTATUS"
+			child="BIMPRODUCTSTATUS" whereclause="productid =:productid and orgid =:orgid"
+			remarks="Relationship to the BIMProductStatus table, used to find the history of status changes for a given product. (productid =:productid and orgid =:orgid). The resulting set will contain zero or more objects." />
+			
+		<create_relationship parent="BIMDESIGNSPEC" name="BIMPRODUCTSTATUS"
+			child="BIMPRODUCTSTATUS" whereclause="productid=:productid and orgid = :orgid"
+			remarks="Relationship to the BIMProductStatus table, used to find the history of status changes for a given product. The resulting set will contain zero or more objects." />
+
+		<create_relationship parent="BIMDESIGNSPEC" name="PRODUCTCHANGESTATUS"
+			child="BIMPRODUCTCHANGESTATUS" whereclause=""
+			remarks="Relationship to the non-persistent BIMProductChangeStatus table. (No where clause). The resulting set will contain zero objects. This relationship is used only for the Change Status action page to change the status of a given product." />
+
+		<create_relationship parent="BIMDESIGNSPEC" name="STATUSDESC"
+			child="SYNONYMDOMAIN" whereclause="domainid='BIMPRODUCTSTATUS' and value=:status and :&DOMAINFILTER&_STATUS"
+			remarks="Relationship to synonymdomain table, used to find description for the status, it will contain one object." />
+			
+		<create_relationship parent="BIMDESIGNSPEC" name="DESIGNSPECITEM"
+			child="ITEM" whereclause="itemnum = :itemnum and itemsetid = :itemsetid"
+			remarks="Relationship to the Item table, used to find the item for a given product. (product.itemnum = item.itemnum and product.itemsetid = item.itemsetid). The resulting set will contain zero or one objects." />
+
+		<create_relationship parent="CLASSSTRUCTURE" name="REQUIREMENTS"
+			child="BIMDESIGNSPEC" whereclause="classstructureid in (select classstructureid from classancestor where ancestor=:classstructureid)"
+			remarks="Relationship to the bimdesignspec table, used to find all requirements associated with the given class structure. (locations.classstructureid = classstructure.classstructureid).  The resulting set will contain zero or more objects." />
+			
+			
+		<!--
+		- BIM Design Secicication Loc table
+		-  Many to many relationshipion between Design Specification and location 
+		-->
+		<define_table persistent="true" classname="psdi.app.bim.product.BIMDesignSpecLocSet"
+			object="BIMDESIGNSPECLOC" service="BIM" type="site" description="Many to many relationshipions between Design Specification and locations."
+			primarykey="LOCATION, PRODUCTID, SITEID">
+			<attrdef attribute="NAME" maxtype="ALN" title="Specification"
+				remarks="Part Name" length="80"
+				restricted="false" haslongdesc="false" />
+			<attrdef attribute="PRODUCTID" maxtype="UPPER" title="Design Specification"
+				remarks="Design Specification Identifier" length="12" required="true"
+				classname="psdi.app.bim.product.FldDesignSpecId"
+				sameasobject="BIMPRODUCTBASE" sameasattribute="PRODUCTID" />
+			<attrdef attribute="ORGID" maxtype="UPPER" title="Organization"
+				remarks="Organization Identifier" length="8" required="false"
+				classname="psdi.app.site.FldOrganizationID" sameasobject="ORGANIZATION" sameasattribute="ORGID" />
+			<attrdef attribute="SITEID" maxtype="UPPER" title="Site"
+				remarks="Site Identifier" length="8" required="false" sameasobject="SITE"
+				sameasattribute="SITEID" classname="psdi.app.bim.FldBIMSiteID"/>
+			<attrdef attribute="LOCATION" maxtype="UPPER" title="Location"  required="true"
+				remarks="THe location to which the specification applies" length="12"
+				sameasobject="LOCATIONS" sameasattribute="LOCATION" restricted="false" 
+				classname="psdi.app.bim.viewer.FldViewerLoc"/>
+			<attrdef attribute="DESCRIPTION" maxtype="ALN" title="Description"
+				remarks="Describes the specification.  To enter or view additional information, click the Long Description button"
+				length="100" persistent="true" haslongdesc="true" restricted="false" />
+		</define_table>
+
+		<create_relationship parent="LOCATIONS" name="LOCHASREQUIREMENT"
+			child="BIMDesignSpecLoc" whereclause="location=:location and siteid=:siteid"
+			remarks="Relationship to Locations table, used to find all locations to which a design specifications applies" />
+			
+		<create_relationship parent="BIMDesignSpec" name="REQUIREMENTFORLOC"
+			child="BIMDesignSpecLoc" whereclause="productid=:productid and orgid=:orgid"
+			remarks="Relationship to DesignSpecLoc table used to find all locations the design spec applies to" />
+			
+		<create_relationship parent="BIMDesignSpecLoc" name="DRILLDOWN" child="DRILLDOWN" whereclause="" remarks="relationship for DRILLDOWN table" />
+			
+		<!--
+		- BIM Design Secicication Prodcut table
+		-  Relationship between Design Specification and product Many to many relationship
+		-->
+		<define_table persistent="true" classname="psdi.app.bim.product.BIMDesignSpecProdSet"
+			object="BIMDESIGNSPECPROD" service="BIM" type="org" description="Many to many relationshipion between Design Specification and Product. "
+			primarykey="DESIGNSPECID, PRODUCTID, ORGID">
+			<attrdef attribute="PRODUCTID" maxtype="UPPER" title="Product"
+				remarks="Product Identifier" length="12" required="true"
+				classname="psdi.app.bim.product.FldProductId"
+				sameasobject="BIMPRODUCTBASE" sameasattribute="PRODUCTID" />
+			<attrdef attribute="DESIGNSPECID" maxtype="UPPER" title="Design Specification"
+				remarks="Product Identifier" length="12" required="true"
+				classname="psdi.app.bim.product.FldDesignSpecId"
+				sameasobject="BIMPRODUCTBASE" sameasattribute="PRODUCTID" />
+			<attrdef attribute="ORGID" maxtype="UPPER" title="Organization"
+				remarks="Organization Identifier" length="8" required="false"
+				classname="psdi.app.site.FldOrganizationID" sameasobject="ORGANIZATION" sameasattribute="ORGID" />
+			<attrdef attribute="NAME" maxtype="ALN" title="Specification"
+				remarks="Part Name" length="80"
+				restricted="false" haslongdesc="false" />
+			<attrdef attribute="DESCRIPTION" maxtype="ALN" title="Description"
+				remarks="Describes the specification.  To enter or view additional information, click the Long Description button"
+				length="100" persistent="true" haslongdesc="true" restricted="false" />
+		</define_table>
+
+		<create_relationship parent="BIMPRODUCT" name="PRODUCTMEEETSREQUIREMENT"
+			child="BIMDesignSpecProd" whereclause="productid=:productid and orgid=:orgid"
+			remarks="Relationship to product table, used to find all products which meets a specification" />
+			
+		<create_relationship parent="BIMDesignSpec" name="REQUIREMENTFORPRODUCT"
+			child="BIMDesignSpecProd" whereclause="designspecid=:productid and orgid=:orgid"
+			remarks="Relationship to  Design SPecification table, used to find all design specifications a product can satisfy" />
+			
+			
+			
+			
+			
+		<add_synonyms domainid="CLASSUSEWITH">
+			<synonymvalueinfo value="DESIGN SPECIFICATION" maxvalue="BIMDESIGNSPEC" defaults="true" description="Use with Design Specification" />
+		</add_synonyms> 
+		
+		
+		<!--
+		- BIM Comment table
+		- Manage threaded discussions
+		-->
+		<define_table persistent="true" classname="psdi.app.bim.product.BIMCommentSet"
+			object="BIMCOMMENT" service="BIM" type="system" description="Threaded discussion" 
+			primarykey="BIMCOMMENTID" >
+			
+			<attrdef attribute="BIMCOMMENTID" maxtype="INTEGER" 
+				title="BIMComment unique ID" remarks="Commune unique ID" length="12" required="true" mustbe="true"  />
+			<attrdef attribute="PARENTID" maxtype="UPPER" title="Parent"
+				remarks="Reference to parent" length="12" required="false"
+				sameasobject="BIMCOMMENT" sameasattribute="BIMCOMMENTID" />
+
+			<attrdef attribute="OWNERID" maxtype="INTEGER" title="Owner ID"
+				remarks="Unique id of owner record" length="12" required="true" />
+			<attrdef attribute="OWNERTABLE" maxtype="UPPER" title="Owner Table"
+				remarks="Table name of the owner record" length="30" required="true"
+				classname="psdi.app.bim.product.FldCommentOwnerTable"
+				sameasobject="MAXOBJECT" sameasattribute="OBJECTNAME" />
+
+			<attrdef attribute="CHANGEBY" maxtype="UPPER" title="Changed By"
+				remarks="Changed By" sameasobject="PERSON" sameasattribute="PERSONID" 
+				restricted="false" haslongdesc="false" required="true" />
+			<attrdef attribute="CHANGEDATE" maxtype="DATETIME" title="Changed On"
+				remarks="Changed On" length="10" restricted="false" haslongdesc="false" />
+			
+			<attrdef attribute="SUBJECT" maxtype="ALN" title="Subject"
+				remarks="Subject" length="80"
+				restricted="false" haslongdesc="false" />
+			<attrdef attribute="TEXT" maxtype="ALN" title="Text"
+				remarks="Text of comment"
+				length="250" persistent="true" haslongdesc="true" restricted="false" />
+				
+	        <attrdef attribute="HASPARENT" maxtype="YORN" title="Has Parent" 
+		  		remarks="Does this location or asset belong to a parent location?" length="1" restricted="false" 
+		  		haslongdesc="false" required="true" classname="psdi.app.common.FldHasParent"/>
+	        <attrdef attribute="HASCHILDREN" maxtype="YORN" title="Has Children" 
+		  		remarks="Does this location have child locations?" length="1" restricted="false" 
+		  		haslongdesc="false" required="true" classname="psdi.app.common.FldHasChildren"/>
+			<attrdef attribute="OBJECTNAME" maxtype="UPPER" title="Object"
+				remarks="The name of this object." length="30" required="false"
+				sameasobject="MAXOBJECT" sameasattribute="OBJECTNAME" classname="psdi.app.common.FldObjectName"/>
+
+		</define_table>
+
+		<create_relationship parent="BIMComment" name="Children"
+			child="BIMComment" whereclause="parentid =:bimcommentid"
+			remarks="All immediate children  parentid =:bimcommentid" />
+
+		<create_relationship parent="BIMComment" name="PARENT"
+			child="BIMComment" whereclause="bimcommentid =:parentid"
+			remarks="All immediate children  bimcommentid =:parentid" />
+
+		<create_relationship parent="BIMDESIGNSPEC" name="COMMENT"
+			child="BIMComment" whereclause="ownertable = 'BIMDESIGNSPEC' and ownerid = :BIMPRODUCTBASEID"
+			remarks="Relationship to the Comment table, used to find all comments for a given product. (ownertable = 'BIMDESIGNSPEC' and ownerid = :BIMPRODUCTBASEID). The resulting set will contain zero or more objects." />
+
+
+		<add_attributes object="BIMCOMMISSION">
+		  <attrdef attribute="CURRENTREQSTATUS" maxtype="ALN" title="Current product status"
+				remarks="Change Requirements with this status to the new status" length="20"
+				defaultvalue="!IMPORTED!" domain="BIMPRODUCTSTATUS"
+				sameasobject="BIMDESIGNSPEC" sameasattribute="STATUS" restricted="false" />
+		  <attrdef attribute="NEWREQSTATUS" maxtype="ALN" title="New product status"
+				remarks="Status of Requirments after Commissioning" length="20"
+				defaultvalue="!ACTIVE!" domain="BIMPRODUCTSTATUS"
+				sameasobject="BIMDESIGNSPEC" sameasattribute="STATUS" restricted="false" />
+		</add_attributes>
+
+	   
+	   	<!--
+		  - Design Specifications applcation  
+		-->		
+		<freeform description="Create Design Specification application">
+			<sql target="all">
+				delete from maxapps where app='DESIGNSPEC' AND maintbname='BIMDESIGNSPEC';
+
+				insert into maxapps
+				(maintbname,ismobile,apptype,maxappsid,description,app,originalapp)
+				values ('BIMDESIGNSPEC',0,'RUN',maxappsseq.nextval,'Design Specifications','DESIGNSPEC','CUSTAPP');
+		  	</sql>
+		</freeform>
+
+		<freeform description="Add Design Specification to BIM menu">
+			<sql target="all">
+				delete from maxmenu where keyvalue='DESIGNSPEC' AND moduleapp='PLANS';
+
+				insert into maxmenu
+				(menutype,position,keyvalue,subposition,maxmenuid,visible,moduleapp,elementtype,image)
+				values ('MODULE',77810,'DESIGNSPEC',0,maxmenuseq.nextval,1,'BIM','APP', 'bim/appimg_product.gif');
+			</sql>
+		</freeform>
+
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="SEARCHSQRY"
+			description="Save Current Query" grantapp="DESIGNSPEC" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="SEARCHVMQR"
+			description="View/Manage Queries" grantapp="DESIGNSPEC" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="SEARCHWHER"
+			description="Where Clause" grantapp="DESIGNSPEC" esigenabled="false"
+			langcode="EN" />
+
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="SAVE"
+			description="Save DESIGNSPEC" alsorevokes="INSERT,DUPLICATE,DELETE"
+			grantapp="DESIGNSPEC" grantoption="READ" esigenabled="false" langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="INSERT"
+			description="New DESIGNSPEC" alsorevokes="DUPLICATE" grantapp="DESIGNSPEC"
+			alsogrants="SAVE" esigenabled="false" langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="CLEAR"
+			description="Clear Changes" grantapp="DESIGNSPEC" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="PREVIOUS"
+			description="Previous DESIGNSPEC" grantapp="DESIGNSPEC" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="NEXT"
+			description="Next DESIGNSPEC" grantapp="DESIGNSPEC" esigenabled="false"
+			langcode="EN" />
+
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="DUPLICATE"
+			description="Duplicate Design Specification" grantapp="DESIGNSPEC" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="DELETE"
+			description="Delete Design Specification" grantapp="DESIGNSPEC" esigenabled="false" langcode="EN" />
+
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="MANAGELIB"
+			description="Manage Library" grantapp="DESIGNSPEC" esigenabled="false" langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="ASSOCFOLD"
+			description="Associate Folders" grantapp="DESIGNSPEC" esigenabled="false" langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="MANAGEFOLD"
+			description="Manage Folders" grantapp="DESIGNSPEC" esigenabled="false" langcode="EN" />
+
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="BOOKMARK"
+			description="Add to Bookmarks" grantapp="DESIGNSPEC" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="SEARCHMORE"
+			description="More Search Fields" grantapp="DESIGNSPEC" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="SEARCHATTR"
+			description="Attribute Search" grantapp="DESIGNSPEC" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="SEARCHTIPS"
+			description="View Search Tips" grantapp="DESIGNSPEC" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="SEARCHBOOK"
+			description="Bookmarks" grantapp="DESIGNSPEC" esigenabled="false" langcode="EN" />
+
+		<add_sigoption visible="true" app="DESIGNSPEC" optionname="READ"
+			description="Read Access to DESIGNSPEC App" alsogrants="CLEAR" alsorevokes="ALL"
+			grantapp="STARTCNTR" grantoption="READ" esigenabled="false" langcode="EN" />
+			
+	   <add_sigoption visible="true" app="DESIGNSPEC" optionname="PRODSTATUS" 
+	        description="Change Status" grantapp="DESIGNSPEC" 
+		    grantoption="READ" esigenabled="false" langcode="EN" />
+
+	   <add_sigoption visible="true" app="DESIGNSPEC" optionname="VIEWHIST" 
+	        description="View History" grantapp="DESIGNSPEC" 
+		    grantoption="READ" esigenabled="false" langcode="EN" />
+
+
+		<freeform description="remove rights from MAXEVERYONE group">
+			<sql target="all">
+				delete from applicationauth where (groupname='MAXEVERYONE' OR groupname='MAXDEFLTREG' )  and app='DESIGNSPEC';
+				delete from applicationauth where groupname='MAXADMIN'  and app='DESIGNSPEC' and optionname='READ';
+			</sql>
+		</freeform>
+
+		<freeform description="Design Specification applicationauthoolbar">
+			<sql target="all">
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','DUPLICATE',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','READ',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','SAVE',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','BOOKMARK',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','SEARCHBOOK',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','SEARCHWHER',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','SEARCHMORE',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','SEARCHSQRY',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','SEARCHATTR',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','SEARCHTIPS',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','SEARCHVMQR',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','DELETE',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','INSERT',applicationauthseq.nextval,'');
+				
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','CLEAR',applicationauthseq.nextval,'');
+
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','PREVIOUS',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','NEXT',applicationauthseq.nextval,'');	
+
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','MANAGELIB',applicationauthseq.nextval,'');	
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','ASSOCFOLD',applicationauthseq.nextval,'');	
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','DESIGNSPEC','MANAGEFOLD',applicationauthseq.nextval,'');	
+  			</sql>
+		</freeform>
+
+
+		<create_app_menu app="DESIGNSPEC" type="tool">
+			<app_menu_option tabdisplay="ALL" option="INSERT"
+				image="nav_icon_insert.gif" />
+			<app_menu_option tabdisplay="MAIN" option="SAVE"
+				image="nav_icon_save.gif" />
+			<app_menu_option tabdisplay="MAIN" option="CLEAR"
+				image="nav_icon_clear.gif" />
+			<menu_separator tabdisplay="MAIN" />
+			<app_menu_option tabdisplay="MAIN" option="PREVIOUS"
+				image="nav_icon_previous.gif" />
+			<app_menu_option tabdisplay="MAIN" option="NEXT"
+				image="nav_icon_next.gif" />
+			<app_menu_option tabdisplay="MAIN" option="PRODSTATUS"
+				image="nav_icon_changestatus.gif" />
+		</create_app_menu>
+
+		<create_app_menu app="DESIGNSPEC" type="action">
+			<app_menu_option tabdisplay="MAIN" option="PRODSTATUS"
+				image="nav_icon_changestatus.gif" />
+			<app_menu_option tabdisplay="MAIN" option="VIEWHIST" />
+			<app_menu_option tabdisplay="MAIN" option="DUPLICATE" />
+			<app_menu_option tabdisplay="MAIN" option="DELETE" />
+			<app_menu_option tabdisplay="MAIN" option="BOOKMARK" />
+			<app_menu_header headerdescription="Attachment Library/Folders">
+				<app_menu_option tabdisplay="ALL" option="MANAGELIB" />
+				<app_menu_option tabdisplay="ALL" option="ASSOCFOLD" />
+				<app_menu_option tabdisplay="ALL" option="MANAGEFOLD" />
+			</app_menu_header>
+		</create_app_menu>
+
+		<create_app_menu app="DESIGNSPEC" type="search">
+			<app_menu_header headerdescription="Advanced Search"
+				image="atb_search.gif">
+				<app_menu_option tabdisplay="ALL" option="SEARCHMORE" />
+				<app_menu_option tabdisplay="ALL" option="SEARCHWHER" />
+				<app_menu_option tabdisplay="ALL" option="SEARCHATTR" />
+				<app_menu_option tabdisplay="ALL" option="SEARCHTIPS" />
+			</app_menu_header>
+			<app_menu_header headerdescription="Save Query"
+				image="atb_save.gif">
+				<app_menu_option tabdisplay="ALL" option="SEARCHSQRY" />
+				<app_menu_option tabdisplay="ALL" option="SEARCHVMQR" />
+			</app_menu_header>
+			<app_menu_option tabdisplay="ALL" option="SEARCHBOOK" image="atb_bookmark.gif" />
+		</create_app_menu>
+
+		<freeform description="Associate attachments with Design Specification applcation">
+			<sql target="all">
+				delete from appdoctype where app='DESIGNSPEC';
+
+				insert into appdoctype(app, doctype) values ('DESIGNSPEC','Attachments');
+				insert into appdoctype(app, doctype) values ('DESIGNSPEC','Diagrams');
+				insert into appdoctype(app, doctype) values ('DESIGNSPEC','Images');
+		  	</sql>
+		</freeform>
+		
+		<modify_attribute object="BIMCOMMISSION" attribute="BIMCOMMISSIONID" defaultvalue="1" />
+		
+	</statements>
+</script>

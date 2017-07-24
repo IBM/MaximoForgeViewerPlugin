@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+-->
+<updatescript version="6.0.0">
+	<app apptype="webclient" id="bimmodels">
+		<add before="LMV_SAVE" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ViewableApproveDeleteBean"/>
+			<set property="id" value="LMV_VIEWABLE_APPROVE_DELETE"/>
+			<set property="label" value="Delete Viewable"/>
+			<set property="mboname" value="BIMLMVDELETEAPPROVE"/>
+			<set property="width" value="300px"/>
+		</add>
+		<add container="LMV_VIEWABLE_APPROVE_DELETE" control="section">
+			<set property="description" value="Do you want to delete the viewable?"/>
+			<set property="id" value="viewable_approve_delete_1"/>
+		</add>
+		<add container="viewable_approve_delete_1" control="checkbox">
+			<set property="dataattribute" value="LINKEDLOC"/>
+			<set property="id" value="viewable_approve_delete_viewables"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="viewable_approve_delete_1" control="buttongroup">
+			<set property="id" value="viewable_approve_delete_btn"/>
+		</add>
+		<add container="viewable_approve_delete_btn" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="viewable_approve_delete_ok"/>
+			<set property="label" value="Delete"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add container="viewable_approve_delete_btn" control="pushbutton">
+			<set property="id" value="viewable_approve_delete_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add before="LMV_MODEL_APPROVE_DELETE" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.system.beans.LookupBean"/>
+			<set property="id" value="lookup_forgemodel"/>
+			<set property="label" value="Model lookup from Forge service"/>
+			<set property="relationship" value="LOOKUP"/>
+		</add>
+		<add container="lookup_forgemodel" control="table">
+			<set property="id" value="lookup_forgemodel_tbl"/>
+			<set property="inputmode" value="readonly"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="lookup_forgemodel_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="10"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="lookup_forgemodel_tablebody"/>
+		</add>
+		<add container="lookup_forgemodel_tablebody" control="tablecol">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="lookup_forgemodel_tbl_key"/>
+			<set property="mxevent" value="selectrecord"/>
+			<set property="mxevent_desc" value="Go To %1"/>
+			<set property="sortable" value="true"/>
+			<set property="type" value="link"/>
+		</add>
+		<add container="lookup_forgemodel_tablebody" control="tablecol">
+			<set property="dataattribute" value="SIZE"/>
+			<set property="id" value="lookup_forgemodel_tbl_size"/>
+		</add>
+		<add container="lookup_forgemodel" control="buttongroup">
+			<set property="id" value="lookup_forgemodel_gb"/>
+		</add>
+		<add container="lookup_forgemodel_gb" control="pushbutton">
+			<set property="id" value="lookup_forgemodel_cancel"/>
+			<set property="label" value="Close"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add before="lookup_forgemodel" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.ModelApproveOverwriteBean"/>
+			<set property="id" value="LMV_MODEL_APPROVE_OVERWRITE"/>
+			<set property="label" value="Replace File?"/>
+			<set property="mboname" value="BIMLMVDELETEAPPROVE"/>
+			<set property="width" value="300px"/>
+		</add>
+		<add container="LMV_MODEL_APPROVE_OVERWRITE" control="section">
+			<set property="id" value="model_approve_overwrite_1"/>
+		</add>
+		<add container="model_approve_overwrite_1" control="statictext">
+			<set property="id" value="model_approve_overwrite_test_1"/>
+			<set property="label" value="The file exists.  Do you want to replace it?"/>
+		</add>
+		<add container="model_approve_overwrite_1" control="blankline">
+			<set property="id" value="model_approve_overwrite_blank"/>
+		</add>
+		<add container="model_approve_overwrite_1" control="buttongroup">
+			<set property="id" value="model_approve_overwrite_bg_cancel"/>
+		</add>
+		<add container="model_approve_overwrite_bg_cancel" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="model_approve_overwrite_ok"/>
+			<set property="label" value="Yes"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add container="model_approve_overwrite_bg_cancel" control="pushbutton">
+			<set property="id" value="model_approve_overwrite_cancel"/>
+			<set property="label" value="No"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add before="LMV_MODEL" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.BucketApproveDeleteBean"/>
+			<set property="id" value="LMV_BUCKET_APPROVE_DELETE"/>
+			<set property="label" value="Delete Storage Container?"/>
+			<set property="mboname" value="BIMLMVDELETEAPPROVE"/>
+			<set property="sigoption" value="LMV_DEL_STORAGE"/>
+			<set property="width" value="300px"/>
+		</add>
+		<add container="LMV_BUCKET_APPROVE_DELETE" control="section">
+			<set property="id" value="bucket_approve_delete_1"/>
+		</add>
+		<add container="bucket_approve_delete_1" control="statictext">
+			<set property="id" value="bucket_approve_delete_test_1"/>
+			<set property="label" value="Do you want to delete the Storage contair forom the Autodesk Forge service"/>
+		</add>
+		<add container="bucket_approve_delete_1" control="statictext">
+			<set property="align" value="left"/>
+			<set property="id" value="bucket_approve_delete_test_2"/>
+			<set property="label" value="This will delete all models and viewable contained in the container"/>
+		</add>
+		<add container="bucket_approve_delete_1" control="statictext">
+			<set property="align" value="left"/>
+			<set property="id" value="bucket_approve_delete_test_3"/>
+			<set property="label" value="ncluding ones added outside of Maximo. This cannot be undone."/>
+		</add>
+		<add container="bucket_approve_delete_1" control="blankline">
+			<set property="id" value="bucket_approve_delete_blank"/>
+		</add>
+		<add container="bucket_approve_delete_1" control="checkbox">
+			<set property="dataattribute" value="MODELSDELETE"/>
+			<set property="id" value="bucket_approve_delete_models"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="bucket_approve_delete_1" control="checkbox">
+			<set property="dataattribute" value="VIEWABLESDELETE"/>
+			<set property="id" value="bucket_approve_delete_viewables"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="bucket_approve_delete_1" control="checkbox">
+			<set property="dataattribute" value="LINKEDLOC"/>
+			<set property="id" value="bucket_approve_delete_linked_loc"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="bucket_approve_delete_1" control="buttongroup">
+			<set property="id" value="bucket_approve_delete_bg_cancel"/>
+		</add>
+		<add container="bucket_approve_delete_bg_cancel" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="bucket_approve_delete_ok"/>
+			<set property="label" value="Delete"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add container="bucket_approve_delete_bg_cancel" control="pushbutton">
+			<set property="id" value="bucket_approve_delete_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add before="LMV_BUCKET_APPROVE_DELETE" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.system.beans.LookupBean"/>
+			<set property="id" value="lookup_forgebucket"/>
+			<set property="label" value="Bucket lookup from Forge service"/>
+			<set property="relationship" value="LOOKUP"/>
+		</add>
+		<add container="lookup_forgebucket" control="table">
+			<set property="id" value="lookup_forgebucket_tbl"/>
+			<set property="inputmode" value="readonly"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="lookup_forgebucket_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="10"/>
+			<set property="filterable" value="false"/>
+			<set property="id" value="lookup_forgebucket_tablebody"/>
+		</add>
+		<add container="lookup_forgebucket_tablebody" control="tablecol">
+			<set property="dataattribute" value="BUCKETKEY"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="lookup_forgebucket_tbl_key"/>
+			<set property="mxevent" value="selectrecord"/>
+			<set property="mxevent_desc" value="Go To %1"/>
+			<set property="sortable" value="true"/>
+			<set property="type" value="link"/>
+		</add>
+		<add container="lookup_forgebucket_tablebody" control="tablecol">
+			<set property="dataattribute" value="POLICYKEY"/>
+			<set property="id" value="lookup_forgebucket_tbl_policykey"/>
+		</add>
+		<add container="lookup_forgebucket_tablebody" control="tablecol">
+			<set property="dataattribute" value="ISAPPENDKEY"/>
+			<set property="id" value="lookup_forgebucket_tbl_appendKey"/>
+		</add>
+		<add container="lookup_forgebucket" control="buttongroup">
+			<set property="id" value="bucketlookup_gb"/>
+		</add>
+		<add container="bucketlookup_gb" control="pushbutton">
+			<set property="id" value="bucketlookup_cancel"/>
+			<set property="label" value="Close"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add before="LMV_BUCKET" container="bimmodels" control="dialog">
+			<set property="beanclass" value="psdi.webclient.beans.bim.viewer.lmv.AuthCacheClearBean"/>
+			<set property="id" value="LMV_CCACHE"/>
+			<set property="label" value="Clear Cache"/>
+			<set property="width" value="300px"/>
+		</add>
+		<add container="LMV_CCACHE" control="section">
+			<set property="description" value="Do you want to clear the Forge authorization tocken cache?"/>
+			<set property="id" value="viewable_clear_cache_1"/>
+		</add>
+		<add container="viewable_clear_cache_1" control="buttongroup">
+			<set property="id" value="viewable_clear_cache_btn"/>
+		</add>
+		<add container="viewable_clear_cache_btn" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="viewable_clear_cache_ok"/>
+			<set property="label" value="Yes"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add container="viewable_clear_cache_btn" control="pushbutton">
+			<set property="id" value="viewable_clear_cache_cancel"/>
+			<set property="label" value="No"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add container="bucket_manage_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="bucket_manage_tbl_delete"/>
+			<set property="mxevent" value="deleteBucketDlg"/>
+			<set property="mxevent_desc" value="Delete Storage"/>
+			<set property="mxevent_icon" value="btn_garbage.gif"/>
+			<set property="sigoption" value="LMV_DEL_STORAGE"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="bucket_manage_tbl_details" control="tabgroup">
+			<set property="id" value="bucket_manage_tbl_tabs"/>
+			<set property="style" value="form"/>
+		</add>
+		<add container="bucket_manage_tbl_tabs" control="tab">
+			<set property="default" value="true"/>
+			<set property="id" value="bucket_manage_tab_main"/>
+			<set property="label" value="Details"/>
+		</add>
+		<move before="bucket_manage_tbl_2" child="bucket_manage_tbl_1" container="bucket_manage_tab_main"/>
+		<add container="bucket_manage_tbl_1_2" control="sectioncol">
+			<set property="id" value="cbucket_manage_tbl_1_2_2"/>
+		</add>
+		<add container="cbucket_manage_tbl_1_2_2" control="textbox">
+			<set property="dataattribute" value="REGION"/>
+			<set property="id" value="bucket_manage_tbl_details_region"/>
+			<set property="lookup" value="longdesc"/>
+		</add>
+		<move before="bucket_manage_access_tbl" child="bucket_manage_tbl_2" container="bucket_manage_tab_main"/>
+		<move child="bucket_manage_access_tbl" container="bucket_manage_tab_main"/>
+		<add container="bucket_manage_tbl_tabs" control="tab">
+			<set property="id" value="bucket_manage_tab_models"/>
+			<set property="label" value="Models"/>
+		</add>
+		<add container="bucket_manage_tab_models" control="table">
+			<set property="id" value="bucket_manage_tab_model_tbl"/>
+			<set property="relationship" value="MODELS"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="bucket_manage_tab_model_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="6"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="bucket_manage_tab_model_tablebody"/>
+		</add>
+		<add container="bucket_manage_tab_model_tablebody" control="tablecol">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_model_objectkey"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tab_model_tablebody" control="tablecol">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_model_desc"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tab_model_tablebody" control="tablecol">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_model_site"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tab_model_tablebody" control="tablecol">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_model_org"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tbl_tabs" control="tab">
+			<set property="id" value="bucket_manage_tab_viewables"/>
+			<set property="label" value="Viewables"/>
+		</add>
+		<add container="bucket_manage_tab_viewables" control="table">
+			<set property="id" value="bucket_manage_tab_viewable_tbl"/>
+			<set property="relationship" value="VIEWABLES"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="bucket_manage_tab_viewable_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="6"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="bucket_manage_tab_viewables_tablebody"/>
+		</add>
+		<add container="bucket_manage_tab_viewables_tablebody" control="tablecol">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_viewable_objectkey"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tab_viewables_tablebody" control="tablecol">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_viewable_desc"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tab_viewables_tablebody" control="tablecol">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_viewable_site"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tab_viewables_tablebody" control="tablecol">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_viewable_org"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tbl_tabs" control="tab">
+			<set property="id" value="bucket_manage_tab_loc"/>
+			<set property="label" value="Linked Locations"/>
+		</add>
+		<add container="bucket_manage_tab_loc" control="table">
+			<set property="id" value="bucket_manage_tab_loc_tbl"/>
+			<set property="relationship" value="LINKEDLOCATIONS"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="bucket_manage_tab_loc_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="6"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="bucket_manage_tab_locs_tablebody"/>
+		</add>
+		<add container="bucket_manage_tab_locs_tablebody" control="tablecol">
+			<set property="dataattribute" value="LOCATION"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_loc_location"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tab_locs_tablebody" control="tablecol">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_loc_objectkey"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tab_locs_tablebody" control="tablecol">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_loc_desc"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tab_locs_tablebody" control="tablecol">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_loc_site"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="bucket_manage_tab_locs_tablebody" control="tablecol">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="bucket_manage_tab_loc_org"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<modify control="bucket_manage_bg_cancel">
+			<set property="mxevent" value="dialogok"/>
+		</modify>
+		<add before="bucket_create_1_1_2" container="bucket_create1_1" control="sectioncol">
+			<set property="id" value="bucket_create_1_1_1"/>
+		</add>
+		<add container="bucket_create_1_1_1" control="combobox">
+			<set property="dataattribute" value="REGION"/>
+			<set property="id" value="bucket_create_region"/>
+		</add>
+		<add before="bucket_attach_1_1_2" container="bucket_attach1_1" control="sectioncol">
+			<set property="id" value="bucket_attach_1_1_1"/>
+		</add>
+		<add container="bucket_attach_1_1_1" control="combobox">
+			<set property="dataattribute" value="REGION"/>
+			<set property="id" value="bucket_attach_region"/>
+		</add>
+		<modify control="bucket_attach_key">
+			<set property="lookup" value="forgebucket"/>
+			<set property="smartfilloff" value="true"/>
+		</modify>
+		<add container="model_manage_tbl_details" control="tabgroup">
+			<set property="id" value="model_manage_tbl_tabs"/>
+			<set property="style" value="form"/>
+		</add>
+		<add container="model_manage_tbl_tabs" control="tab">
+			<set property="default" value="true"/>
+			<set property="id" value="model_manage_tab_detail"/>
+			<set property="label" value="Details"/>
+		</add>
+		<move child="model_manage_tbl_1" container="model_manage_tab_detail"/>
+		<add container="model_manage_tbl_tabs" control="tab">
+			<set property="default" value="false"/>
+			<set property="id" value="model_manage_tab_status"/>
+			<set property="label" value="Status"/>
+		</add>
+		<move child="model_manage_upload_tbl" container="model_manage_tab_status"/>
+		<add container="model_manage_tbl_tabs" control="tab">
+			<set property="id" value="model_manage_tab_links"/>
+			<set property="label" value="Linked Models"/>
+		</add>
+		<move before="model_manage_link_tbl_btn_1" child="model_manage_link_tbl" container="model_manage_tab_links"/>
+		<move child="model_manage_link_tbl_btn_1" container="model_manage_tab_links"/>
+		<modify control="model_manage_entry_tbl_btn_link">
+			<set property="mxevent" value="LMV_MODEL_LINK"/>
+		</modify>
+		<add container="model_manage_tbl_tabs" control="tab">
+			<set property="id" value="model_manage_tab_viewable"/>
+			<set property="label" value="Viewable"/>
+		</add>
+		<add container="model_manage_tab_viewable" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="model_manage_viewable"/>
+			<set property="relationship" value="VIEWABLE"/>
+		</add>
+		<add container="model_manage_viewable" control="section">
+			<set property="id" value="model_manage_viewable_1"/>
+		</add>
+		<add container="model_manage_viewable_1" control="sectionrow">
+			<set property="id" value="model_manage_viewable_1_1"/>
+		</add>
+		<add container="model_manage_viewable_1_1" control="sectioncol">
+			<set property="id" value="model_manage_viewable_1_1_1"/>
+		</add>
+		<add container="model_manage_viewable_1_1_1" control="textbox">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="id" value="model_manage_viewable_site"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_viewable_1_1" control="sectioncol">
+			<set property="id" value="model_manage_viewable_1_1_2"/>
+		</add>
+		<add container="model_manage_viewable_1_1_2" control="textbox">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="id" value="model_manage_viewable_org"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_viewable_1_1" control="sectioncol">
+			<set property="id" value="model_manage_viewable_1_1_3"/>
+		</add>
+		<add container="model_manage_viewable_1_1_3" control="checkbox">
+			<set property="dataattribute" value="ONLINE"/>
+			<set property="id" value="model_manage_viewable_online"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_viewable_1" control="sectionrow">
+			<set property="id" value="model_manage_viewable_1_2"/>
+		</add>
+		<add container="model_manage_viewable_1_2" control="sectioncol">
+			<set property="id" value="model_manage_viewable_1_2_1"/>
+		</add>
+		<add container="model_manage_viewable_1_2_1" control="textbox">
+			<set property="dataattribute" value="PROGRESS"/>
+			<set property="id" value="model_manage_viewable_progress"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_viewable_1_2" control="sectioncol">
+			<set property="id" value="model_manage_viewable_1_2_2"/>
+		</add>
+		<add container="model_manage_viewable_1_2_2" control="textbox">
+			<set property="dataattribute" value="STATUS"/>
+			<set property="id" value="model_manage_viewable_status"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_viewable_1_2" control="sectioncol">
+			<set property="id" value="model_manage_viewable_1_2_3"/>
+		</add>
+		<add container="model_manage_viewable_1_2_3" control="textbox">
+			<set property="dataattribute" value="SUCCESS"/>
+			<set property="id" value="model_manage_viewable_success"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_viewable" control="section">
+			<set property="id" value="model_manage_viewable_2"/>
+		</add>
+		<add container="model_manage_viewable_2" control="textbox">
+			<set property="dataattribute" value="STARTEDAT"/>
+			<set property="id" value="model_manage_viewable_startedat"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="model_manage_viewable_2" control="textbox">
+			<set property="dataattribute" value="BASE64URN"/>
+			<set property="id" value="model_manage_viewable_viewableurn"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<modify control="model_manage_bg_cancel">
+			<set property="mxevent" value="dialogok"/>
+		</modify>
+		<modify control="LMV_MODEL_LINK">
+			<set property="label" value="Select Linked Models"/>
+			<clear property="mboname"/>
+			<set property="relationship" value="LINKLOOKUP"/>
+		</modify>
+		<add container="lmv_model_link" control="buttongroup">
+			<set property="id" value="lookup_modellink_btn"/>
+		</add>
+		<add container="lookup_modellink_btn" control="pushbutton">
+			<set property="id" value="lookup_modellink_btn_cancel"/>
+			<set property="label" value="Cancel"/>
+			<set property="mxevent" value="dialogcancel"/>
+		</add>
+		<add container="lookup_modellink_btn" control="pushbutton">
+			<set property="default" value="true"/>
+			<set property="id" value="lookup_modellink_btn_ok"/>
+			<set property="label" value="OK"/>
+			<set property="mxevent" value="dialogok"/>
+		</add>
+		<add before="lookup_modellink_btn" container="lmv_model_link" control="table">
+			<set property="id" value="lookup_modellink_tbl"/>
+			<set property="selectmode" value="multiple"/>
+		</add>
+		<add container="lookup_modellink_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="8"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="lookup_modellink_tablebody"/>
+		</add>
+		<add container="lookup_modellink_tablebody" control="tablecol">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="filterable" value="false"/>
+			<set property="hidden" value="false"/>
+			<set property="id" value="lookup_modellink_tbl_select"/>
+			<set property="mxevent" value="toggleselectrow"/>
+			<set property="mxevent_desc" value="Select Row {0}"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add container="lookup_modellink_tablebody" control="tablecol">
+			<set property="dataattribute" value="OBJECTKEY"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="lookup_modellink_tbl_id"/>
+			<set property="length" value="30"/>
+		</add>
+		<add container="lookup_modellink_tablebody" control="tablecol">
+			<set property="dataattribute" value="DESCRIPTION"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="lookup_modellink_tbl_desc"/>
+			<set property="length" value="30"/>
+		</add>
+		<add before="model_attach_object" container="model_attach_2_2_1" control="helpgrid">
+			<set property="id" value="cobieup_log_tab_help"/>
+			<set property="innerhtml" value="The lookup list is filter by names that start with the value in this field"/>
+		</add>
+		<modify control="model_attach_object">
+			<set property="lookup" value="forgemodel"/>
+			<set property="smartfilloff" value="true"/>
+		</modify>
+		<modify control="model_upload_ok">
+			<set property="mxevent" value="uploadModel"/>
+		</modify>
+		<add container="viewable_manage_tablebody" control="tablecol">
+			<set property="filterable" value="false"/>
+			<set property="id" value="viewable_manage_tbl_delete"/>
+			<set property="mxevent" value="deleteViewableDlg"/>
+			<set property="mxevent_desc" value="Delete Viewable"/>
+			<set property="mxevent_icon" value="btn_garbage.gif"/>
+			<set property="sortable" value="false"/>
+			<set property="type" value="event"/>
+		</add>
+		<add before="viewable_manage_tab_details" container="viewable_manage_tbl_tabs" control="tab">
+			<set property="id" value="viewable_manage_tab_locations"/>
+			<set property="label" value="Locations"/>
+		</add>
+		<add container="viewable_manage_tab_locations" control="table">
+			<set property="id" value="viewable_manage_tab_locations_tbl"/>
+			<set property="relationship" value="USEDBY"/>
+			<set property="selectmode" value="single"/>
+		</add>
+		<add container="viewable_manage_tab_locations_tbl" control="tablebody">
+			<set property="displayrowsperpage" value="6"/>
+			<set property="filterable" value="true"/>
+			<set property="filterexpanded" value="true"/>
+			<set property="id" value="viewable_manage_tab_locations_tablebody"/>
+		</add>
+		<add container="viewable_manage_tab_locations_tablebody" control="tablecol">
+			<set property="dataattribute" value="LOCATION"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="viewable_manage_tab_locations_location"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tab_locations_tablebody" control="tablecol">
+			<set property="dataattribute" value="TITLE"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="viewable_manage_tab_locations_title"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tab_locations_tablebody" control="tablecol">
+			<set property="dataattribute" value="SITEID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="viewable_manage_tab_locations_site"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add container="viewable_manage_tab_locations_tablebody" control="tablecol">
+			<set property="dataattribute" value="ORGID"/>
+			<set property="filterable" value="true"/>
+			<set property="id" value="viewable_manage_tab_locations_org"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<modify control="viewable_manage_tab_main">
+			<set property="label" value="Details"/>
+		</modify>
+		<modify control="viewable_manage_tab_details">
+			<set property="label" value="Log Records"/>
+		</modify>
+		<modify control="viewable_manage_bg_cancel">
+			<set property="mxevent" value="dialogok"/>
+		</modify>
+		<remove container="model_manage_tbl_details" control="model_manage_tbl_4"/>
+		<remove container="lmv_model_link" control="model_link_1"/>
+		<remove container="lmv_model_link" control="model_link_2"/>
+		<remove container="lmv_model_link" control="model_link_btn"/>
+	</app>
+</updatescript>

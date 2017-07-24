@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+-->
+<!DOCTYPE script SYSTEM "script.dtd">
+<script author="Doug Wood" scriptname="Maximo for Buildings 7.6.0.8">
+	<description>Maximo for Buildings 7.6 Autodesk Forge Viewer support</description>
+	<statements>
+
+		<add_attributes object="BIMLMVVIEWABLE">
+			<attrdef attribute="REGION" maxtype="UPPER" title="Region"  domain="BIMLMVBUCKEREGION"
+				remarks="Region hosting storage container" defaultvalue="!US!"
+				length="10" persistent="true" haslongdesc="false" restricted="false" />
+	      	<attrdef attribute="COMPRESSED" maxtype="YORN" title="Compressed" 
+		  		remarks="Is the source file a compressed archive containing a multi-part model" 
+				length="1" restricted="false" required="true" haslongdesc="false"  defaultvalue="0"/>
+			<attrdef attribute="ROOTFILENAME" maxtype="LOWER" title="Root File Name"
+				remarks="In a compressed model archive, the root file of a multi-part model.  This is the top level file in the translation hierarchy" 
+				length="250" required="false" mustbe="true"  />		
+		</add_attributes>
+
+	</statements>
+</script>

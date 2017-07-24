@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+-->
+<updatescript version="6.0.0">
+	<app apptype="webclient" id="bimproject">
+		<add before="project_orgid" container="maintab_section_1_1_3" control="textbox">
+			<set property="dataattribute" value="ITEMSETID"/>
+			<set property="id" value="project_itemsetid"/>
+			<set property="inputmode" value="readonly"/>
+		</add>
+		<add before="cobieup_op_populate_system_map" container="cobieup_options_tab_opt" control="checkbox">
+			<set property="dataattribute" value="TYPESARESPECS"/>
+			<set property="id" value="cobieup_op_types_are_spec"/>
+		</add>
+		<move before="cobie_export_change_filter" child="cobie_export_spec_map_name" container="cobie_export_1_1_1"/>
+		<modify control="cobie_export_spec_map_name">
+			<set property="lookup" value="bimattributemap"/>
+		</modify>
+		<move before="cobie_export_exportnullattrib" child="cobie_export_map_name" container="cobie_export_1_1_2"/>
+		<add container="cobie_export_2_1_2_1" control="checkbox">
+			<set property="dataattribute" value="EXPORTJOB"/>
+			<set property="id" value="cobie_export__job"/>
+		</add>
+		<add before="cobie_export__system" container="cobie_export_2_1_2_1" control="checkbox">
+			<set property="dataattribute" value="EXPORTTYPE"/>
+			<set property="id" value="cobie_export__type"/>
+		</add>
+		<add container="ccobie_export_2_1_3_1" control="checkbox">
+			<set property="dataattribute" value="EXPORTSPARE"/>
+			<set property="id" value="cobie_export__spares"/>
+		</add>
+		<add before="cobie_export__spares" container="ccobie_export_2_1_3_1" control="checkbox">
+			<set property="dataattribute" value="EXPORTRESOURCE"/>
+			<set property="id" value="cobie_export__resource"/>
+		</add>
+		<add container="cobieup_options_tab_create_1_1_1" control="checkbox">
+			<set property="dataattribute" value="CREATEITEMMASTER"/>
+			<set property="id" value="cobieup_op_item_mast"/>
+		</add>
+		<add container="cobieup_options_tab_create_1_1_2" control="checkbox">
+			<set property="dataattribute" value="CREATEPRODUCT"/>
+			<set property="id" value="cobieup_op_create_product"/>
+		</add>
+		<add before="cobieup_op_create_product" container="cobieup_options_tab_create_1_1_2" control="checkbox">
+			<set property="dataattribute" value="CREATEPM"/>
+			<set property="id" value="cobieup_op_create_pm"/>
+		</add>
+		<add before="cobieup_op_init_jp_status" container="cobieup_default_tab" control="combobox">
+			<set property="dataattribute" value="INITPRODSTATUS"/>
+			<set property="id" value="cobieup_op_init_product_status"/>
+		</add>
+		<add container="bim_config_class_1_1" control="textbox">
+			<set property="dataattribute" value="PRODUCTCLASS.HIERARCHYPATH"/>
+			<set property="id" value="bim_config_product_2_1"/>
+			<set property="label" value="Product"/>
+			<set property="menutype" value="bimdefaultclassification"/>
+		</add>
+		<add container="bim_config_class_1_2" control="textbox">
+			<set property="dataattribute" value="ITEMCLASS.HIERARCHYPATH"/>
+			<set property="id" value="bim_config_item"/>
+			<set property="label" value="Item"/>
+			<set property="menutype" value="bimdefaultclassification"/>
+		</add>
+		<add container="bim_config_options_tab_create_1_1" control="sectionrow">
+			<set property="id" value="bim_config_options_tab_create_1_6"/>
+		</add>
+		<add container="bim_config_options_tab_create_1_6" control="sectioncol">
+			<set property="id" value="bim_config_options_tab_create_1_6_1"/>
+		</add>
+		<add container="bim_config_options_tab_create_1_6_1" control="checkbox">
+			<set property="dataattribute" value="CREATEPM"/>
+			<set property="id" value="bim_config_create_pm"/>
+		</add>
+		<add container="bim_config_options_tab_create_1_6" control="sectioncol">
+			<set property="id" value="bim_config_options_tab_create_1_6_2"/>
+		</add>
+		<add container="bim_config_options_tab_create_1_6_2" control="checkbox">
+			<set property="dataattribute" value="CREATEPRODUCT"/>
+			<set property="id" value="bim_config_attrib_create_product"/>
+		</add>
+		<add container="bim_config_options_tab_create_1_5" control="sectioncol">
+			<set property="id" value="bim_config_options_tab_create_1_5_2"/>
+		</add>
+		<add container="bim_config_options_tab_create_1_5_2" control="checkbox">
+			<set property="dataattribute" value="CREATEITEMMASTER"/>
+			<set property="id" value="bim_config_item_mast"/>
+		</add>
+		<add before="bim_config_asset_attrib_loc" container="bim_config_options_tab_import_attrib" control="checkbox">
+			<set property="dataattribute" value="COPYTYPEATTRIBTOITEM"/>
+			<set property="id" value="bim_config_copy_type_item"/>
+		</add>
+		<add container="bim_config_default_tab_1_1_2_1" control="combobox">
+			<set property="dataattribute" value="INITPRODSTATUS"/>
+			<set property="id" value="bim_config_init_product_status"/>
+		</add>
+		<add container="commission_status_tab_3_2" control="sectioncol">
+			<set property="id" value="commission_status_tab_3_2_3"/>
+		</add>
+		<add container="commission_status_tab_3_2_3" control="checkbox">
+			<set property="dataattribute" value="UPDATEJOBPLAN"/>
+			<set property="id" value="commission_status_update_jp"/>
+		</add>
+		<add container="commission_status_tab_3_2_3" control="checkbox">
+			<set property="dataattribute" value="UPDATEPM"/>
+			<set property="id" value="commission_status_update_pm"/>
+		</add>
+		<add container="commission_status_tab_3_2_2" control="checkbox">
+			<set property="dataattribute" value="UPDATEPRODUCT"/>
+			<set property="id" value="commission_status_update_product"/>
+		</add>
+		<add before="commission_status_update_product" container="commission_status_tab_3_2_2" control="checkbox">
+			<set property="dataattribute" value="UPDATEREQ"/>
+			<set property="id" value="commission_status_update_req"/>
+		</add>
+		<add container="commission_status_tg" control="tab">
+			<set property="id" value="commission_status_tg_pm"/>
+			<set property="label" value="PM"/>
+			<set property="type" value="PM"/>
+		</add>
+		<add container="commission_status_tg_pm" control="section">
+			<set property="id" value="commission_status_tg_pm_4"/>
+		</add>
+		<add container="commission_status_tg_pm_4" control="sectionrow">
+			<set property="id" value="commission_status_tg_pm_4_2"/>
+		</add>
+		<add container="commission_status_tg_pm_4_2" control="sectioncol">
+			<set property="id" value="commission_status_tg_pm_4_2_1"/>
+		</add>
+		<add container="commission_status_tg_pm_4_2_1" control="combobox">
+			<set property="dataattribute" value="CURRENTPMSTATUS"/>
+			<set property="id" value="commission_status_cur_pm_status"/>
+		</add>
+		<add container="commission_status_tg_pm_4_2" control="sectioncol">
+			<set property="id" value="commission_status_tg_pm_4_2_2"/>
+		</add>
+		<add container="commission_status_tg_pm_4_2_2" control="combobox">
+			<set property="dataattribute" value="NEWPMSTATUS"/>
+			<set property="id" value="commission_status_new_pm_status"/>
+		</add>
+		<add before="commission_status_tg_pm" container="commission_status_tg" control="tab">
+			<set property="id" value="commission_status_tg_jp"/>
+			<set property="label" value="Job Plan"/>
+			<set property="type" value="Job Plan"/>
+		</add>
+		<add container="commission_status_tg_jp" control="section">
+			<set property="id" value="commission_status_tg_jp_4"/>
+		</add>
+		<add container="commission_status_tg_jp_4" control="sectionrow">
+			<set property="id" value="commission_status_tg_jpb_4_2"/>
+		</add>
+		<add container="commission_status_tg_jpb_4_2" control="sectioncol">
+			<set property="id" value="commission_status_tg_jp_4_2_1"/>
+		</add>
+		<add container="commission_status_tg_jp_4_2_1" control="combobox">
+			<set property="dataattribute" value="CURRENTJOBPLANSTATUS"/>
+			<set property="id" value="commission_status_cur_jp_status"/>
+		</add>
+		<add container="commission_status_tg_jpb_4_2" control="sectioncol">
+			<set property="id" value="commission_status_tg_jp_4_2_2"/>
+		</add>
+		<add container="commission_status_tg_jp_4_2_2" control="combobox">
+			<set property="dataattribute" value="NEWJOBPLANSTATUS"/>
+			<set property="id" value="commission_status_new_jp_status"/>
+		</add>
+		<add before="commission_status_tg_jp" container="commission_status_tg" control="tab">
+			<set property="id" value="commission_status_tg_prod"/>
+			<set property="label" value="Product"/>
+			<set property="type" value="Product"/>
+		</add>
+		<add container="commission_status_tg_prod" control="section">
+			<set property="id" value="commission_status_tg_prod_4"/>
+		</add>
+		<add container="commission_status_tg_prod_4" control="sectionrow">
+			<set property="id" value="commission_status_tg_prod_4_2"/>
+		</add>
+		<add container="commission_status_tg_prod_4_2" control="sectioncol">
+			<set property="id" value="commission_status_tg_prod_4_2_1"/>
+		</add>
+		<add container="commission_status_tg_prod_4_2_1" control="combobox">
+			<set property="dataattribute" value="CURRENTPRODSTATUS"/>
+			<set property="id" value="commission_status_cur_prod_status"/>
+		</add>
+		<add container="commission_status_tg_prod_4_2" control="sectioncol">
+			<set property="id" value="commission_status_tg_prod_4_2_2"/>
+		</add>
+		<add container="commission_status_tg_prod_4_2_2" control="combobox">
+			<set property="dataattribute" value="NEWPRODSTATUS"/>
+			<set property="id" value="commission_status_new_prod_status"/>
+		</add>
+		<add before="commission_status_tg_prod" container="commission_status_tg" control="tab">
+			<set property="id" value="commission_status_tg_req"/>
+			<set property="label" value="Requirement"/>
+			<set property="type" value="Requirement"/>
+		</add>
+		<add container="commission_status_tg_req" control="section">
+			<set property="id" value="commission_status_tg_req_4"/>
+		</add>
+		<add container="commission_status_tg_req_4" control="sectionrow">
+			<set property="id" value="commission_status_tg_req_4_2"/>
+		</add>
+		<add container="commission_status_tg_req_4_2" control="sectioncol">
+			<set property="id" value="commission_status_tg_req_4_2_1"/>
+		</add>
+		<add container="commission_status_tg_req_4_2_1" control="combobox">
+			<set property="dataattribute" value="CURRENTREQSTATUS"/>
+			<set property="id" value="commission_status_cur_req_status"/>
+		</add>
+		<add container="commission_status_tg_req_4_2" control="sectioncol">
+			<set property="id" value="commission_status_tg_req_4_2_2"/>
+		</add>
+		<add container="commission_status_tg_req_4_2_2" control="combobox">
+			<set property="dataattribute" value="NEWREQSTATUS"/>
+			<set property="id" value="commission_status_new_req_status"/>
+		</add>
+		<add container="comm_hist_status_tab_3_2" control="sectioncol">
+			<set property="id" value="comm_hist_status_tab_3_2_3"/>
+		</add>
+		<add container="comm_hist_status_tab_3_2_3" control="checkbox">
+			<set property="dataattribute" value="UPDATEJOBPLAN"/>
+			<set property="id" value="comm_hist_status_update_jp"/>
+		</add>
+		<add container="comm_hist_status_tab_3_2_3" control="checkbox">
+			<set property="dataattribute" value="UPDATEPM"/>
+			<set property="id" value="comm_hist_status_update_pm"/>
+		</add>
+		<add container="comm_hist_status_tab_3_2_2" control="checkbox">
+			<set property="dataattribute" value="UPDATEPRODUCT"/>
+			<set property="id" value="comm_hist_status_update_product"/>
+		</add>
+		<add container="comm_hist_status_tg" control="tab">
+			<set property="id" value="comm_hist_status_tg_pm"/>
+			<set property="label" value="PM"/>
+			<set property="type" value="PM"/>
+		</add>
+		<add container="comm_hist_status_tg_pm" control="section">
+			<set property="id" value="comm_hist_status_tg_pm_4"/>
+		</add>
+		<add container="comm_hist_status_tg_pm_4" control="sectionrow">
+			<set property="id" value="comm_hist_status_tg_pm_4_2"/>
+		</add>
+		<add container="comm_hist_status_tg_pm_4_2" control="sectioncol">
+			<set property="id" value="comm_hist_status_tg_pm_4_2_1"/>
+		</add>
+		<add container="comm_hist_status_tg_pm_4_2_1" control="combobox">
+			<set property="dataattribute" value="CURRENTPMSTATUS"/>
+			<set property="id" value="comm_hist_status_cur_pm_status"/>
+		</add>
+		<add container="comm_hist_status_tg_pm_4_2" control="sectioncol">
+			<set property="id" value="comm_hist_status_tg_pm_4_2_2"/>
+		</add>
+		<add container="comm_hist_status_tg_pm_4_2_2" control="combobox">
+			<set property="dataattribute" value="NEWPMSTATUS"/>
+			<set property="id" value="comm_hist_status_new_pm_status"/>
+		</add>
+		<add before="comm_hist_status_tg_pm" container="comm_hist_status_tg" control="tab">
+			<set property="id" value="comm_hist_status_tg_jp"/>
+			<set property="label" value="Job Plan"/>
+			<set property="type" value="Job Plan"/>
+		</add>
+		<add container="comm_hist_status_tg_jp" control="section">
+			<set property="id" value="comm_hist_status_tg_jp_4"/>
+		</add>
+		<add container="comm_hist_status_tg_jp_4" control="sectionrow">
+			<set property="id" value="comm_hist_status_tg_jpb_4_2"/>
+		</add>
+		<add container="comm_hist_status_tg_jpb_4_2" control="sectioncol">
+			<set property="id" value="comm_hist_status_tg_jp_4_2_1"/>
+		</add>
+		<add container="comm_hist_status_tg_jp_4_2_1" control="combobox">
+			<set property="dataattribute" value="CURRENTJOBPLANSTATUS"/>
+			<set property="id" value="comm_hist_status_cur_jp_status"/>
+		</add>
+		<add container="comm_hist_status_tg_jpb_4_2" control="sectioncol">
+			<set property="id" value="comm_hist_status_tg_jp_4_2_2"/>
+		</add>
+		<add container="comm_hist_status_tg_jp_4_2_2" control="combobox">
+			<set property="dataattribute" value="NEWJOBPLANSTATUS"/>
+			<set property="id" value="comm_hist_status_new_jp_status"/>
+		</add>
+		<add before="comm_hist_status_tg_jp" container="comm_hist_status_tg" control="tab">
+			<set property="id" value="comm_hist_status_tg_prod"/>
+			<set property="label" value="Product"/>
+			<set property="type" value="Product"/>
+		</add>
+		<add container="comm_hist_status_tg_prod" control="section">
+			<set property="id" value="comm_hist_status_tg_prod_4"/>
+		</add>
+		<add container="comm_hist_status_tg_prod_4" control="sectionrow">
+			<set property="id" value="comm_hist_status_tg_prod_4_2"/>
+		</add>
+		<add container="comm_hist_status_tg_prod_4_2" control="sectioncol">
+			<set property="id" value="comm_hist_status_tg_prod_4_2_1"/>
+		</add>
+		<add container="comm_hist_status_tg_prod_4_2_1" control="combobox">
+			<set property="dataattribute" value="CURRENTPRODSTATUS"/>
+			<set property="id" value="comm_hist_status_cur_prod_status"/>
+		</add>
+		<add container="comm_hist_status_tg_prod_4_2" control="sectioncol">
+			<set property="id" value="comm_hist_status_tg_prod_4_2_2"/>
+		</add>
+		<add container="comm_hist_status_tg_prod_4_2_2" control="combobox">
+			<set property="dataattribute" value="NEWPRODSTATUS"/>
+			<set property="id" value="comm_hist_status_new_prod_status"/>
+		</add>
+		<modify control="comm_hist_log_tab_2_1">
+			<set property="columns" value="70"/>
+		</modify>
+	</app>
+</updatescript>

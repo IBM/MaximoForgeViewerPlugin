@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<presentation id="designspec" beanclass="psdi.webclient.beans.bim.DesignSpecAppBean" 
+	mboname="BIMDesignSpec" resultstableid="results_showlist" version="6.0.0">
+	<page id="mainrec">
+		<include id="pageHeader"/>
+		<clientarea id="clientarea">
+			<tabgroup id="maintabs" style="form">
+				<tab default="true" id="results" label="List" type="list">
+					<menubar event="search" id="actiontoolbar1" sourcemethod="getAppSearchOptions"/>
+					<table id="results_showlist" inputmode="readonly" label="Design Specifications" mboname="BIMDESIGNSPEC" selectmode="multiple">
+						<tablebody displayrowsperpage="20" filterable="true" filterexpanded="true" id="results_showlist_tablebody">
+							<tablecol dataattribute="PRODUCTID" filterable="false"
+								id="results_showlist_column_select" mxevent="toggleselectrow"
+								mxevent_desc="Select Row {0}" sortable="false" type="event" />
+							<tablecol dataattribute="PRODUCTID" id="designspec_tablebody_1_2" mxevent="selectrecord" mxevent_desc="Go To %1" label="Specification ID"
+											type="link" usefieldsizegroup="false"/>
+							<tablecol dataattribute="NAME" id="designspec_tablebody_1_3" showfilterfield="true" sortable="true" label="Specification"
+							                mxevent="selectrecord" type="link" mxevent_desc="Go To %1" />
+							<tablecol dataattribute="DESCRIPTION" id="designspec_tablebody_1_4" showfilterfield="true" sortable="true"/>
+							<tablecol dataattribute="ORGID" id="designspec_tablebody_orgid" inputmode="query" lookup="org"/>
+							<tablecol filterable="false" id="results_bookmark" mxevent="BOOKMARK" mxevent_desc="Add to Bookmarks" 
+										mxevent_icon="btn_addtobookmarks.gif" sortable="false" type="event"/>
+						</tablebody>
+					</table>
+				</tab>
+				<tab id="main" label="Design Specification" type="insert">
+				  <section id="designspec_1" border="true">
+					<sectionrow id="designspec_1_1">
+						<sectioncol id="designspec_1_1_1" >
+								<section id="designspec_1_1_1_1_1">
+									<sectionrow id="designspec_1_1_1_1_1_1">
+										<sectioncol id="designspec_1_1_1_1_1_1_1" >
+											<textbox dataattribute="PRODUCTID" id="designspec_details_productid" label="Specification ID" inputmode="readonly"/>
+										</sectioncol>
+										<sectioncol id="designspec_1_1_1_1_1_1_2" >
+											<textbox dataattribute="MODELID" id="designspec_details_modelid" inputmode="readonly"/>
+										</sectioncol>
+									</sectionrow>
+								</section>
+								<section id="designspec_1_1_1_1_2">
+									<multiparttextbox id="designspec_name" dataattribute="NAME" descdataattribute="DESCRIPTION" label="Specification"/>
+									<textbox dataattribute="status" id="designspec_status" inputmode="readonly"/>
+								</section>
+						</sectioncol>
+						<sectioncol id="designspec_1_1_1_2" >
+							<section id="designspec_1_1_1_2_1" >
+								<textbox dataattribute="orgid" id="designspec_orgid" lookup="org"/>
+								<textbox dataattribute="itemsetid" id="designspec_itemsetid" inputmode="readonly" />
+								<attachments id="designspec_1_1_1_2_1_1_2"/>
+							</section>
+						</sectioncol>	
+					</sectionrow>
+				  </section>
+				  <section id="designspec_details_1_1_1"  >
+					 <sectionrow id="designspec_details_1_1_1_1" >
+						<sectioncol id="designspec_details_1_1_1_1_1" >
+							<section id="designspec_details_1_1_1_1_1_1" label="Description">
+								<textbox id="designspec_details_category" dataattribute="CATEGORY" />
+								<combobox id="designspec_details_1_1_1_1_1_1_2" dataattribute="BIMASSETTYPE" lookup="valuelist"/>
+								<textbox id="designspec_tabs_detail_1_1_2_1" dataattribute="FEATURES" lookup="longdesc"/>
+							</section>
+						</sectioncol>
+						<sectioncol id="designspec_details_1_1_1_1_2" >
+							<section id="designspec_details_1_1_1_1_2_1" label="Audit" >
+                  				<multiparttextbox id="designspec_details_item" dataattribute="itemnum" ondatachange="resetchildren" descdataattribute="DESIGNSPECITEM.description" 
+										 lookup="itemwithitemset" menutype="item" applink="item,inventor" descinputmode="readonly" />						
+								<textbox id="designspec_details_createdby" dataattribute="CREATEDBY" inputmode="readonly" />
+								<textbox id="designspec_details_createdon" dataattribute="CREATEDON"  inputmode="readonly" lookup="datelookup"/>
+								<textbox id="designspec_details_changedby" dataattribute="CHANGEBY" inputmode="readonly" />
+								<textbox id="designspec_details_chnagedate" dataattribute="CHANGEDATE"  inputmode="readonly" lookup="datelookup"/>
+							</section>
+						</sectioncol>
+					</sectionrow>
+				  </section>
+					<section id="designspec_tabs_detail_2"  >
+						<sectionrow id="designspec_tabs_detail_2_1">
+							<sectioncol id="designspec_tabs_detail_2_1_1" >
+								<section id="designspec_tabs_detail_2_1_1_1" label="Physical Description" >
+									<textbox id="designspec_tabs_detail_size" dataattribute="PRODUCTSIZE" />
+									<multiparttextbox id="designspec_tabs_detail_length" dataattribute="NOMINALLENGTH"  descdataattribute="LENGTHUNITS" desclookup="measureunit"/>
+									<multiparttextbox id="designspec_tabs_detail_width" dataattribute="NOMINALWIDTH"  descdataattribute="WIDTHUNITS" desclookup="measureunit"/>
+									<multiparttextbox id="designspec_tabs_detail_height" dataattribute="NOMINALHEIGHT"  descdataattribute="HEIGHTUNITS" desclookup="measureunit"/>
+									<multiparttextbox id="designspec_tabs_detail_whight" dataattribute="NOMINALWEIGHT"  descdataattribute="WEIGHTUNITS" desclookup="measureunit"/>
+									<textbox id="designspec_tabs_detail_shape" dataattribute="SHAPE" />
+									<textbox id="designspec_tabs_detail_color" dataattribute="COLOR" />
+									<textbox id="designspec_tabs_detail_finish" dataattribute="FINISH" />
+									<textbox id="designspec_tabs_detail_material" dataattribute="MATERIAL" />
+								</section>
+							</sectioncol>	
+							<sectioncol id="designspec_tabs_detail_2_1_2" >
+								<section id="designspec_tabs_detail_2_1_2_1" label="Perfornance" >
+									<textbox id="designspec_tabs_detail_grade" dataattribute="GRADE" />
+									<textbox id="designspec_tabs_detail_constituents" dataattribute="CONSTITUENTS" />
+									<textbox id="designspec_tabs_detail_accessibilty" dataattribute="ACCESSIBILITYPERFORMANCE" />
+									<textbox id="designspec_tabs_detail_code" dataattribute="CODEPERFORMANCE" />
+									<textbox id="designspec_tabs_detail_sustainability" dataattribute="SUSTAINABILITYPERFORMANCE" />
+									<multiparttextbox id="designspec_details_expectedlife" dataattribute="EXPECTEDLIFE"  descdataattribute="DURATIONUNIT" desclookup="valuelist" />
+								</section>
+							</sectioncol>	
+						</sectionrow>
+					</section>
+					<section id="designspec_warranty_details_2_1_1" label="Warranty" >
+					   <sectionrow id="designspec_details_1">  
+							<sectioncol id="designspec_warranty_details_1_1_1" >
+								<textbox id="designspec_warranty_details_1_1_1_1" dataattribute="WARRANTYDESC"  lookup="longdesc" />
+								<combobox id="designspec_warranty_details_1_1_1_2" dataattribute="WARRANTYDURATIONUNIT" lookup="valuelist" />
+							</sectioncol>
+							<sectioncol id="designspec_warranty_details_1_1_2" >
+								<multiparttextbox id="designspec_warranty_details_2_1_1_1_1_1_2" dataattribute="PARTSWARRANTDURATION"  
+									 descdataattribute="WARRANTYDURATIONUNIT" descinputmode="readonly"/>
+								<multiparttextbox id="designspec_warranty_details_2_1_1_1_2_1_2" dataattribute="LABORWARRANTYDURATION"  
+									 descdataattribute="WARRANTYDURATIONUNIT" descinputmode="readonly"/>
+							</sectioncol>
+					   </sectionrow>
+					</section>
+				</tab>
+				<tab id="designspec_tabs_review" label="Review">
+					<section id="designspec_tabs_review_header" border="true">
+						<sectionrow id="designspec_tabs_review_0">
+							<sectioncol id="designspec_tabs_review_0_1" >
+								<section id="designspec_tabs_review_0_1_1">
+									<multiparttextbox id="designspec_tabs_review_name" label="Specification" dataattribute="NAME" descdataattribute="DESCRIPTION" />
+								</section>
+							</sectioncol>
+							<sectioncol id="designspec_tabs_review_0_2" >
+								<section id="designspec_tabs_review_0_2_1" >
+									<textbox dataattribute="orgid" id="designspec_tabs_review_orgid" inputmode="readonly" />
+								</section>
+							</sectioncol>	
+						</sectionrow>
+					</section>
+					<section id="designspec_tabs_review_commentmgr" beanclass="psdi.webclient.beans.bim.CommentMgrBean" relationship="COMMENT" >
+						<bimtree beanclass="psdi.webclient.beans.bim.CommentTreeBean" checkfornewnodes="true" 
+							height="250"  id="designspec_tabs_review_commenttree"
+							orderby="changedate desc" 
+							dataattribute="BIMCOMMENTID"
+							maxchildren="100" 
+							expandallnodes="true" 
+							selectfirstnode="true" >
+							<treenode displaykeyattribute="false" displayobjectname="false" id="view_tree_node" 
+									  keyattribute="BIMCOMMENTID" objectname="BIMCOMMENT">
+								<treeattribute dataattribute="CHANGEBY" display="true" id="designspec_tabs_review_tree_who"/>
+								<treeattribute dataattribute="changedate" display="true" id="designspec_tabs_review_tree_when"/>
+								<treeattribute dataattribute="subject" display="true" id="designspec_tabs_review_tree_subject"/>
+							</treenode>
+						</bimtree>
+						<section id="designspec_tabs_review_tree_2">
+							<sectionrow id="designspec_tabs_review_tree_2_1">
+								<sectioncol id="designspec_tabs_review_tree_2_1_1" >
+									<textbox dataattribute="CHANGEBY" id="designspec_tabs_review_commentchangeby" />
+								</sectioncol>	
+								<sectioncol id="designspec_tabs_review_tree_2_1_2" >
+									<textbox dataattribute="changedate" id="designspec_tabs_review_commentchangedate" />
+								</sectioncol>	
+							</sectionrow>
+							<sectionrow id="designspec_tabs_review_tree_2_2">
+								<sectioncol id="designspec_tabs_review_tree_2_2_1" >
+									<textbox dataattribute="subject" id="designspec_tabs_review_commentsubject" inputmode="required"/>
+								</sectioncol>	
+							</sectionrow>
+						</section>
+						<section id="designspec_tabs_review_tree_3">
+							<multilinetextbox columns="80" dataattribute="TEXT"
+								id="designspec_tabs_review_commentdesc" rows="8" hidetooltip="true" lookup="longdesc"/>
+						</section>
+						<section id="designspec_tabs_review_4">
+							<pushbutton id="designspec_tabs_review_newcomment" label="Add comment" mxevent="newComment"/>
+							<pushbutton id="designspec_tabs_review_reply" label="Reply" mxevent="reply"  type="event" />
+						</section>
+					</section>
+				</tab>
+				<tab id="designspec_tabs_locations" label="Locations">
+					<section id="designspec__tabs_loc" border="true">
+						<sectionrow id="designspec_tabs_loc_0">
+							<sectioncol id="designspec_tabs_loc_0_1" >
+								<section id="designspec_tabs_loc_0_1_1">
+									<multiparttextbox id="designspec_tabs_loc_name" dataattribute="NAME" label="Specification"
+													   descdataattribute="DESCRIPTION" />
+								</section>
+							</sectioncol>
+							<sectioncol id="designspec_tabs_loc_0_2" >
+								<section id="designspec_tabs_loc_0_2_1" >
+									<textbox dataattribute="orgid" id="designspec_tabs_loc_orgid" inputmode="readonly" />
+								</section>
+							</sectioncol>	
+						</sectionrow>
+					</section>
+					<table id="designspec_tabs_locations_locations_table" label="Specicifation applies to..." relationship="REQUIREMENTFORLOC">
+						<tablebody displayrowsperpage="10" filterable="true" id="designspec_tabs_locations_locations_table_tablebody">
+							<tablecol filterable="false" id="designspec_tabs_locations_locations_table_tablebody_1" mxevent="toggledetailstate" 
+									  mxevent_desc="Show Detail" sortable="false" type="event"/>
+							<tablecol dataattribute="name" id="results_showlist_column_name" 
+									  showfilterfield="true" />
+							<tablecol dataattribute="location" id="designspec_tabs_locations_locations_table_locations" 
+									  lookup="locations" menutype="locations" filterable="true" />
+							<tablecol dataattribute="siteid" id="results_showlist_column_siteid" 
+									  showfilterfield="true" lookup="site"/>
+							<tablecol filterable="false" id="designspec_tabs_locations_locations_tablebody_10" mxevent="toggledeleterow" 
+									   mxevent_desc="Mark Row for Delete" mxevent_icon="btn_garbage.gif" sortable="false" type="event"/>
+						</tablebody>
+						<tabledetails id="designspec_tabs_locations_locations_table_1">
+							<textbox  dataattribute="location" id="designspec_tabs_locations_locations_table_location" 
+									  inputmode="required" lookup="locations" menutype="locations" applink="location,ipc" />
+							<textbox dataattribute="name" id="designspec_tabs_locations_locations_table_name" />
+							<textbox dataattribute="description" id="designspec_tabs_locations_locations_table_table_1_grid1_11" lookup="longdesc"/>
+							<textbox  dataattribute="siteid" id="designspec_tabs_locations_locations_table_table_siteid" inputmode="readonly" />
+						</tabledetails>
+						<buttongroup id="designspec_tabs_locations_locations_table_2">
+							<pushbutton default="true" id="designspec_tabs_locations_locations_table_2_1" label="New Row" mxevent="addrow"/>
+						</buttongroup>
+					</table>
+				</tab>
+				<tab id="designspec_tabs_product" label="Products">
+					<section id="designspec_product_0" border="true">
+						<sectionrow id="designspec_tabs_product_0">
+							<sectioncol id="designspec_tabs_product_0_1" >
+								<section id="designspec_tabs_product_0_1_1">
+									<multiparttextbox id="designspec_tabs_product_name" dataattribute="NAME" label="Specification"
+													  descdataattribute="DESCRIPTION" />
+								</section>
+							</sectioncol>
+							<sectioncol id="designspec_tabs_product_0_2" >
+								<section id="designspec_tabs_product_0_2_1" >
+									<textbox dataattribute="orgid" id="designspec_tabs_product_orgid" inputmode="readonly" />
+								</section>
+							</sectioncol>	
+						</sectionrow>
+					</section>
+					<table id="designspec_tabs_prod_table" label="Products that meet the specification" relationship="REQUIREMENTFORPRODUCT">
+						<tablebody displayrowsperpage="10" filterable="true" id="designspec_tabs_product_product_table_tablebody">
+							<tablecol filterable="false" id="designspec_tabs_product_product_table_tablebody_1" mxevent="toggledetailstate" 
+									  mxevent_desc="Show Detail" sortable="false" type="event"/>
+							<tablecol dataattribute="name" id="designspec_tabs_product_table_name" 
+									  showfilterfield="true" />
+							<tablecol dataattribute="productid" id="designspec_tabs_product_product_table_locations" 
+									  lookup="product" menutype="BIMPRODUCT" filterable="true" />
+							<tablecol filterable="false" id="designspec_tabs_product_product_tablebody_10" mxevent="toggledeleterow" 
+									   mxevent_desc="Mark Row for Delete" mxevent_icon="btn_garbage.gif" sortable="false" type="event"/>
+						</tablebody>
+						<tabledetails id="designspec_tabs_product_product_table_1">
+							<textbox  dataattribute="productid" id="designspec_tabs_product_product_table_location" 
+									  inputmode="required" lookup="product" menutype="BIMPRODUCT" applink="product,ipc" />
+							<textbox dataattribute="name" id="designspec_tabs_product_product_table_name" />
+							<textbox dataattribute="description" id="designspec_tabs_product_product_table_table_1_grid1_11" lookup="longdesc"/>
+						</tabledetails>
+						<buttongroup id="designspec_tabs_product_product_table_2">
+							<pushbutton default="true" id="designspec_tabs_product_product_table_2_1" label="New Row" mxevent="addrow"/>
+						</buttongroup>
+					</table>
+				</tab>
+				<tab id="designspec_tabs_specifications" label="Specifications">
+					<section border="true" id="designspec_tabs_specifications_grid2">
+						<sectionrow id="designspec_tabs_specifications_grid2_row">
+							<sectioncol id="designspec_tabs_specifications_grid2_row_col1">
+								<section id="designspec_tabs_specifications_grid2_row_col1_sec">
+									<multiparttextbox dataattribute="productid" descdataattribute="description" 
+									                  id="designspec_tabs_specifications_grid2_1" label="Specification ID"/>
+									<textbox applink="assetcat" dataattribute="CLASSSTRUCTURE.HIERARCHYPATH" id="designspec_tabs_specifications_grid2_4" 
+									menutype="classification" ondatachange="resetchildren"/>
+									<textbox dataattribute="CLASSSTRUCTURE.description_class" id="designspec_tabs_specifications_grid2_5" lookup="classification" ondatachange="resetchildren"/>
+								</section>
+							</sectioncol>
+							<sectioncol id="designspec_tabs_specifications_grid2_row_col2">
+								<section id="designspec_tabs_specifications_grid2_row_col2_sec">
+									<textbox dataattribute="itemsetid" id="designspec_tabs_specifications_grid2_3"/>
+									<textbox dataattribute="NAME" id="producttab_spec_name" label="Specification"/>
+								</section>
+							</sectioncol>
+						</sectionrow>
+					</section>
+					<table id="designspec_tabs_specifications_specifications_table" label="Specifications" orderby="displaysequence" relationship="BIMPRODUCTBASESPECCLASS">
+						<tablebody displayrowsperpage="10" filterable="true" id="designspec_tabs_specifications_specifications_table_tablebody">
+							<tablecol filterable="false" id="designspec_tabs_specifications_specifications_table_tablebody_1" mxevent="toggledetailstate" 
+									  mxevent_desc="Show Detail" sortable="false" type="event"/>
+							<tablecol dataattribute="assetattrid" id="designspec_tabs_specifications_specifications_table_tablebody_2" lookup="assetattribute" sortable="true"/>
+							<tablecol dataattribute="assetattribute.description" id="designspec_tabs_specifications_specifications_table_tablebody_3" 
+									  inputmode="readonly" showfilterfield="true" sortable="false"/>
+							<tablecol dataattribute="assetattribute.datatype" id="designspec_tabs_specifications_specifications_table_tablebody_4" 
+									  linkedcontrolid="specifications_specifications_table_1_griddetails2_1" sortable="false"/>
+							<tablecol dataattribute="alnvalue" id="designspec_tabs_specifications_specifications_table_tablebody_5" 
+									  linkedcontrolid="specifications_specifications_table_1_griddetails2_4" sortable="true"/>
+							<tablecol dataattribute="numvalue" id="designspec_tabs_specifications_specifications_table_tablebody_6" 
+									  linkedcontrolid="specifications_specifications_table_1_griddetails2_2" sortable="true"/>
+							<tablecol dataattribute="measureunitid" id="designspec_tabs_specifications_specifications_table_tablebody_7" 
+									  linkedcontrolid="specifications_specifications_table_1_griddetails2_3" sortable="true"/>
+							<tablecol dataattribute="tablevalue" id="designspec_tabs_specifications_specifications_table_tablebody_9" 
+									  linkedcontrolid="specifications_specifications_table_1_griddetails2_2a"/>
+							<tablecol filterable="false" id="designspec_tabs_specification_specifications_tablebody_10" mxevent="toggledeleterow" 
+									   mxevent_desc="Mark Row for Delete" mxevent_icon="btn_garbage.gif" sortable="false" type="event"/>
+						</tablebody>
+						<tabledetails id="designspec_tabs_specifications_specifications_table_1">
+							<section id="designspec_tabs_specifications_specifications_table_1_griddetails1" label="Details">
+								<sectionrow id="designspec_tabs_specifications_specifications_table_1_griddetails1_row">
+									<sectioncol id="designspec_tabs_specifications_specifications_table_1_griddetails1_row_col1">
+										<section id="designspec_tabs_specifications_specifications_table_1_griddetails1_row_col1_sec">
+											<multiparttextbox dataattribute="assetattrid" descdataattribute="assetattribute.description" descinputmode="readonly" 
+															  id="designspec_tabs_specifications_specifications_table_1_griddetails1_1" lookup="assetattribute"/>
+											<textbox dataattribute="assetattribute.datatype" id="designspec_tabs_specifications_specifications_table_1_griddetails2_1" inputmode="readonly"/>
+											<textbox dataattribute="measureunitid" id="designspec_tabs_specifications_specifications_table_1_griddetails2_3" lookup="measureunit"/>
+											<textbox dataattribute="section" id="designspec_tabs_specifications_specifications_table_1_griddetails2_5"/>
+										</section>
+									</sectioncol>
+									<sectioncol id="designspec_tabs_specifications_specifications_table_1_griddetails1_row_col2">
+										<section id="designspec_tabs_specifications_specifications_table_1_griddetails1_row_col2_sec">
+											<textbox dataattribute="alnvalue" id="designspec_tabs_specifications_specifications_table_1_griddetails2_4"
+													 lookup="alndomain" smartfilloff="true"/>
+											<textbox dataattribute="numvalue" id="designspec_tabs_specifications_specifications_table_1_griddetails2_2" 
+													 lookup="numericdomain" smartfilloff="true"/>
+											<textbox dataattribute="tablevalue" id="designspec_tabs_specifications_specifications_table_1_griddetails2_2a" menutype="normal"/>
+											<textbox dataattribute="classspec.inheritedfrom" id="designspec_tabs_specifications_specifications_table_1_griddetails2_2b" inputmode="readonly"/>
+											<textbox dataattribute="classspec.applydownhier" id="designspec_tabs_specifications_specifications_table_1_griddetails2_2c" inputmode="readonly"/>
+										</section>
+									</sectioncol>
+								</sectionrow>
+							</section>
+						</tabledetails>
+						<buttongroup id="designspec_tabs_specifications_specifications_table_2">
+							<pushbutton default="true" id="designspec_tabs_specifications_specifications_table_2_1" label="New Row" mxevent="addrow"/>
+						</buttongroup>
+					</table>
+				</tab>
+			</tabgroup>
+		</clientarea>
+		<include id="pageFooter"/>
+	</page>
+
+	<dialog beanclass="psdi.webclient.beans.common.ClassificationBean" id="searchmore" inputmode="query" label="More Search Fields">
+	  <section id="searchmore_1" border="true">
+		<sectionrow id="searchmore_1_1">
+			<sectioncol id="searchmore_1_1_1" >
+				<section id="searchmore_1_1_1_1">
+					<textbox id="searchmore_1_1_1_1_1" dataattribute="PRODUCTID" inputmode="query" />
+					<multiparttextbox id="searchmore_1_1_1_1_2" dataattribute="NAME" descdataattribute="DESCRIPTION" descinputmode="query"/>
+					<textbox dataattribute="CLASSSTRUCTURE.HIERARCHYPATH" id="searchmore_1_1_1_1_3" inputmode="query"
+							   menutype="classificationqbe"/>
+				</section>
+			</sectioncol>
+			<sectioncol id="searchmore_1_1_1_2" >
+				<section id="searchmore_1_1_1_2_1" >
+					<textbox dataattribute="itemsetid" id="searchmore_1_1_1_2_1_2" inputmode="query" lookup="itemset" />
+					<textbox dataattribute="status" id="searchmore_1_1_1_2_1_3" inputmode="query" lookup="valuelist"/>
+				</section>
+			</sectioncol>	
+		</sectionrow>
+	  </section>
+	  <section id="searchmore_2" label="Details" >
+		 <sectionrow id="searchmore_2_1" >
+			<sectioncol id="searchmore_2_1_1" >
+				<section id="searchmore_2_1_1_1" >
+					<textbox id="searchmore_2_1_1_1_1" dataattribute="MANUFACTURER" inputmode="query" lookup="companies" menutype="normal"/>							
+					 <textbox id="searchmore_2_1_1_1_2" dataattribute="MODELNUMBER" inputmode="query"/>
+					<combobox id="searchmore_2_1_1_1_3" dataattribute="BIMASSETTYPE" inputmode="query" lookup="valuelist"/>
+					<textbox id="searchmore_2_1_1_1_4" dataattribute="CATEGORY" inputmode="query" />
+				</section>
+			</sectioncol>
+			<sectioncol id="searchmore_2_2" >
+				<section id="searchmore_2_2_1" >
+					<textbox id="searchmore_2_2_1_2" dataattribute="CREATEDBY" inputmode="query" />
+					<textbox id="searchmore_2_2_1_3" dataattribute="CREATEDON" inputmode="query" lookup="datelookup"/>
+					<textbox id="searchmore_2_2_1_4" dataattribute="REPLACEMENTCOST" inputmode="query"/>
+					<multiparttextbox id="searchmore_2_2_1_5" dataattribute="EXPECTEDLIFE"  descdataattribute="DURATIONUNIT" inputmode="query" desclookup="valuelist" descinputmode="query"/>
+				</section>
+			</sectioncol>
+		</sectionrow>
+	  </section>
+  	  <section id="searchmore_3" label="Physical Description" >
+	    <sectionrow id="searchmore_3_1">  
+			<sectioncol id="searchmore_3_1_1" >
+				<textbox id="searchmore_3_1_1_1" dataattribute="PRODUCTSIZE" />
+				<multiparttextbox id="searchmore_3_1_1_2" dataattribute="NOMINALLENGTH"  descdataattribute="LENGTHUNITS" desclookup="measureunit" inputmode="query" descinputmode="query"/>
+				<multiparttextbox id="searchmore_3_1_1_3" dataattribute="NOMINALWIDTH"  descdataattribute="WIDTHUNITS" desclookup="measureunit" inputmode="query" descinputmode="query"/>
+				<multiparttextbox id="searchmore_3_1_1_4" dataattribute="NOMINALHEIGHT"  descdataattribute="HEIGHTUNITS" desclookup="measureunit" inputmode="query" descinputmode="query"/>
+			</sectioncol>
+			<sectioncol id="searchmore_3_1_2" >
+				<textbox id="searchmore_3_1_2_1" dataattribute="SHAPE" inputmode="query"/>
+				<textbox id="searchmore_3_1_2_2" dataattribute="COLOR" inputmode="query"/>
+				<textbox id="searchmore_3_1_2_3" dataattribute="FINISH" inputmode="query"/>
+				<textbox id="searchmore_3_1_2_4" dataattribute="MATERIAL" inputmode="query"/>
+			</sectioncol>
+	    </sectionrow>
+  	  </section>
+  	  <section id="searchmore_4" label="Warranty" >
+	   <sectionrow id="searchmore_4_1">  
+			<sectioncol id="searchmore_4_1_1" >
+				<textbox id="searchmore_4_1_1_1" dataattribute="WARRANTYDESC" inputmode="query" lookup="longdesc" />
+				<combobox id="searchmore_4_1_1_2" dataattribute="WARRANTYDURATIONUNIT" inputmode="query" lookup="valuelist" />
+			</sectioncol>
+			<sectioncol id="searchmore_4_1_2" >
+				<textbox id="searchmore_4_1_2_1" dataattribute="WARRANTYCONTRACTNUM" inputmode="query" lookup="CONTRACT" />
+			</sectioncol>
+	   </sectionrow>
+	   <sectionrow id="searchmore_4_2">  
+			<sectioncol id="searchmore_4_2_1" >
+				<section id="searchmore_4_2_1_1" label="Parts">
+					<textbox id="searchmore_parts_guarantor" dataattribute="PARTSWARRANTYGUARANTOR"  inputmode="query" applink="company" lookup="companies" menutype="normal" />
+					<multiparttextbox id="searchmore_4_2_1_1_2" dataattribute="PARTSWARRANTDURATION"  
+						 descdataattribute="WARRANTYDURATIONUNIT" desclookup="valuelist" inputmode="query" descinputmode="query"/>
+				</section>
+			</sectioncol>
+			<sectioncol id="searchmore_4_2_2" >
+				<section id="searchmore_4_2_2_1" label="Labor">
+					<textbox id="searchmore_labor_guarantor" dataattribute="LABORWARRANTYGUARANTOR"  inputmode="query" applink="company" lookup="companies" menutype="normal" />
+					<multiparttextbox id="searchmore_4_2_2_1_2" dataattribute="LABORWARRANTYDURATION"  
+						 descdataattribute="WARRANTYDURATIONUNIT" desclookup="valuelist" inputmode="query" descinputmode="query"/>
+				</section>
+			</sectioncol>
+	   </sectionrow>
+	  </section>
+		<buttongroup id="searchmore_buttongroup">
+			<pushbutton default="true" id="searchmore_buttongroup_1" label="Find" mxevent="dialogok"/>
+			<pushbutton id="qbe_restoreappdefault_button" label="Restore Application Defaults" mxevent="qbeclear"/>
+			<pushbutton id="qbe_revisebutton" label="Revise" menutype="SEARCHMOREREVISE" targetid="searchmore"/>
+			<pushbutton id="searchmore_buttongroup_3" label="Cancel" mxevent="qbecancel"/>
+		</buttongroup>
+	</dialog>
+
+	<dialog beanclass="psdi.webclient.system.beans.ViewBookmarksBean" id="searchbook" label="My Bookmarks" mboname="BIMDESIGNSPEC">
+		<table id="bookmarks_table" inputmode="readonly" selectmode="single">
+			<tablebody displayrowsperpage="20" filterable="true" id="bookmarks_table_tablebody">
+				<tablecol dataattribute="BIMPRODUCTBASEID" id="bookmarks_tablecolumn_1" mxevent="selectrecord" type="link" />
+				<tablecol dataattribute="name" id="bookmarks_tablecolumn_name"/>
+				<tablecol dataattribute="description" id="bookmarks_tablecolumn_2"/>
+				<tablecol filterable="false" id="bookmarks_tablecolumn_3" mxevent="instantdelete" mxevent_desc="Delete" mxevent_icon="btn_delete.gif" sortable="false" type="event"/>
+			</tablebody>
+		</table>
+		<buttongroup id="bookmarks_2">
+			<pushbutton default="true" id="bookmarks_2_1" label="OK" mxevent="dialogok"/>
+		</buttongroup>
+	</dialog>
+	
+	<dialog id="PRODSTATUS" label="Change Status" relationship="PRODUCTCHANGESTATUS" savemode="ONLOADUNLOAD">
+		<section border="true" datasrc="MAINRECORD" id="changestatus_grid1_1_1_grid3">
+			<multiparttextbox dataattribute="productid" descdataattribute="description" descinputmode="readonly" desclongdescreadonly="true" id="changestatus_grid1_1_1_grid3_1"/>
+			<multiparttextbox dataattribute="status" descdataattribute="statusdesc.description" descinputmode="readonly" id="changestatus_grid1_1_1_grid3_2"/>
+		</section>
+		<section border="false" id="changestatus_grid1_1_1_grid4">
+			<combobox dataattribute="status" id="changestatus_grid1_1_1_grid4_1" smartfilloff="true"/>
+			<textbox dataattribute="asofdate" id="changestatus_grid1_1_1_grid4_2" inputmode="readonly" lookup="datelookup" title="Date"/>
+			<textbox dataattribute="memo" id="changestatus_grid1_1_1_grid4_3"/>
+		</section>
+		<buttongroup id="changestatus_2">
+			<pushbutton clickmessage="Product status has been changed." default="true" id="changestatus_2_1" label="OK" mxevent="dialogok"/>
+			<pushbutton id="changestatus_2_2" label="Cancel" mxevent="dialogcancel"/>
+		</buttongroup>
+	</dialog>
+	
+	
+	<dialog id="viewhist" label="View History">
+		<section border="true" id="viewstatushist_grid1">
+			<multiparttextbox dataattribute="productid" defaultfocus="true" descdataattribute="description" descinputmode="readonly" id="viewstatushist_grid1_1"/>
+			<textbox dataattribute="orgid" id="viewstatushist_grid1_3"/>
+		</section>
+		<table id="viewstatushist_statushisttable" label="Status History" orderby="changedate desc" relationship="prodstatus">
+			<tablebody displayrowsperpage="20" filterable="true" filterexpanded="false" id="viewstatushist_statushisttable_tablebody">
+				<tablecol dataattribute="status" id="viewstatushist_statushisttable_tablebody_1"/>
+				<tablecol dataattribute="changedate" id="viewstatushist_statushisttable_tablebody_2" showfilterfield="true"/>
+				<tablecol dataattribute="changeBy" id="viewstatushist_statushisttable_tablebody_3" showfilterfield="true"/>
+				<tablecol dataattribute="memo" id="viewstatushist_statushisttable_tablebody_4"/>
+			</tablebody>
+		</table>
+		<buttongroup id="viewstatushist_2">
+			<pushbutton default="true" id="viewstatushist_2_1" label="OK" mxevent="dialogok"/>
+		</buttongroup>
+	</dialog>
+</presentation>

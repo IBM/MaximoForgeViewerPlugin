@@ -1,0 +1,1031 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<presentation id="bimmodels" ismobile="false" mboname="BUILDINGMODEL" resultstableid="results_showlist" version="6.0.0"
+              beanclass="psdi.webclient.beans.bim.viewer.ModelAppBean"
+			  apphelp="com.ibm.mbs.doc,bimmodels/t_ctr_manage_bim.html">
+	<page id="mainrec">
+		<include id="pageHeader"/>
+		<clientarea id="clientarea">
+			<tabgroup id="maintabs" style="form">
+				<tab default="true" id="results" label="List" type="list">
+					<menubar event="search" id="actiontoolbar1" sourcemethod="getAppSearchOptions"/>
+					<table id="results_showlist" inputmode="readonly" label="BIM Models" mboname="BUILDINGMODEL" selectmode="multiple">
+						<tablebody displayrowsperpage="20" filterable="true" filterexpanded="true" id="results_showlist_tablebody">
+							<tablecol dataattribute="BUILDINGMODELID" filterable="false" id="results_showlist_column_select" mxevent="toggleselectrow" mxevent_desc="Select Row {0}" sortable="false" type="event"/>
+							<tablecol dataattribute="BUILDINGMODELID" id="results_showlist_column_link" mxevent="selectrecord" mxevent_desc="Go To %1" type="link" usefieldsizegroup="false"/>
+							<tablecol dataattribute="location" id="results_showlist_column_location" 
+									  lookup="locations" menutype="locations" filterable="true" />
+							<tablecol dataattribute="TITLE" id="results_showlist_column_title" 
+									  showfilterfield="true" mxevent_desc="Go To %1" type="link"
+									  mxevent="selectrecord" sortable="true" filterable="true"/>
+							<tablecol dataattribute="description" id="results_showlist_column_description" 
+									  showfilterfield="true" 
+									  sortable="true" filterable="true"/>
+							<tablecol dataattribute="viewertype" id="results_showlist_column_viewertype" 
+									  showfilterfield="true" inputmode="query" lookup="valuelist"/>
+							<tablecol dataattribute="siteid" id="results_showlist_column_siteid" 
+									  showfilterfield="true" inputmode="query" lookup="site"/>
+							<tablecol filterable="false" id="results_bookmark" mxevent="BOOKMARK" mxevent_desc="Add to Bookmarks" mxevent_icon="btn_addtobookmarks.gif" sortable="false" type="event"/>
+						</tablebody>
+					</table>
+				</tab>
+				<tab id="main" label="Building Models" type="insert" tabchangeevent="eventTabChanged" tabchangeeventtarget="bimmodels" >
+					<section collapsed="false" id="managemodel_common_header" >
+						<sectionrow id="managemodel_table_1_grid1_4">
+							<sectioncol id="managemodel_grid1_6">
+								<textbox  dataattribute="location" id="managemodel_location" 
+										  inputmode="required" lookup="locations" menutype="locations" applink="location,ipc" />
+								<textbox  dataattribute="priority" id="managemodel_priority" />
+							</sectioncol>
+							<sectioncol id="managemodel_grid1_8">
+								<textbox dataattribute="title" id="managemodel_table_1_grid1_9"/>
+							</sectioncol>
+							<sectioncol id="managemodel_grid1_10">
+								<textbox dataattribute="description" id="managemodel_table_1_grid1_11" lookup="longdesc"/>
+							</sectioncol>
+							<sectioncol id="managemodel_grid1_12">
+								<textbox  dataattribute="siteid" id="managemodel_table_siteid" inputmode="readonly" />
+								<attachments id="managemodel_attachments"/>
+							</sectioncol>
+						</sectionrow>
+					</section>
+					<section collapsed="false" id="managemodel_gis" licensekey="MAPCONTROL" >
+						<sectionrow id="managemodel_gis_1">
+							<sectioncol id="managemodel_gis_1_1">
+								<textbox  dataattribute="FORMATTEDADDRESS" id="managemodel_gis_address" />
+							</sectioncol>
+							<sectioncol id="managemodel_gis_1_2">
+								<textbox id="managemodel_gis_lat" dataattribute="LATITUDEY" width="150"/>
+							</sectioncol>
+							<sectioncol id="managemodel_gis_1_3">
+								<textbox id="managemodel_gis_long" dataattribute="LONGITUDEX" width="150"/>							
+							</sectioncol>
+						</sectionrow>
+					</section>
+					<section border="true"  collapsed="false" id="lmv_main"  display="false" >
+						<section collapsed="false" id="managemodel_lmv_1" >
+							<sectionrow id="managemodel_lmv_1_1">
+								<sectioncol id="managemodel_lmv_1_1_1">
+									<textbox  dataattribute="OBJECTKEY" id="managemodel_lmv_objectkey"  lookup="bimviewable" />
+								</sectioncol>
+								<sectioncol id="managemodel_lmv_1_1_2">
+									<textbox dataattribute="ATTRIBUTENAME" id="managemodel_lmv_search" 
+											 label="ID Attribute" inputmode="required" />
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<section collapsed="false" id="managemodel_lmv_2" >
+							<sectionrow id="managemodel_lmv_2_1">
+								<sectioncol id="managemodel_lmv_2_1_1">
+									<multilinetextbox columns="80" dataattribute="URL" id="managemodel_lmv_url" rows="3" inputmode="required"  />
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</section>
+				</tab>
+				<tab id="mxmap" label="Map" licensekey="MAPCONTROL" tabbodycss="tabBodyTableStretch">
+		            <section id="mxmap_section" width="100%">
+						<section id="mxmap_geocode_section">
+							<sectionrow id="mxmap_geocode_section_row1">
+								<sectioncol id="mxmap_geocode_section_row1_col1">
+									<section id="mxmap_geocode_section_row1_col1_sec1">
+										<mxmapgeocodesection id="mxmap_geocode_section_row1_col1_sec1_1" datasrc="MAINRECORD" dataattribute="FORMATTEDADDRESS" mxejsgeocodeaction="FINDLOCATION" label="Formatted Address" buttonlabel="Find Location"/>
+									</section>
+								</sectioncol>
+								<sectioncol id="mxmap_geocode_section_row1_col2">
+									<section id="mxmap_geocode_section_row1_col2_sec1">
+										<multiparttextbox id="mxmap_geocode_section_row1_col2_sec1_1" dataattribute="LOCATION" descdataattribute="DESCRIPTION" inputmode="readonly"/>
+									</section>
+								</sectioncol>
+							</sectionrow>
+						</section>            	
+		            </section>
+					<mapcontrol height="100%" id="mxmap_div" datasrc="MAINRECORD"  mapviewonly="false"/>
+		        </tab>
+				<tab id="view" label="3D View">
+					<section id="managemodel_view_1_grid1" >
+						<sectionrow id="managemodel_view_1_grid1_1">
+							<sectioncol id="managemodel_view_grid1_2">
+								<section id="managemodel_view_1_grid1_3" >
+									<sectionrow id="managemodel_view_1_grid1_4">
+										<sectioncol id="managemodel_view_grid1_6">
+											<textbox  dataattribute="location" id="managemodel_view_grid1_7" 
+													  inputmode="required" menutype="locations" 
+													  lookup="locations" />
+										</sectioncol>
+										<sectioncol id="managemodel_view_grid1_8">
+											<textbox dataattribute="title" 
+													 id="managemodel_view_1_grid1_9"/>
+										</sectioncol>
+										<sectioncol id="managemodel_view_grid1_10">
+											<textbox dataattribute="description" 
+													 id="managemodel_view_1_grid1_11" lookup="longdesc"/>
+										</sectioncol>
+										<sectioncol id="managemodel_view_grid1_12">
+											<textbox  dataattribute="siteid" 
+													  id="managemodel_view_siteid" 
+													  inputmode="readonly" />
+										</sectioncol>
+									</sectionrow>
+								</section>
+							</sectioncol>
+						</sectionrow>
+					</section>
+				</tab>
+			</tabgroup>
+			<section border="false" id="model_viewer" >
+				<bimviewer dataattribute="URL" height="905" id="model_location_view" width="100%" leftoffset="0"  
+				           selection_enabled="false" manage_visibility="true" />
+			</section>
+		</clientarea>
+		<include id="pageFooter"/>
+	</page>
+	
+	<dialog beanclass="psdi.webclient.beans.bim.viewer.ModelImportBean" id="import_building_model" label="Import Building Model">
+		<section id="import_building_model1">
+			<sectionrow id="import_building_model1_1">
+				<uploadfile cancellabel="Cancel" event="loadModelFile" id="import_building_model_file_2_1" 
+							label="Browse for Model:" maxfilesize="200" oklabel="OK"/>
+			</sectionrow>
+		</section>
+	</dialog>
+
+	<dialog beanclass="psdi.webclient.system.beans.QbeBean" id="searchmore" inputmode="query" label="More Search Fields">
+		<section collapsed="false" id="searchmore_1" label="Details">
+			<sectionrow id="searchmore_1_1">
+				<sectioncol id="searchmore_1_1_1">
+					<textbox  dataattribute="location" id="searchmore_location" 
+							  inputmode="required" menutype="locations" lookup="locations" />
+				</sectioncol>
+				<sectioncol id="searchmore_1_1_2">
+					<textbox dataattribute="title" id="searchmore_title"/>
+				</sectioncol>
+				<sectioncol id="searchmore_1_1_3">
+					<textbox dataattribute="description" id="searchmore_desc" lookup="longdesc"/>
+				</sectioncol>
+				<sectioncol id="searchmore_1_1_4">
+					<textbox  dataattribute="siteid" id="searchmore_siteid" />
+				</sectioncol>
+			</sectionrow>
+		</section>
+		<section id="searchmore_1_2">
+			<multilinetextbox columns="70" dataattribute="URL" id="searchmore_url" rows="3"/>
+		</section>
+		<section id="searchmore_2">
+			<sectionrow id="searchmore_table_1_grid3_1a">
+				<sectioncol id="searchmore_grid3_1_1c">
+					<section id="searchmore_table_1_grid3_1">
+						<sectionrow id="searchmore_grid3_3">
+							<sectioncol id="searchmore_grid3_3_1">
+								<textbox dataattribute="ATTRIBUTECLASS" id="searchmore_grid3_3_1_1" />
+								<textbox dataattribute="ATTRIBUTENAME" id="searchmore_grid3_3_1_2" />
+							</sectioncol>
+							<sectioncol id="searchmore_grid1_3_2">
+								<textbox dataattribute="PARAMCLASS" id="searchmore_grid3_3_2_1"/>
+								<textbox dataattribute="PARAMNAME"  id="searchmore_grid3_3_2_2"/>
+							</sectioncol>
+						</sectionrow>
+					</section>
+				</sectioncol>
+			</sectionrow>
+		</section>
+		<section border="false" id="searchmore_3" label="Default views">
+			<sectionrow id="searchmore_grid4_4">
+				<sectioncol id="searchmore_grid4_5">
+					<textbox dataattribute="LOCATIONVIEW" id="searchmore_location_view"/>
+					<textbox dataattribute="LOOKUPVIEW" id="searchmore_lookup_view"/>
+				</sectioncol>
+				<sectioncol id="searchmore_grid4_6">
+					<textbox dataattribute="ASSETVIEW" id="searchmore_asset_view"/>
+					<textbox dataattribute="WORKORDERVIEW" id="searchmore_work_order_view"/>
+				</sectioncol>
+			</sectionrow>
+		</section>
+		<buttongroup id="searchmore_buttongroup">
+			<pushbutton default="true" id="searchmore_buttongroup_1" label="Find" mxevent="dialogok"/>
+			<pushbutton id="qbe_restoreappdefault_button" label="Restore Application Defaults" mxevent="qbeclear"/>
+			<pushbutton id="qbe_revisebutton" label="Revise" menutype="SEARCHMOREREVISE" targetid="searchmore"/>
+			<pushbutton id="searchmore_buttongroup_3" label="Cancel" mxevent="qbecancel"/>
+		</buttongroup>
+	</dialog>
+
+	<dialog beanclass="psdi.webclient.system.beans.ViewBookmarksBean" id="searchbook" label="My Bookmarks" mboname="BUILDINGMODEL">
+		<table id="bookmarks_table" inputmode="readonly" selectmode="single">
+			<tablebody displayrowsperpage="20" filterable="true" id="bookmarks_table_tablebody">
+				<tablecol dataattribute="BUILDINGMODELID" id="bookmarks_tablecolumn_1" mxevent="selectrecord" type="link"/>
+				<tablecol dataattribute="description" id="bookmarks_tablecolumn_2"/>
+				<tablecol filterable="false" id="bookmarks_tablecolumn_3" mxevent="instantdelete" mxevent_desc="Delete" mxevent_icon="btn_delete.gif" sortable="false" type="event"/>
+			</tablebody>
+		</table>
+		<buttongroup id="bookmarks_2">
+			<pushbutton default="true" id="bookmarks_2_1" label="OK" mxevent="dialogok"/>
+		</buttongroup>
+	</dialog>
+	
+	<dialog beanclass="psdi.webclient.beans.bim.viewer.lmv.AuthCacheClearBean" id="LMV_CCACHE" label="Clear Cache" width="300px" >
+		<section id="viewable_clear_cache_1"  
+		    description="Do you want to clear the Forge authorization tocken cache?">
+			<buttongroup id="viewable_clear_cache_btn" >
+				<pushbutton default="true" id="viewable_clear_cache_ok" label="Yes"
+							mxevent="dialogok" />
+				<pushbutton id="viewable_clear_cache_cancel" label="No"
+							mxevent="dialogcancel" />
+			</buttongroup>
+		</section>
+	</dialog>
+
+	<dialog mboname="BIMLMVBUCKET" id="LMV_BUCKET" label="Manage Model Storage" 
+			beanclass="psdi.webclient.beans.bim.viewer.lmv.BucketManageBean" >
+		<table id="bucket_manage_tbl" selectmode="single"  >
+			<tablebody displayrowsperpage="8" filterable="true" id="bucket_manage_tablebody" filterexpanded="true">
+				<tablecol filterable="false" id="bucket_manage_tbl_detail"
+					mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+					type="event" />
+				<tablecol dataattribute="BUCKETKEY" id="bucket_manage_tbl_key" filterable="true" />
+				<tablecol dataattribute="POLICYKEY" id="bucket_manage_tbl_policykey"  filterable="true" />
+				<tablecol dataattribute="SITEID" id="bucket_manage_tbl_site" lookup="site" filterable="true"  />
+				<tablecol dataattribute="ORGID" id="bucket_manage_tbl_org" lookup="org"  filterable="true" />
+				<tablecol dataattribute="ONLINE" id="bucket_manage_tbl_online" filterable="true" inputmode="readonly" />
+				<tablecol filterable="false" id="bucket_manage_tbl_unlink"
+						mxevent_desc="Unlink from Storage" mxevent="detatchStorage"
+						mxevent_icon="bim/unlink.png" sortable="false" type="event" />
+				<tablecol filterable="false" id="bucket_manage_tbl_delete"
+						mxevent_desc="Delete Storage" mxevent="deleteBucketDlg"
+						mxevent_icon="btn_garbage.gif" sortable="false" type="event" 
+						sigoption="LMV_DEL_STORAGE" />
+			</tablebody>
+			<tabledetails id="bucket_manage_tbl_details"  border="false" >
+			    <tabgroup id="bucket_manage_tbl_tabs" style="form">
+					<tab default="true" id="bucket_manage_tab_main" label="Details" >
+						<section id="bucket_manage_tbl_1" border="false">
+							<sectionrow id="bucket_manage_tbl_1_1">
+								<sectioncol id="cbucket_manage_tbl_1_1_1">
+									<textbox dataattribute="BUCKETKEY" id="bucket_manage_tbl_details_key" />
+								</sectioncol>
+								<sectioncol id="cbucket_manage_tbl_1_1_2">
+									<textbox dataattribute="POLICYKEY" id="bucket_manage_tbl_details_policykey" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="bucket_manage_tbl_1_1_3" >
+									<textbox dataattribute="SITEID" id="bucket_manage_tbl_details_siteid" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="bucket_manage_tbl_1_1_4" >
+									<textbox dataattribute="ORGID" id="bucket_manage_tbl_details_orgid" inputmode="readonly"/>
+								</sectioncol>
+							</sectionrow>
+							<sectionrow id="bucket_manage_tbl_1_2">
+								<sectioncol id="cbucket_manage_tbl_1_2_1">
+									<textbox dataattribute="DESCRIPTION" id="bucket_manage_tbl_details_desc" lookup="longdesc" />
+								</sectioncol>
+								<sectioncol id="cbucket_manage_tbl_1_2_2">
+									<textbox dataattribute="REGION" id="bucket_manage_tbl_details_region" />
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<section id="bucket_manage_tbl_2" border="false">
+							<sectionrow id="bucket_manage_tbl_2_1">
+								<sectioncol id="bucket_manage_tbl_2_1_1" >
+									<textbox dataattribute="OWNER" id="bucket_manage_tbl_details_ownerkey" />
+								</sectioncol>
+								<sectioncol id="bucket_manage_tbl_2_1_2" >
+									<textbox dataattribute="CREATEDATE" id="bucket_manage_tbl_details_createdate" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="bucket_manage_tbl_2_1_3" >
+									<checkbox dataattribute="ISAPPENDKEY" id="bucket_manage_tbl_append" inputmode="readonly" />
+								</sectioncol>
+							</sectionrow>
+							<sectionrow id="bucket_manage_tbl_2_2">
+								<sectioncol id="bucket_manage_tbl_2_2_1" >
+									<textbox dataattribute="LASTERROR" id="bucket_manage_tbl_lasterror" lookup="longdesc" inputmode="readonly" />
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<table id="bucket_manage_access_tbl" selectmode="single"  relationship="ACCESS" displayrowsperpage="4" label="Rights"
+						       beanclass="psdi.webclient.beans.bim.viewer.lmv.BucketAccessBean">
+							<tablebody displayrowsperpage="8" filterable="false" id="bucket_manage_access_tbl_body" >
+								<tablecol dataattribute="SERVICEID" id="bucket_manage_access_tbl_key"  inputmode="readonly" />
+								<tablecol dataattribute="ACCESS" id="bucket_manage_access_tbl_access"   inputmode="readonly" />
+								<tablecol filterable="false" id="bucket_manage_access_tbl_access_revoke"
+										mxevent_desc="Revoke Access" mxevent="revokeAccess"
+										mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+							</tablebody>
+							<buttongroup id="bucket_manage_access_tbl__btn_1" >
+								<pushbutton default="false" id="bucket_manage_entry_tbl_btn_grant"
+									label="Grant Access" mxevent="grantAccess" />
+							</buttongroup>
+						</table>	
+					</tab>
+					<tab id="bucket_manage_tab_models" label="Models" >
+						<table id="bucket_manage_tab_model_tbl" selectmode="single"  relationship="MODELS" >
+						    <tablebody displayrowsperpage="6" filterable="true" id="bucket_manage_tab_model_tablebody" filterexpanded="true">
+								<tablecol dataattribute="OBJECTKEY" id="bucket_manage_tab_model_objectkey" inputmode="readonly" filterable="true" />
+								<tablecol dataattribute="DESCRIPTION" id="bucket_manage_tab_model_desc" filterable="true" inputmode="readonly" />
+								<tablecol dataattribute="SITEID" id="bucket_manage_tab_model_site" inputmode="readonly" filterable="true"  />
+								<tablecol dataattribute="ORGID" id="bucket_manage_tab_model_org" inputmode="readonly"  filterable="true" />
+							</tablebody>
+						</table>
+					</tab>
+					<tab id="bucket_manage_tab_viewables" label="Viewables" >
+						<table id="bucket_manage_tab_viewable_tbl" selectmode="single"  relationship="VIEWABLES" >
+						    <tablebody displayrowsperpage="6" filterable="true" id="bucket_manage_tab_viewables_tablebody" filterexpanded="true">
+								<tablecol dataattribute="OBJECTKEY" id="bucket_manage_tab_viewable_objectkey" inputmode="readonly" filterable="true" />
+								<tablecol dataattribute="DESCRIPTION" id="bucket_manage_tab_viewable_desc" filterable="true" inputmode="readonly" />
+								<tablecol dataattribute="SITEID" id="bucket_manage_tab_viewable_site" inputmode="readonly" filterable="true"  />
+								<tablecol dataattribute="ORGID" id="bucket_manage_tab_viewable_org" inputmode="readonly"  filterable="true" />
+							</tablebody>
+						</table>
+					</tab>
+					<tab id="bucket_manage_tab_loc" label="Linked Locations" >
+						<table id="bucket_manage_tab_loc_tbl" selectmode="single"  relationship="LINKEDLOCATIONS" >
+						    <tablebody displayrowsperpage="6" filterable="true" id="bucket_manage_tab_locs_tablebody" filterexpanded="true">
+								<tablecol dataattribute="LOCATION" id="bucket_manage_tab_loc_location" inputmode="readonly" filterable="true" />
+   								<tablecol dataattribute="OBJECTKEY" id="bucket_manage_tab_loc_objectkey" inputmode="readonly" filterable="true" />
+								<tablecol dataattribute="DESCRIPTION" id="bucket_manage_tab_loc_desc" filterable="true" inputmode="readonly" />
+								<tablecol dataattribute="SITEID" id="bucket_manage_tab_loc_site" inputmode="readonly" filterable="true"  />
+								<tablecol dataattribute="ORGID" id="bucket_manage_tab_loc_org" inputmode="readonly"  filterable="true" />
+							</tablebody>
+						</table>
+					</tab>
+			    </tabgroup>
+			</tabledetails>
+			<buttongroup id="bucket_manage_tbl__btn_1" >
+				<pushbutton default="false" id="bucket_manage_entry_tbl_btn_create"
+					label="Create Storage" mxevent="createStorage" />
+				<pushbutton default="false" id="bucket_manage_entry_tbl_btn_attach"
+					label="Link to Storage" mxevent="attachStorage" />
+			</buttongroup>
+		</table>	
+		<buttongroup id="bucket_manage_bg">
+			<pushbutton id="bucket_manage_bg_cancel" label="Close" default="true" 
+				mxevent="dialogok" />
+		</buttongroup>
+	</dialog>
+	
+	<dialog mboname="BIMLMVBUCKET" id="LMV_BUCKET_CREATE" label="Create Storage" 
+			beanclass="psdi.webclient.beans.bim.viewer.lmv.BucketCreateBean" >
+		<section id="bucket_createdetails"  border="false" >
+			<section id="bucket_create_1" border="false">
+				<sectionrow id="bucket_create1_1">
+					<sectioncol id="bucket_create_1_1_1" >
+						<combobox dataattribute="REGION" id="bucket_create_region" />
+					</sectioncol>
+   					<sectioncol id="bucket_create_1_1_2" >
+						<textbox dataattribute="SITEID" id="bucket_create_siteid" lookup="site"/>
+					</sectioncol>
+					<sectioncol id="bucket_create_1_1_3" >
+						<textbox dataattribute="ORGID" id="bucket_create_orgid" lookup="org"/>
+					</sectioncol>
+				</sectionrow>
+			</section>
+			<section id="bucket_create_3" border="false">
+				<sectionrow id="bucket_create_3_1">
+					<sectioncol id="bucket_create_3_1_1" >
+						<textbox dataattribute="BUCKETKEY" id="bucket_create_key" />
+					</sectioncol>
+				</sectionrow>
+			</section>
+			<section id="bucket_create_2" border="false">
+				<sectionrow id="bucket_create_2_1">
+					<sectioncol id="cbucket_create_2_1_1">
+						<checkbox dataattribute="ISAPPENDKEY" id="bucket_append_key" inputmode="required" />
+					</sectioncol>
+					<sectioncol id="cbucket_create_2_1_2">
+						<combobox dataattribute="POLICYKEY" id="bucket_policy_key" inputmode="required"/>
+					</sectioncol>
+				</sectionrow>
+			</section>
+			<section id="bucket_create_5" border="false">
+				<sectionrow id="bucket_create_5_1">
+					<sectioncol id="cbucket_create_5_1_1">
+						<textbox dataattribute="DESCRIPTION" id="bucket_create_desc" lookup="longdesc" />
+					</sectioncol>
+				</sectionrow>
+			</section>
+		</section>
+		<buttongroup id="bucket_create">
+			<pushbutton id="bucket_create_cancel" label="Cancel" mxevent="dialogcancel" />
+			<pushbutton default="true" id="bucket_create_ok" label="OK" mxevent="dialogok"/>
+		</buttongroup>
+	</dialog>
+
+	<dialog mboname="BIMLMVBUCKET" id="LMV_BUCKET_ATTACH" label="Link to Storage" 
+			beanclass="psdi.webclient.beans.bim.viewer.lmv.BucketAttachBean" >
+		<section id="bucket_attachdetails"  border="false" >
+			<section id="bucket_attach_1" border="false">
+				<sectionrow id="bucket_attach1_1">
+					<sectioncol id="bucket_attach_1_1_1" >
+						<combobox dataattribute="REGION" id="bucket_attach_region" />
+					</sectioncol>
+					<sectioncol id="bucket_attach_1_1_2" >
+						<textbox dataattribute="SITEID" id="bucket_attach_siteid" lookup="site"/>
+					</sectioncol>
+					<sectioncol id="bucket_attach_1_1_3" >
+						<textbox dataattribute="ORGID" id="bucket_attach_orgid" lookup="org"/>
+					</sectioncol>
+				</sectionrow>
+			</section>
+			<section id="bucket_attachdetails_2"  border="false" >
+				<sectionrow id="bucket_attach_2_1">
+					<sectioncol id="cbucket_attach_2_1_1">
+						<textbox dataattribute="BUCKETKEY" id="bucket_attach_key" 
+						         inputmode="required" lookup="forgebucket" smartfilloff="true"/>
+					</sectioncol>
+					<sectioncol id="cbucket_attach_2_1_2">
+						<checkbox dataattribute="ISAPPENDKEY" id="bucket_attach_append_key" inputmode="required"/>
+					</sectioncol>
+				</sectionrow>
+			</section>
+			<section id="bucket_attachdetails_3"  border="false" >
+				<sectionrow id="bucket_attach_3_1">
+					<sectioncol id="cbucket_attach_3_1_1">
+						<textbox dataattribute="DESCRIPTION" id="bucket_attach_desc" lookup="longdesc" />
+					</sectioncol>
+				</sectionrow>
+			</section>
+		</section>
+		<buttongroup id="bucket_attach">
+			<pushbutton id="bucket_attach_cancel" label="Cancel" mxevent="dialogcancel" />
+			<pushbutton default="true" id="bucket_attach_ok" label="OK" mxevent="dialogok"/>
+		</buttongroup>
+	</dialog>
+
+	<dialog  mboname="BIMLMVBUCKETACCESS" id="LMV_BUCKET_GRANT" label="Grant Access" 
+			beanclass="psdi.webclient.beans.bim.viewer.lmv.BucketGrantBean" >
+		<textbox dataattribute="SERVICEID" id="bucket_grant_service_id" inputmode="required"/>
+		<combobox dataattribute="ACCESS" id="bucket_grant_access" inputmode="required" />
+		<buttongroup id="bucket_grant">
+			<pushbutton id="bucket_grant_cancel" label="Cancel" mxevent="dialogcancel" />
+			<pushbutton default="true" id="bucket_grant_ok" label="OK" mxevent="dialogok"/>
+		</buttongroup>
+	</dialog>
+
+	<dialog  relationship="LOOKUP" id="lookup_forgebucket" label="Bucket lookup from Forge service" 
+			 beanclass="psdi.webclient.system.beans.LookupBean">
+		<table id="lookup_forgebucket_tbl" selectmode="single"  inputmode="readonly" >
+			<tablebody displayrowsperpage="10" filterable="false" id="lookup_forgebucket_tablebody" >
+				<tablecol dataattribute="BUCKETKEY" id="lookup_forgebucket_tbl_key"
+				          filterable="true" mxevent="selectrecord" mxevent_desc="Go To %1" sortable="true" type="link" />
+				<tablecol dataattribute="POLICYKEY" id="lookup_forgebucket_tbl_policykey"    />
+				<tablecol dataattribute="ISAPPENDKEY" id="lookup_forgebucket_tbl_appendKey"  />
+			</tablebody>
+		</table>
+		<buttongroup id="bucketlookup_gb">
+			<pushbutton id="bucketlookup_cancel" label="Close" mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+	
+	<dialog mboname="BIMLMVDELETEAPPROVE" beanclass="psdi.webclient.beans.bim.viewer.lmv.BucketApproveDeleteBean"
+		id="LMV_BUCKET_APPROVE_DELETE" label="Delete Storage Container?" width="300px" sigoption="LMV_DEL_STORAGE" >
+		<section id="bucket_approve_delete_1" >
+			<statictext id="bucket_approve_delete_test_1" label="Do you want to delete the Storage contair forom the Autodesk Forge service"/>
+			<statictext id="bucket_approve_delete_test_2" label="This will delete all models and viewable contained in the container" align="left"/>
+			<statictext id="bucket_approve_delete_test_3" label="including ones added outside of Maximo. This cannot be undone." align="left"/>
+			<blankline id="bucket_approve_delete_blank"/>
+   			<checkbox dataattribute="MODELSDELETE" id="bucket_approve_delete_models" inputmode="required" />
+			<checkbox dataattribute="VIEWABLESDELETE" id="bucket_approve_delete_viewables" inputmode="required" />
+			<checkbox dataattribute="LINKEDLOC" id="bucket_approve_delete_linked_loc" inputmode="required" />
+			<buttongroup id="bucket_approve_delete_bg_cancel" >
+				<pushbutton default="true" id="bucket_approve_delete_ok" label="Delete"
+							mxevent="dialogok" />
+				<pushbutton id="bucket_approve_delete_cancel" label="Cancel"
+							mxevent="dialogcancel" />
+			</buttongroup>
+		</section>
+	</dialog>
+
+	<dialog mboname="BIMLMVMODEL" id="LMV_MODEL" label="Manage Models" 
+			beanclass="psdi.webclient.beans.bim.viewer.lmv.ModelManageBean" >
+		<table id="model_manage_tbl" selectmode="single"  >
+			<tablebody displayrowsperpage="8" filterable="true" id="model_manage_tablebody" filterexpanded="true">
+				<tablecol filterable="false" id="model_manage_tbl_detail"
+					mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+					type="event" />
+				<tablecol dataattribute="OBJECTKEY" id="model_manage_tbl_id" length="30" filterable="true" />
+				<tablecol dataattribute="BUCKETKEY" id="model_manage_tbl_key" length="30" filterable="true" lookup="bimbucket" />
+				<tablecol dataattribute="SITEID" id="model_manage_tbl_site" lookup="site" filterable="true"  />
+				<tablecol dataattribute="ORGID" id="model_manage_tbl_org" lookup="org"  filterable="true" />
+				<tablecol dataattribute="ONLINE" id="model_manage_tbl_online" filterable="true" inputmode="readonly" />
+				<tablecol filterable="false" id="model_manage_tbl_unlink"
+						mxevent_desc="Unlink from Model" mxevent="detatchModel"
+						mxevent_icon="bim/unlink.png" sortable="false" type="event" />
+				<tablecol filterable="false" id="model_manage_tbl_delete"
+						mxevent_desc="Delete Model" mxevent="deleteModelDlg"
+						mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+			</tablebody>
+			<tabledetails id="model_manage_tbl_details"  border="false" >
+			    <tabgroup id="model_manage_tbl_tabs" style="form">
+					<tab default="true" id="model_manage_tab_detail" label="Details" >
+					    <section id="model_manage_tbl_1" border="false">
+							<sectionrow id="model_manage_tbl_1_1">
+								<sectioncol id="cmodel_manage_tbl_1_1_1">
+									<textbox dataattribute="OBJECTKEY" id="model_manage_tbl_details_id" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="cmodel_manage_tbl_1_1_2">
+									<textbox dataattribute="BUCKETKEY" id="model_manage_tbl_details_key" inputmode="readonly" />
+								</sectioncol>
+								<sectioncol id="model_manage_tbl_1_1_3" >
+									<textbox dataattribute="SITEID" id="model_manage_tbl_details_siteid" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="model_manage_tbl_1_1_4" >
+									<textbox dataattribute="ORGID" id="model_manage_tbl_details_orgid" inputmode="readonly"/>
+								</sectioncol>
+							</sectionrow>
+							<sectionrow id="model_manage_tbl_1_2">
+								<sectioncol id="cmodel_manage_tbl_1_2_1">
+									<textbox dataattribute="DESCRIPTION" id="model_manage_tbl_details_desc" lookup="longdesc" />
+								</sectioncol>
+							</sectionrow>
+							<sectionrow id="model_manage_tbl_1_3">
+								<sectioncol id="model_manage_tbl_1_3_1" >
+									<textbox dataattribute="CONTENTTYPE" id="model_manage_tbl_details_type" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="model_manage_tbl_1_3_2" >
+									<textbox dataattribute="SHA1" id="model_manage_tbl_details_sha1" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="cmodel_manage_tbl_1_3_3">
+									<textbox dataattribute="SIZE" id="model_manage_tbl_details_size" inputmode="readonly"/>
+								</sectioncol>
+							</sectionrow>
+							<sectionrow id="model_manage_tbl_1_4">
+								<sectioncol id="cmodel_manage_tbl_1_4_1">
+									<textbox dataattribute="MODELURN" id="model_manage_tbl_details_urn" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="model_manage_tbl_1_4_2" >
+									<textbox dataattribute="URL" id="model_manage_tbl_details_url" inputmode="readonly"/>
+								</sectioncol>
+							</sectionrow>
+							<sectionrow id="model_manage_tbl_1_5">
+								<sectioncol id="cmodel_manage_tbl_1_5_1">
+									<textbox dataattribute="LASTERROR" id="model_manage_tbl_details_lasterror" lookup="longdesc" inputmode="readonly" />
+								</sectioncol>
+							</sectionrow>
+						</section>
+				    </tab>
+					<tab default="false" id="model_manage_tab_status" label="Status" >
+						<table relationship="UPLOADSTATUS" id="model_manage_upload_tbl" selectmode="single"  label="Upload History"
+							   beanclass="psdi.webclient.beans.bim.viewer.lmv.ModelUploadStatussBean">
+							<tablebody displayrowsperpage="4" filterable="false" id="model_manage_upload_tablebody" filterexpanded="true">
+								<tablecol filterable="false" id="model_manage_upload_tbl_detail"
+									mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+									type="event" />
+								<tablecol dataattribute="UPLOADTIME" id="model_manage_upload_tbl_time" length="30" filterable="true" />
+								<tablecol dataattribute="STATUS" id="model_manage_upload_tbl_status" length="30" filterable="true" />
+							</tablebody>
+							<tabledetails id="model_manage_upload_tbl_details"  border="false" >
+								<tabgroup id="model_manage_upload_tbl_tabs" style="form">
+									<tab default="true" id="model_manage_upload_tab_main" label="Main" >
+										<section id="model_manage_upload_tab_main_1" border="false">
+											<sectionrow id="model_manage_upload_tab_main_1_1">
+												<sectioncol id="model_manage_upload_tab_main_1_1_1">
+													<textbox dataattribute="STATUS" id="model_manage_upload_tab_main_status" inputmode="readonly"/>
+												</sectioncol>
+												<sectioncol id="model_manage_upload_tab_main_1_1_2">
+													<textbox dataattribute="PERCENTCOMP" id="model_manage_upload_tab_main_percent" inputmode="readonly"/>
+												</sectioncol>
+											</sectionrow>
+											<sectionrow id="model_manage_upload_tab_main_1_2">
+												<sectioncol id="model_manage_upload_tab_main_1_2_1">
+													<textbox dataattribute="IMPORTEDBY" id="model_manage_upload_tab_main_uploadby" inputmode="readonly"/>
+												</sectioncol>
+												<sectioncol id="model_manage_upload_tab_main_1_2_2">
+													<textbox dataattribute="UPLOADTIME" id="model_manage_upload_tab_main_upload" inputmode="readonly"/>
+												</sectioncol>
+											</sectionrow>
+										</section>
+									</tab>
+									<tab id="model_manage_upload_tab_main_log" label="Log Records" >
+										<multilinetextbox columns="40" dataattribute="LOG"
+											id="model_manage_upload_tab_log_log" inputmode="readonly" rows="4" hidetooltip="true" />
+									</tab>
+								</tabgroup>
+							</tabledetails>
+							<buttongroup id="model_manage_upload_tbl_btn_1">
+								<pushbutton id="model_manage_entry_tbl_btn_refresh"
+									label="Refresh" mxevent="refreshStatus" />
+							</buttongroup>
+						</table>	
+				    </tab>
+					<tab id="model_manage_tab_viewable" label="Viewable" >
+						<section id="model_manage_viewable" border="false" relationship="VIEWABLE">
+							<section id="model_manage_viewable_1">
+	   							<sectionrow id="model_manage_viewable_1_1">
+									<sectioncol id="model_manage_viewable_1_1_1">
+										<textbox dataattribute="SITEID" id="model_manage_viewable_site" inputmode="readonly"/>
+									</sectioncol>
+									<sectioncol id="model_manage_viewable_1_1_2">
+										<textbox dataattribute="ORGID" id="model_manage_viewable_org" inputmode="readonly"/>
+									</sectioncol>
+									<sectioncol id="model_manage_viewable_1_1_3">
+										<checkbox dataattribute="ONLINE" id="model_manage_viewable_online" inputmode="readonly"/>
+									</sectioncol>
+							    </sectionrow>
+								<sectionrow id="model_manage_viewable_1_2">
+									<sectioncol id="model_manage_viewable_1_2_1">
+										<textbox dataattribute="PROGRESS" id="model_manage_viewable_progress" inputmode="readonly"/>
+									</sectioncol>
+									<sectioncol id="model_manage_viewable_1_2_2">
+	   									<textbox dataattribute="STATUS" id="model_manage_viewable_status" inputmode="readonly"/>
+									</sectioncol>
+									<sectioncol id="model_manage_viewable_1_2_3">
+	   									<textbox dataattribute="SUCCESS" id="model_manage_viewable_success" inputmode="readonly"/>
+									</sectioncol>
+							    </sectionrow>
+						    </section>
+							<section id="model_manage_viewable_2">
+								<textbox dataattribute="STARTEDAT" id="model_manage_viewable_startedat" inputmode="readonly"/>
+	    						<textbox dataattribute="BASE64URN" id="model_manage_viewable_viewableurn" inputmode="readonly"/>
+						    </section>
+					    </section>
+					</tab>
+			    </tabgroup>
+			</tabledetails>
+			<buttongroup id="model_manage_tbl__btn_1">
+				<pushbutton id="model_manage_entry_tbl_btn_upload"
+					label="Upload Model" mxevent="uploadModel" />
+				<pushbutton default="false" id="model_manage_entry_tbl_btn_attach"
+					label="Link to Model" mxevent="attachModel" />
+			</buttongroup>
+		</table>	
+		<buttongroup id="model_manage_bg">
+			<pushbutton  default="true"  id="model_manage_bg_cancel" label="Close"
+				mxevent="dialogok" />
+		</buttongroup>
+	</dialog>
+
+	<dialog id="LMV_MODEL_ATTACH" label="Link to Model" 
+			beanclass="psdi.webclient.beans.bim.viewer.lmv.ModelAttachBean" >
+		<section id="model_attach_details"  border="false" >
+			<section id="model_attach_1" border="false">
+				<sectionrow id="model_attach1_1">
+					<sectioncol id="model_attach_1_1_1" >
+						<textbox dataattribute="SITEID" id="model_attach_siteid" lookup="site"/>
+					</sectioncol>
+					<sectioncol id="model_attach_1_1_2" >
+						<textbox dataattribute="ORGID" id="model_attach_orgid" lookup="org"/>
+					</sectioncol>
+				</sectionrow>
+			</section>
+			<section id="model_attach_2" border="false">
+				<sectionrow id="model_attach2_1">
+					<sectioncol id="model_attach_2_1_1" >
+						<textbox dataattribute="BUCKETKEY" id="model_attach_bucket" 
+						         lookup="bimbucket" inputmode="required" />
+					</sectioncol>
+				</sectionrow>
+				<sectionrow id="model_attach_2_3">
+					<sectioncol id="model_attach_2_3_1" >
+						<textbox dataattribute="DESCRIPTION" id="model_attach_desc" lookup="longdesc" />
+					</sectioncol>
+				</sectionrow>
+				<sectionrow id="model_attach_2_2">
+					<sectioncol id="model_attach_2_2_1" >
+					    <helpgrid id="cobieup_log_tab_help" 
+					    	innerhtml="The lookup list is filter by names that start with the value in this field" />
+						<textbox dataattribute="OBJECTKEY" id="model_attach_object" 
+						         inputmode="required" lookup="forgemodel" smartfilloff="true"/>
+					</sectioncol>
+				</sectionrow>
+			</section>
+		</section>
+		<checkbox dataattribute="AUTOLINK" id="model_attach_autolink" />
+		<buttongroup id="model_attach_bg">
+			<pushbutton id="model_attach_cancel" label="Cancel" mxevent="dialogcancel" />
+			<pushbutton default="true" id="model_attach_ok" label="OK" mxevent="dialogok"/>
+		</buttongroup>
+	</dialog>
+	
+	<dialog mboname="BIMLMVMODEL"  id="LMV_MODEL_UPLOAD" label="Upload Model"
+	        beanclass="psdi.webclient.beans.bim.viewer.lmv.ModelUploadBean" >
+	    <helpgrid id="model_upload_help" 
+	    	innerhtml="A multi-part model can be uploaded as a single zip file containing all the model files" />
+		<section id="model_upload_1" border="false">
+			<sectionrow id="model_upload1_1">
+				<sectioncol id="model_upload_1_1_2" >
+					<textbox dataattribute="SITEID" id="model_upload_siteid" lookup="site"/>
+				</sectioncol>
+				<sectioncol id="model_upload_1_1_3" >
+					<textbox dataattribute="ORGID" id="model_upload_orgid" lookup="org"/>
+				</sectioncol>
+			</sectionrow>
+		</section>
+		<section id="model_upload_3" border="false">
+			<sectionrow id="model_upload3_1">
+				<sectioncol id="model_upload_3_1_2" >
+					<textbox dataattribute="BUCKETKEY" id="model_upload_bucket" 
+					         lookup="bimbucket" inputmode="required"  />
+				</sectioncol>
+			</sectionrow>
+			<sectionrow id="model_upload_3_2">
+				<sectioncol id="model_upload_3_2_2" >
+					<textbox dataattribute="DESCRIPTION" id="model_upload_desc" lookup="longdesc" />
+				</sectioncol>
+			</sectionrow>
+		</section>
+		<section id="model_upload_2" border="false">
+			<sectionrow id="model_upload_2_1">
+				<sectioncol id="model_upload_2_1_2" >
+					<textbox dataattribute="OBJECTKEY" id="model_upload_object" inputmode="readonly"/>
+				</sectioncol>
+				<sectioncol id="model_upload_2_1_3" >
+					<pushbutton default="true" id="model_upload_select_file_btn"
+						label="Select Model File" mxevent="LMV_MODEL_UPLOAD_FILE" />
+				</sectioncol>
+			</sectionrow>
+		</section>
+		<checkbox dataattribute="AUTOREG" id="model_upload_autoreg" />
+		<buttongroup id="model_upload_bg">
+			<pushbutton id="model_upload_cancel" label="Cancel" mxevent="dialogcancel" />
+			<pushbutton default="true" id="model_upload_ok" label="OK" mxevent="uploadModel"/>
+		</buttongroup>
+	</dialog>
+
+	<dialog id="LMV_MODEL_UPLOAD_FILE" label="Select Model File"
+	        beanclass="psdi.webclient.beans.bim.viewer.lmv.ModelUploadSelectBean" >
+		<uploadfile cancellabel="Cancel" event="loadModelFile" id="model_upload_file_select" 
+					label="Browse for Model:" maxfilesize="200" oklabel="OK"/>
+	</dialog>
+
+	<dialog mboname="BIMLMVDELETEAPPROVE" beanclass="psdi.webclient.beans.bim.viewer.lmv.ModelApproveOverwriteBean"
+		id="LMV_MODEL_APPROVE_OVERWRITE" label="Replace File?" width="300px" >
+		<section id="model_approve_overwrite_1" >
+			<statictext id="model_approve_overwrite_test_1" label="The file exists.  Do you want to replace it?"/>
+			<blankline id="model_approve_overwrite_blank"/>
+			<buttongroup id="model_approve_overwrite_bg_cancel" >
+				<pushbutton default="true" id="model_approve_overwrite_ok" label="Yes"
+							mxevent="dialogok" />
+				<pushbutton id="model_approve_overwrite_cancel" label="No"
+							mxevent="dialogcancel" />
+			</buttongroup>
+		</section>
+	</dialog>
+
+	<dialog  relationship="LOOKUP" id="lookup_forgemodel" label="Model lookup from Forge service" 
+			 beanclass="psdi.webclient.system.beans.LookupBean">
+		<table id="lookup_forgemodel_tbl" selectmode="single" inputmode="readonly"  >
+			<tablebody displayrowsperpage="10" id="lookup_forgemodel_tablebody" filterable="true" filterexpanded="true">
+				<tablecol dataattribute="OBJECTKEY" id="lookup_forgemodel_tbl_key" 
+				          filterable="true" mxevent="selectrecord" mxevent_desc="Go To %1" sortable="true" type="link" />
+				<tablecol dataattribute="SIZE" id="lookup_forgemodel_tbl_size"   />
+			</tablebody>
+		</table>
+		<buttongroup id="lookup_forgemodel_gb">
+			<pushbutton id="lookup_forgemodel_cancel" label="Close" mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+	
+	<dialog beanclass="psdi.webclient.beans.bim.viewer.lmv.ModelApproveDeleteBean"
+		id="LMV_MODEL_APPROVE_DELETE" label="Delete Model?" width="300">
+		<section id="model_approve_delete_1"  description="Do you want to delete the model forom the Autodesk cloud?">
+			<buttongroup id="model_approve_delete_btn" >
+			<pushbutton default="true" id="model_approve_delete_ok" label="Delete"
+				mxevent="dialogok" />
+			<pushbutton id="model_approve_delete_cancel" label="Cancel"
+				mxevent="dialogcancel" />
+		</buttongroup>
+		</section>
+	</dialog>
+
+	<dialog mboname="BIMLMVVIEWABLE" id="LMV_VIEW" label="Manage Viewable Models" 
+			beanclass="psdi.webclient.beans.bim.viewer.lmv.ViewableManageBean" >
+		<table id="viewable_manage_tbl" selectmode="single"  >
+			<tablebody displayrowsperpage="8" filterable="true" id="viewable_manage_tablebody" filterexpanded="true">
+				<tablecol filterable="false" id="viewable_manage_tbl_detail"
+					mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+					type="event" />
+				<tablecol dataattribute="OBJECTKEY" id="viewable_manage_tbl_objectkey" filterable="true" />
+				<tablecol dataattribute="SITEID" id="viewable_manage_tbl_site" lookup="site" filterable="true"  />
+				<tablecol dataattribute="ORGID" id="viewable_manage_tbl_org" lookup="org"  filterable="true" />
+				<tablecol dataattribute="ONLINE" id="viewable_manage_tbl_online" filterable="true" inputmode="readonly" />
+				<tablecol filterable="false" id="viewable_manage_tbl_unlink"
+						mxevent_desc="Unlink from Model" mxevent="detatchViewable"
+						mxevent_icon="bim/unlink.png" sortable="false" type="event" />
+				<tablecol filterable="false" id="viewable_manage_tbl_delete"
+						mxevent_desc="Delete Viewable" mxevent="deleteViewableDlg"
+						mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+			</tablebody>
+			<tabledetails id="viewable_manage_tbl_details"  border="false" >
+				<tabgroup id="viewable_manage_tbl_tabs" style="form">
+					<tab default="true" id="viewable_manage_tab_main" label="Details" >
+						<section id="viewable_manage_tbl_1" border="false">
+							<sectionrow id="viewable_manage_tbl_1_1">
+								<sectioncol id="viewable_manage_tbl_1_1_2" >
+									<textbox dataattribute="OBJECTKEY" id="viewable_manage_tbl_details_objectkey" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="viewable_manage_tbl_1_1_3" >
+									<textbox dataattribute="SITEID" id="viewable_manage_tbl_details_siteid" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="viewable_manage_tbl_1_1_4" >
+									<textbox dataattribute="ORGID" id="viewable_manage_tbl_details_orgid" inputmode="readonly"/>
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<section id="viewable_manage_tbl_2" border="false">
+							<sectionrow id="viewable_manage_tbl_2_1">
+								<sectioncol id="viewable_manage_tbl_2_1_1" >
+									<textbox dataattribute="DESCRIPTION" id="viewable_manage_tbl_details_desc" lookup="longdesc" />
+								</sectioncol>
+								<sectioncol id="viewable_manage_tbl_2_1_2">
+									<textbox dataattribute="REGION" id="viewable_manage_tbl_details_region" />
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<textbox dataattribute="MODELURN" id="viewable_manage_tbl_details_modelurn" inputmode="readonly"/>
+						<textbox dataattribute="BASE64URN" id="viewable_manage_tbl_details_viewableurn" inputmode="readonly"/>
+						<section id="viewable_manage_tbl_3" border="false">
+							<sectionrow id="viewable_manage_tbl_3_1">
+								<sectioncol id="cviewable_manage_tbl_3_1_1">
+									<textbox dataattribute="PROGRESS" id="viewable_manage_tbl_details_progress" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="viewable_manage_tbl_3_1_2" >
+									<textbox dataattribute="STATUS" id="viewable_manage_tbl_details_status" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="viewable_manage_tbl_3_1_3" >
+									<textbox dataattribute="SUCCESS" id="viewable_manage_tbl_details_success" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="viewable_manage_tbl_3_1_4" >
+									<pushbutton id="viewable_manage_tbl_details_refresh_btn" label="Refresh" mxevent="refresh" />
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<section id="viewable_manage_tbl_4" border="false">
+							<sectionrow id="viewable_manage_tbl_4_1">
+								<sectioncol id="cviewable_manage_tbl_4_1_1">
+									<textbox dataattribute="STARTEDAT" id="viewable_manage_tbl_details_startedat" inputmode="readonly"/>
+								</sectioncol>
+								<sectioncol id="viewable_manage_tbl_4_1_2" >
+									<textbox dataattribute="HASTHUMBNAIL" id="viewable_manage_tbl_details_hasthumbnail" inputmode="readonly"/>
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<textbox dataattribute="GUID" id="viewable_manage_tbl_details_giud" inputmode="readonly"/>
+						<textbox dataattribute="LASTERROR" id="viewable_manage_tbl_lasterror" lookup="longdesc" inputmode="readonly" />
+					</tab>
+					<tab id="viewable_manage_tab_locations" label="Locations" >
+						<table id="viewable_manage_tab_locations_tbl" selectmode="single"  relationship="USEDBY" >
+						    <tablebody displayrowsperpage="6" filterable="true" id="viewable_manage_tab_locations_tablebody" filterexpanded="true">
+								<tablecol dataattribute="LOCATION" id="viewable_manage_tab_locations_location" inputmode="readonly" filterable="true" />
+								<tablecol dataattribute="TITLE" id="viewable_manage_tab_locations_title" filterable="true" inputmode="readonly" />
+								<tablecol dataattribute="SITEID" id="viewable_manage_tab_locations_site" inputmode="readonly" filterable="true"  />
+								<tablecol dataattribute="ORGID" id="viewable_manage_tab_locations_org" inputmode="readonly"  filterable="true" />
+							</tablebody>
+						</table>
+					</tab>
+					<tab id="viewable_manage_tab_details" label="Log Records" >
+						<multilinetextbox columns="70" dataattribute="DETAILS"
+							id="viewable_manage_details" inputmode="readonly" rows="12" hidetooltip="true" />
+					</tab>
+				</tabgroup>
+			</tabledetails>
+			<buttongroup id="viewable_manage_tbl__btn_1">
+				<pushbutton default="true" id="viewable_manage_entry_tbl_btn_create"
+					label="Register Viewable" mxevent="registerViewable" />
+				<pushbutton default="false" id="viewable_manage_entry_tbl_btn_attach"
+					label="Link to Viewable" mxevent="attachViewable" />
+			</buttongroup>
+		</table>	
+		<buttongroup id="viewable_manage_bg">
+			<pushbutton id="viewable_manage_bg_cancel" label="Close"
+				mxevent="dialogok" />
+		</buttongroup>
+	</dialog>
+
+	<dialog mboname="BIMLMVVIEWABLE" id="LMV_VIEW_ATTACH" label="Link to Viewable" 
+			beanclass="psdi.webclient.beans.bim.viewer.lmv.ViewableAttachBean" >
+		<section id="viewable_arrach_details"  border="false" >
+			<section id="viewable_arrach_1" border="false">
+				<sectionrow id="viewable_arrach1_1">
+					<sectioncol id="viewable_arrach_1_1_2" >
+						<textbox dataattribute="SITEID" id="viewable_arrach_siteid" lookup="site"/>
+					</sectioncol>
+					<sectioncol id="viewable_arrach_1_1_3" >
+						<textbox dataattribute="ORGID" id="viewable_arrach_orgid" lookup="org"/>
+					</sectioncol>
+				</sectionrow>
+			</section>
+			<section id="viewable_arrach_2" border="false">
+				<sectionrow id="viewable_arrach2_1">
+					<sectioncol id="viewable_arrach_2_1_2" >
+						<textbox dataattribute="OBJECTKEY" id="viewable_arrach_objectkey" lookup="bimmodel" />
+					</sectioncol>
+				</sectionrow>
+				<sectionrow id="viewable_arrach2_2">
+					<sectioncol id="viewable_arrach_2_2_2" >
+						<textbox dataattribute="MODELURN" id="viewable_arrach_modelurn" inputmode="required" />
+					</sectioncol>
+				</sectionrow>
+				<sectionrow id="viewable_arrach2_4">
+					<sectioncol id="viewable_arrach_2_4_2" >
+						<textbox dataattribute="DESCRIPTION" id="viewable_arrach_desc" lookup="longdesc" />
+					</sectioncol>
+				</sectionrow>
+			</section>
+		</section>
+		<buttongroup id="viewable_arrach">
+			<pushbutton id="viewable_arrach_cancel" label="Cancel" mxevent="dialogcancel" />
+			<pushbutton default="true" id="viewable_arrach_ok" label="OK" mxevent="dialogok"/>
+		</buttongroup>
+	</dialog>
+
+	<dialog mboname="BIMLMVVIEWABLE" id="LMV_VIEW_REGISTER" label="Register Model as Viewable" 
+			beanclass="psdi.webclient.beans.bim.viewer.lmv.ViewableRegisterBean" >
+		<section id="viewable_register_details"  border="false" >
+			<section id="viewable_register_1" border="false">
+				<sectionrow id="viewable_register1_1">
+					<sectioncol id="viewable_register_1_1_1" >
+						<combobox dataattribute="REGION" id="viewable_register_create_region" />
+					</sectioncol>
+					<sectioncol id="viewable_register_1_1_2" >
+						<textbox dataattribute="SITEID" id="viewable_register_siteid" lookup="site"/>
+					</sectioncol>
+					<sectioncol id="viewable_register_1_1_3" >
+						<textbox dataattribute="ORGID" id="viewable_register_orgid" lookup="org"/>
+					</sectioncol>
+				</sectionrow>
+			</section>
+			<section id="viewable_register_2" border="false">
+				<sectionrow id="viewable_register2_1">
+					<sectioncol id="viewable_register_2_1_2" >
+						<textbox dataattribute="OBJECTKEY" id="viewable_register_objectkey" lookup="bimmodel"/>
+					</sectioncol>
+				</sectionrow>
+				<sectionrow id="viewable_register2_2">
+					<sectioncol id="viewable_register_2_2_1" >
+						<section id="viewable_register_2_1_1_1" border="false">
+							<sectionrow id="viewable_register_2_1_1_1_1">
+								<sectioncol id="viewable_register_2_1_1_1_1_1" >
+									<checkbox dataattribute="COMPRESSED" id="viewable_register_compressed" inputmode="required" />
+								</sectioncol>
+								<sectioncol id="viewable_register_2_1_1_1_1_2" >
+									<textbox dataattribute="ROOTFILENAME" id="viewable_register_rootfilename" />
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</sectioncol>
+				</sectionrow>
+				<sectionrow id="viewable_register2_3">
+					<sectioncol id="viewable_register_2_1_3" >
+						<textbox dataattribute="DESCRIPTION" id="viewable_register_desc" lookup="longdesc" />
+					</sectioncol>
+				</sectionrow>
+			</section>
+		</section>
+		<buttongroup id="viewable_register">
+			<pushbutton id="viewable_register_cancel" label="Cancel" mxevent="dialogcancel" />
+			<pushbutton default="true" id="viewable_register_ok" label="OK" mxevent="dialogok"/>
+		</buttongroup>
+	</dialog>
+	
+	<dialog mboname="BIMLMVDELETEAPPROVE" beanclass="psdi.webclient.beans.bim.viewer.lmv.ViewableApproveDeleteBean"
+		id="LMV_VIEWABLE_APPROVE_DELETE" label="Delete Viewable" width="300px" >
+		<section id="viewable_approve_delete_1"  
+		    description="Do you want to delete the viewable?">
+			<checkbox dataattribute="LINKEDLOC" id="viewable_approve_delete_viewables" inputmode="required" />
+			<buttongroup id="viewable_approve_delete_btn" >
+				<pushbutton default="true" id="viewable_approve_delete_ok" label="Delete"
+							mxevent="dialogok" />
+				<pushbutton id="viewable_approve_delete_cancel" label="Cancel"
+							mxevent="dialogcancel" />
+			</buttongroup>
+		</section>
+	</dialog>
+
+	<dialog mboname="BUILDINGMODEL" id="LMV_SAVE" label="Manage Saved Views"   datasrc="MAINRECORD"  >
+		<section id="savedview_bannergrid">
+			<sectionrow id="savedview_grid1">
+				<sectioncol id="savedview_grid1_1">
+					<multiparttextbox dataattribute="location" defaultfocus="true" descdataattribute="description"
+					                  descinputmode="readonly" id="savedview_bannergrid_1"/>
+				</sectioncol>
+				<sectioncol id="savedview_grid1_2">
+					<textbox dataattribute="siteid" id="savedview_bannergrid_3" inputmode="readonly"/>
+				</sectioncol>
+			</sectionrow>
+		</section>
+		<table id="savedview_table" label="Saved Views" relationship="SAVEDVIEWS"  >
+			<tablebody displayrowsperpage="10" filterable="true" filterexpanded="false" id="savedview_tablebody">
+				<tablecol filterable="false" id="savedview_filter" mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false" type="event"/>
+				<tablecol dataattribute="description" id="savedview_tablebody_description" sortable="true"/>
+				<tablecol dataattribute="owner" id="savedview_tablebody_owner" sortable="true"/>
+				<tablecol dataattribute="shared" id="savedview_tablebody_shared" sortable="true"/>
+				<tablecol filterable="false" hidden="false" id="savedview_tablebody_delete" mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete" mxevent_icon="btn_garbage.gif" sortable="false" type="event"/>
+			</tablebody>
+			<tabledetails id="savedview_TableDetails">
+				<textbox dataattribute="DESCRIPTION" id="savedview_TableDetails_desc" lookup="longdesc" />
+				<section id="savedview_TableDetails_1">
+					<sectionrow id="savedview_TableDetails_1_1">
+						<sectioncol id="savedview_TableDetails_1_1_1">
+							<textbox dataattribute="owner" id="savedview_TableDetails_owner" inputmode="readonly" />
+						</sectioncol>
+						<sectioncol id="savedview_TableDetails_1_1_2">
+							<checkbox dataattribute="SHARED" id="savedview_TableDetails_shared" inputmode="readonly" />
+						</sectioncol>
+					</sectionrow>
+				</section>
+			</tabledetails>
+		</table>
+
+		<buttongroup id="savedview_bg_1">
+			<pushbutton default="true" id="savedview_ok" label="OK" mxevent="dialogok"/>
+			<pushbutton id="savedview_cancel" label="Cancel" mxevent="dialogcancel"/>
+		</buttongroup>
+	</dialog>
+	
+</presentation>

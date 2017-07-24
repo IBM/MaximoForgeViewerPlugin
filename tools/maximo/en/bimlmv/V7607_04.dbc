@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+-->
+<!DOCTYPE script SYSTEM "script.dtd">
+<script author="Doug Wood" scriptname="Maximo for Buildings 7.5">
+	<description>Maximo for Buildings 7.6 Autodesk Forge Viewer support</description>
+	<statements>
+		<!--
+		- Fix problem with menu items not showing because there position is wrong
+		- These value really should be progamtaically calculated
+		<freeform description="Create Design Specification application">
+			<sql target="all">
+				update maxmenu set position=100001 where keyvalue = 'BIMMODELS' AND moduleapp = 'BIM';
+				update maxmenu set position=100002 where keyvalue = 'PRODUCT' AND moduleapp = 'BIM';
+				update maxmenu set position=100003 where keyvalue = 'DESIGNSPEC' AND moduleapp = 'BIM';
+		  	</sql>
+		</freeform>
+		-->
+
+        <specify_synonym_domain maxtype="UPPER" length="20" domainid="BIMLMVBUCKEREGION" 
+		           description="Access rights to storage" overwrite="false">
+          	<synonymvalueinfo value="US" maxvalue="US" defaults="true" description="US Region" />
+          	<synonymvalueinfo value="EMEA" maxvalue="EMEA" defaults="true" description="EMEA Region" />
+        </specify_synonym_domain>
+
+		<modify_attribute object="BIMLMVBUCKET" attribute="BUCKETKEY" classname="psdi.app.bim.viewer.lmv.FldBucketKeyLookup" />
+		<modify_attribute object="BIMLMVBUCKET" attribute="POLICYKEY" remarks="Are model automatically deleted?, If so, how quickly" />
+		<modify_attribute object="BIMLMVMODEL" attribute="OBJECTKEY" classname="psdi.app.bim.viewer.lmv.FldObjectKeyLookup"  searchtype="TEXT"/>
+		<modify_attribute object="BUILDINGMODEL" attribute="URL" classname="psdi.app.bim.viewer.lmv.FldURL"  />
+
+		<add_attributes object="BIMLMVBUCKET">
+			<attrdef attribute="REGION" maxtype="UPPER" title="Region"  domain="BIMLMVBUCKEREGION"
+				remarks="Region hosting storage container" defaultvalue="!US!"
+				length="10" persistent="true" haslongdesc="false" restricted="false" />
+		</add_attributes>
+
+		<add_attributes object="BIMLMVVIEWABLE">
+			<attrdef attribute="BUCKETKEYFULL" maxtype="LOWER" title="Storage Container Name"
+				sameasobject="BIMLMVBUCKET"	sameasattribute="BUCKETKEY"
+				remarks="Name of storage bucket with service ID" length="128" required="false" mustbe="true"/>		
+		</add_attributes>
+
+		<add_attributes object="BUILDINGMODEL">
+			<attrdef attribute="BUCKETKEYFULL" maxtype="LOWER" title="Storage Container Name"
+				sameasobject="BIMLMVBUCKET"	sameasattribute="BUCKETKEY"
+				remarks="Name of storage bucket with service ID" length="128" required="false" mustbe="true"/>		
+		</add_attributes>
+
+		<add_attributes object="BIMLMVMODELLINK">
+			<attrdef attribute="BUCKETKEYFULL" maxtype="LOWER" title="Storage Container Name"
+				sameasobject="BIMLMVBUCKET"	sameasattribute="BUCKETKEY"
+				remarks="Name of storage bucket with service ID" length="128" required="false" mustbe="true"/>		
+		</add_attributes>
+
+		<create_relationship parent="BIMLMVVIEWABLE" name="USEDBY"
+			child="BUILDINGMODEL" whereclause="URL=:BASE64URN"
+			remarks="Manage BIM Viewer records that reference the viewable" />
+
+		<create_relationship parent="BIMLMVMODEL" name="VIEWABLE"
+			child="BIMLMVVIEWABLE" whereclause="MODELURN=:MODELURN and :MODELURN is not null"
+			remarks="The viewable derived from this model.  Will be 0 or 1 items returned.  The viewable could exist in the cloud but not be registed in Maximo.  If so, it is not returned" />
+
+		<create_relationship parent="BIMLMVBUCKET" name="MODELS"
+			child="BIMLMVMODEL" whereclause="BUCKETKEYFULL=:BUCKETKEYFULL"
+			remarks="All of the models managed by Maximo in the bucket.  There may be additional model only in the Forge service" />
+
+		<create_relationship parent="BIMLMVBUCKET" name="LINKEDLOCATIONS"
+			child="BUILDINGMODEL" whereclause="BUCKETKEYFULL=:BUCKETKEYFULL"
+			remarks="All of the locations linked to Viewables in the bucket." />
+
+		<create_relationship parent="BIMLMVBUCKET" name="VIEWABLES"
+			child="BIMLMVVIEWABLE" whereclause="BUCKETKEYFULL=:BUCKETKEYFULL and :BUCKETKEYFULL is not null"
+			remarks="All of the viewables managed by Maximo in the bucket.  There may be additional viewables only in the Forge service" />
+
+		<create_relationship parent="BIMLMVBUCKET" name="LOOKUP"
+			child="BIMLMVBUCKETLOOKUP" whereclause=""
+			remarks="All the storage containers in the Forge service for the client ID" />
+
+		<create_relationship parent="BIMLMVMODEL" name="LOOKUP"
+			child="BIMLMVMODELLOOKUP" whereclause=""
+			remarks="All the models in the Forge service for the owning Bucket" />
+
+		<create_relationship parent="BIMLMVMODEL" name="LINKLOOKUP"
+			child="BIMLMVMODEL" whereclause="bucketkeyfull=:bucketkeyfull and OBJECTKEY&lt;&gt;:OBJECTKEY and OBJECTKEY not in (select CHILDKEY from BIMLMVMODELLINK where PARENTMODELID = :BIMLMVMODELID )"
+			remarks="All the models in the same storage container as the parent model and not already linked to it." />
+
+		<create_relationship parent="BIMLMVVIEWABLE" name="LINKEDLOCATIONS"
+			child="BUILDINGMODEL" whereclause="BUCKETKEYFULL=:BUCKETKEYFULL"
+			remarks="All of the locations linked to the Viewable" />
+
+		<!--
+		- Bucket - Approve delete
+		-->
+		<define_table persistent="false" 
+			classname="psdi.app.bim.viewer.lmv.virtual.BucketDeleteApproveSet" object="BIMLMVDELETEAPPROVE"
+			service="BIMLMV" type="system" 
+			description="Non-persistent set to confirm delete of buckets">
+	      <attrdef attribute="MODELSDELETE" maxtype="YORN"  title="Delete all models in storage container" 
+	      		remarks="Delete all the models in the storage container including any in the Forge service but not registered in Maximo" 
+		  		length="1" required="true" mustbe="true"  defaultvalue="0"/>
+	      <attrdef attribute="VIEWABLESDELETE" maxtype="YORN"  title="Delete all viewables in storage container" 
+	      		remarks="Delete all the viewables in the storage container including any in the Forge but not registered in Maximo" 
+		  		length="1" required="true" mustbe="true"  defaultvalue="0"/>
+	      <attrdef attribute="LINKEDLOC" maxtype="YORN"  title="Delete all links to Locations" 
+	      		remarks="Delete all links to Locations (Manage BIM Vier records)" 
+		  		length="1" required="true" mustbe="true"  defaultvalue="0"/>
+	    </define_table>
+
+		<!--
+		- Bucket - Lookup from Forge service
+		-->
+		<define_table persistent="false"
+			classname="psdi.app.bim.viewer.lmv.BucketLookupSet" object="BIMLMVBUCKETLOOKUP" 
+			service="BIMLMV" type="system" 
+			description="Proxy for listing of buckets returned from the Forge service" >
+			<attrdef attribute="BUCKETKEY" maxtype="LOWER" title="Storage Container Name"
+				sameasobject="BIMLMVBUCKET"	sameasattribute="BUCKETKEY" required="true" mustbe="true"  
+				remarks="Name of storage bucket"/>		
+			<attrdef attribute="BUCKETKEYFULL" maxtype="LOWER" title="Storage Container Name"
+				sameasobject="BIMLMVBUCKET"	sameasattribute="BUCKETKEY"
+				remarks="Name of storage bucket with service ID" length="128" required="true" mustbe="true"/>		
+			<attrdef attribute="CREATEDATE" maxtype="DATETIME" title="Created On"
+				remarks="Created On" length="10" restricted="false" haslongdesc="false" />
+	        <attrdef attribute="POLICYKEY" domain="BIMLMVBUCKETPOLICY" maxtype="LOWER" title="Retention policy" 
+				sameasobject="BIMLMVBUCKET"	sameasattribute="POLICYKEY"  mustbe="true"  
+		   		remarks="Are model automatically deleted?, If so, how quickly" length="16" haslongdesc="false" 
+		   		required="false" restricted="false" />
+	      	<attrdef attribute="ISAPPENDKEY" maxtype="YORN" title="Append Service Key" 
+		  		remarks="Automatically append the cudtomer key to the storage container name to make it unique" 
+				length="1" restricted="false" required="true" haslongdesc="false"  defaultvalue="1" />
+		</define_table>
+
+		<define_table persistent="false"
+			classname="psdi.app.bim.viewer.lmv.ModelLookupSet" object="BIMLMVMODELLOOKUP" 
+			service="BIMLMV" type="system" 
+			description="Proxy for listing of models returned from the Forge service" >
+			<attrdef attribute="BUCKETKEY" maxtype="ALN" title="Storage Container Name"
+				sameasobject="BIMLMVBUCKET"	sameasattribute="BUCKETKEY" required="true" mustbe="true"  
+				remarks="Name storage bucket" />		
+			<attrdef attribute="BUCKETKEYFULL" maxtype="LOWER" title="Storage Container Name"
+				sameasobject="BIMLMVBUCKET"	sameasattribute="BUCKETKEY"
+				remarks="Name of storage bucket with service ID" length="128" required="true" mustbe="true"/>		
+			<attrdef attribute="OBJECTKEY" maxtype="LOWER" title="Model Name"
+				sameasobject="BIMLMVMODEL"	sameasattribute="OBJECTKEY" required="true" mustbe="true"  
+				remarks="Name of model.  When the model is uploaded this is the base file name"  />		
+			<attrdef attribute="URL" maxtype="ALN" title="URL"
+				sameasobject="BIMLMVMODEL"	sameasattribute="URL" required="false" mustbe="true"  
+				remarks="URL for the object in the Autodesk cloud" />
+			<attrdef attribute="SIZE" maxtype="INTEGER" title="Object size"
+				sameasobject="BIMLMVMODEL"	sameasattribute="SIZE" required="false" mustbe="true"  
+				remarks="Size of objeext in bytes" />
+			<attrdef attribute="SHA1" maxtype="ALN" title="Sha-1"
+				sameasobject="BIMLMVMODEL"	sameasattribute="SHA1" required="false" mustbe="true"  
+				remarks="Sha-1 checksum of object" />
+			<attrdef attribute="CONTENTTYPE" maxtype="ALN" title="Content-type"
+				sameasobject="BIMLMVMODEL"	sameasattribute="CONTENTTYPE" required="false" mustbe="true"  
+				remarks="MIME type of object" />
+			<attrdef attribute="MODELURN" maxtype="ALN" title="Model URN"
+				sameasobject="BIMLMVMODEL"	sameasattribute="MODELURN" required="true" mustbe="true"  
+				remarks="Model URN"   />		
+		</define_table>
+		
+	    <add_sigoption visible="true" app="BIMMODELS" optionname="LMV_DEL_STORAGE" description="Delete Forge service storage containers" 
+	            grantapp="BIMMODELS" grantoption="READ" esigenabled="false" langcode="EN" />
+		
+		<!--
+		- Add Markup into Work Views
+		-->
+		<add_attributes object="BIMLMVWORKVIEW">
+	        <attrdef attribute="Markup"  maxtype="CLOB" title="Markup" 
+	      		remarks="Base 64 encode SVN String of MArkups" length="999999" haslongdesc="false" 
+		  		required="false" restricted="false" searchtype="NONE"/>
+	      	<attrdef attribute="HASMARKUP" maxtype="YORN" title="Has Markup" 
+		  		remarks="True if there is a value for the Markup field" 
+				length="1" restricted="false" required="true" haslongdesc="false"  defaultvalue="0"/>
+		</add_attributes>
+		
+	   	<add_sigoption visible="true" app="WOTRACK" optionname="BIM_SMU" description="Display markup in Forge viewer" 
+   			grantapp="WOTRACK" grantoption="READ" esigenabled="false" langcode="EN" />
+	   	<add_sigoption visible="true" app="WOTRACK" optionname="BIM_EMU" description="Creat/Edit markup in Forge viewer" 
+   			grantapp="WOTRACK" grantoption="READ" esigenabled="false" langcode="EN" />
+		
+		<!--
+		- Add menu option to clear the authorization token cache.
+		-->
+	   <add_sigoption visible="true" app="BIMMODELS" optionname="LMV_CCACHE" description="Clear Authorization Token Cache" grantapp="BIMMODELS" 
+					  esigenabled="false" langcode="EN" />
+	
+		<additional_app_menu app="BIMMODELS" type="action">
+			<app_menu_option tabdisplay="ALL" option="LMV_CCACHE" />
+		</additional_app_menu>
+		
+		<!-- Option starts hidden	-->
+		<freeform description="remove rights from MAXEVERYONE group">
+			<sql target="all">
+				delete from applicationauth where optionname='LMV_CCACHE'  and app='BIMMODELS';
+			</sql>
+		</freeform>
+		
+
+		<!--
+		- Set to current viewer version
+		-->
+		<set_property name='bim.viewer.LMV.viewer.version' value='?v=v2.10'/>
+	</statements>
+</script>

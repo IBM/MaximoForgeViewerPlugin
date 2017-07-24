@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+-->
+<html >
+<head>
+  <script type="text/javascript" >
+	function setup()
+	{
+
+		var fe = window.frameElement;
+		var table = document.getElementById( "resizeTable" );
+		if( table != undefined )
+		{
+			var value = parent.getValue( "resize_title" );
+			table.rows[0].cells[0].innerHTML = value;
+
+			var value = parent.getValue( "resize_default" );
+			table.rows[1].cells[1].innerHTML = value;
+
+			var height   = table.scrollHeight
+			var width    = table.scrollWidth
+			fe.width  = width + 4;
+			fe.height = height + 4;
+		}
+		fe.onmouseout = closeResize;
+	}
+
+	
+  </script>
+</head>
+<body onLoad="setup()">
+  <script type="text/javascript" >
+	function setResolution( opt )
+	{
+		var ctrl = document.getElementById( "" + opt );
+		if( ctrl != undefined )
+		{
+			ctrl.checked = true;
+		}
+	}
+
+	function closeResize()
+	{
+		window.frameElement.style.visibility = "hidden";
+	}
+
+  
+	function resizeEvent( id ) 
+	{
+		parent.resize( id );
+	}
+  </script>
+    
+  <table id=resizeTable border="0">
+   	<tr bgcolor="#E0E0FF" style="color:#000000" border="0">
+   	  <td colspan="2" >
+   	  </td>
+    </tr>
+    <tr border="0">
+   	  <td>
+      	<input id="0" type="radio" name="ctrlSize" onClick="resizeEvent( '0' )"></input>
+      </td>
+      <td></td>
+    </tr>
+    <tr border="0">
+   	  <td>
+      	<input id="1" type="radio" name="ctrlSize" onClick="resizeEvent( '1' )"></input>
+      </td>
+      <td>"720x1200"</td>
+    </tr>
+    <tr border="0">
+   	  <td>
+      	<input id="2" type="radio"  name="ctrlSize" onClick="resizeEvent( '2' )"></input>
+      </td>
+      <td>"768x1024"</td>
+    </tr>
+    <tr border="0">
+   	  <td>
+      	<input id="7" type="radio"  name="ctrlSize" onClick="resizeEvent( '7' )"></input>
+      </td>
+      <td>"800x1200"</td>
+    </tr>
+    <tr border="0">
+   	  <td>
+      	<input id="3" type="radio"  name="ctrlSize" onClick="resizeEvent( '3' )"></input>
+      </td>
+      <td>"1024x1280"</td>
+    </tr>
+    <tr border="0">
+   	  <td>
+      	<input id="4" type="radio"  name="ctrlSize" onClick="resizeEvent( '4' )"></input>
+      </td>
+      <td>"1080x1920"</td>
+    </tr>
+    <tr border="0">
+   	  <td>
+      	<input id="5" type="radio"  name="ctrlSize" onClick="resizeEvent( '5' )"></input>
+      </td>
+      <td>"1200x1600"</td>
+    </tr>
+    <tr border="0">
+   	  <td>
+      	<input id="6" type="radio"  name="ctrlSize" onClick="resizeEvent( '6' )"></input>
+      </td>
+      <td>"1200x1920"</td>
+    </tr>
+  </table>
+
+</body>
+</html>

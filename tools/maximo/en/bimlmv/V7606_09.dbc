@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+-->
+<!DOCTYPE script SYSTEM "script.dtd">
+<script author="Doug Wood" scriptname="Maximo for Buildings 7.5">
+	<description>Maximo for Buildings 7.6 Autodesk Forge Viewer support</description>
+	<statements>
+
+		<add_service servicename="BIMLMV" description="Autodesk Forge Viewer Administration" classname="psdi.app.bim.viewer.lmv.LMVService" />
+
+		<add_synonyms domainid="BIMVIEWERTYPE">
+          	<synonymvalueinfo value="Autodesk Forge" maxvalue="lmv" defaults="true" description="Autodesk Forge Viewer" />
+		</add_synonyms> 
+
+        <specify_synonym_domain maxtype="LOWER" length="20" domainid="BIMLMVBUCKETPOLICY" 
+		           description="How long are objects stored in the bucket are retained?" overwrite="false">
+          <synonymvalueinfo value="24 hours" maxvalue="transient" defaults="true" description="objects retained for 24 hours" />
+          <synonymvalueinfo value="30 days" maxvalue="temporary" defaults="true" description="objects retained for 30 days" />
+          <synonymvalueinfo value="until removed" maxvalue="persistent" defaults="true" description="objects retained until removed" />
+        </specify_synonym_domain>
+
+        <specify_synonym_domain maxtype="LOWER" length="20" domainid="BIMLMVBUCKETACCESS" 
+		           description="Access rights to storage" overwrite="false">
+          	<synonymvalueinfo value="full" maxvalue="full" defaults="true" description="Full access" />
+          	<synonymvalueinfo value="read" maxvalue="read" defaults="true" description="Read-only access" />
+        </specify_synonym_domain>
+
+		<define_table persistent="true"
+			classname="psdi.app.bim.viewer.lmv.BucketSet" object="BIMLMVBUCKET" 
+			service="BIMLMV" type="systemorgsite" primarykey="BUCKETKEY, ORGID, SITEID"
+			description="Unstructured storage location in the Autodesk cloud for model files and translated viewable models" >
+			<attrdef attribute="BUCKETKEY" maxtype="LOWER" title="Storage Container Name"
+				remarks="Name of storage bucket" length="64" required="true" mustbe="true"/>		
+			<attrdef attribute="BUCKETKEYFULL" maxtype="LOWER" title="Storage Container Name"
+				sameasobject="BIMLMVBUCKET"	sameasattribute="BUCKETKEY"
+				remarks="Name of storage bucket with service ID" length="128" required="false" mustbe="true"/>		
+			<attrdef attribute="ORGID" maxtype="UPPER" title="Organization"
+				remarks="Organization Identifier" length="8" 
+				classname="psdi.app.bim.project.FldOrgId" sameasobject="ORGANIZATION" sameasattribute="ORGID" />		
+			<attrdef attribute="SITEID" maxtype="UPPER" title="Site"
+				remarks="Site Identifier" length="8" required="false" sameasobject="SITE"
+				sameasattribute="SITEID" classname="psdi.app.bim.FldBIMSiteID"/>
+			<attrdef attribute="CHANGEBY" maxtype="UPPER" title="Changed By"
+				remarks="Chanaged By" sameasobject="PERSON" sameasattribute="PERSONID" 
+				restricted="false" haslongdesc="false" required="true" />
+			<attrdef attribute="CHANGEDATE" maxtype="DATETIME" title="Chanaged On"
+				remarks="Chanaged On" length="10" restricted="false" haslongdesc="false" />
+			<attrdef attribute="DESCRIPTION" maxtype="ALN" title="Description"
+				remarks="Describes the bucket.  To enter or view additional information, click the Long Description button"
+				length="100" persistent="true" haslongdesc="true" restricted="false" />
+	      	<attrdef attribute="ISBOUND" maxtype="YORN" title="Bound" 
+		  		remarks="This object is a Maximo proxy for an Autodek Forge service object, This field s true if the instance is bound to an Autodesk object" 
+				length="1" restricted="false" required="true" haslongdesc="false"  defaultvalue="0"/>
+	      	<attrdef attribute="ISAPPENDKEY" maxtype="YORN" title="Append Service Key" 
+		  		remarks="Automatically append the cudtomer key to the storage container name to make it unique" 
+				length="1" restricted="false" required="true" haslongdesc="false"  defaultvalue="1"
+				persistent="false" />
+
+	      	<attrdef attribute="ONLINE" maxtype="YORN" title="Online" 
+		  		remarks="True if the data in the AUtodesk cloud is accessible" 
+				length="1" persistent="false"  restricted="false" required="true" haslongdesc="false"  defaultvalue="0"/>
+	      	<attrdef attribute="LASTERROR"  maxtype="ALN" title="Last error" 
+		  		remarks="The last error from the Autodesk cloud or blan if the last operation was successful" 
+				length="1024" haslongdesc="true" 
+		  		required="false" persistent="false" restricted="false" />
+
+	      	<attrdef attribute="CREATEDATE"  maxtype="DATETIME" title="Created on" 
+		  		remarks="Timestamp when the bucket was created" length="10" haslongdesc="false" 
+		  		required="false" persistent="false" restricted="false" />
+			<attrdef attribute="OWNER" maxtype="LOWER" title="Onwer Key"
+				remarks="Autodesk supplied Key of the bucket owner"
+				length="128" persistent="false" haslongdesc="false" restricted="false" />
+	        <attrdef attribute="POLICYKEY" domain="BIMLMVBUCKETPOLICY" maxtype="LOWER" title="Retention policy" 
+		   		remarks="COBie Sheet" length="16" haslongdesc="false" required="false" restricted="false" defaultvalue="!persistent!"/>
+		</define_table>
+		
+		<modify_attribute object="BIMLMVBUCKET" attribute="DESCRIPTION_LONGDESCRIPTION" title="Details" />
+		<modify_attribute object="BIMLMVBUCKET" attribute="LASTERROR_LONGDESCRIPTION" title="Error Details" />
+
+		<define_table persistent="false"
+			classname="psdi.app.bim.viewer.lmv.BucketAccessSet" object="BIMLMVBUCKETACCESS" 
+			service="BIMLMV" type="system" 
+			description="Proxy object for model files stored in the Autodesk viewer cloud" >
+			<attrdef attribute="BUCKETKEY" maxtype="LOWER" title="Storage Container Name"
+				sameasobject="BIMLMVBUCKET"	sameasattribute="BUCKETKEY" required="true" mustbe="true"  
+				remarks="Name of storage bucket"/>		
+			<attrdef attribute="BUCKETKEYFULL" maxtype="LOWER" title="Storage Container Name"
+				sameasobject="BIMLMVBUCKET"	sameasattribute="BUCKETKEY"
+				remarks="Name of storage bucket with service ID" length="128" required="true" mustbe="true"/>		
+			<attrdef attribute="SERVICEID" maxtype="ALN" title="Service ID"
+				length="250" required="true" mustbe="true" 		
+				remarks="Autodesk supplied Key used by Maximo to access Autodesk servicesr"  />
+			<attrdef attribute="ACCESS" maxtype="LOWER" title="Access"  domain="BIMLMVBUCKETACCESS"
+				remarks="Access rights: read or full"
+				length="10" persistent="false" haslongdesc="false" restricted="false" />
+		</define_table>
+
+		<create_relationship parent="BIMLMVBUCKET" name="ACCESS"
+			child="BIMLMVBUCKETACCESS" whereclause="BUCKETKEYFULL = :BUCKETKEYFULL"
+			remarks="Access rights for storage" />
+
+		<define_table persistent="true"
+			classname="psdi.app.bim.viewer.lmv.ModelSet" object="BIMLMVMODEL" 
+			service="BIMLMV" type="systemorgsite" primarykey="OBJECTKEY, BUCKETKEYFULL, ORGID, SITEID"
+			description="Proxy object for model files stored in the Autodesk viewer cloud" >
+	        <attrdef attribute="BIMLMVMODELID" maxtype="INTEGER" canautonum="true" title="Model ID" remarks="Model ID" 
+	                 length="19" required="true" mustbe="true" />
+			<attrdef attribute="BUCKETKEY" maxtype="ALN" title="Storage Container Name"
+				sameasobject="BIMLMVBUCKET"	sameasattribute="BUCKETKEY" required="true" mustbe="true"  
+				remarks="Name storage bucket"   
+				classname="psdi.app.bim.viewer.lmv.FldBucketKey"/>		
+			<attrdef attribute="BUCKETKEYFULL" maxtype="LOWER" title="Storage Container Name"
+				sameasobject="BIMLMVBUCKET"	sameasattribute="BUCKETKEY"
+				remarks="Name of storage bucket with service ID" length="128" required="true" mustbe="true"/>		
+			<attrdef attribute="OBJECTKEY" maxtype="LOWER" title="Model Name"
+				remarks="Name of model.  When the model is uploaded this is the base file name" 
+				length="250" required="true" mustbe="true"  />		
+			<attrdef attribute="ORGID" maxtype="UPPER" title="Organization"
+				remarks="Organization Identifier" length="8" 
+				classname="psdi.app.bim.viewer.lmv.FldModelOrgId" sameasobject="ORGANIZATION" sameasattribute="ORGID" />		
+			<attrdef attribute="SITEID" maxtype="UPPER" title="Site"
+				remarks="Site Identifier" length="8" required="false" sameasobject="SITE"
+				sameasattribute="SITEID" classname="psdi.app.bim.viewer.lmv.FldModelSiteId"/>
+			<attrdef attribute="CHANGEBY" maxtype="UPPER" title="Changed By"
+				remarks="Chanaged By" sameasobject="PERSON" sameasattribute="PERSONID" 
+				restricted="false" haslongdesc="false" required="true" />
+			<attrdef attribute="CHANGEDATE" maxtype="DATETIME" title="Chanaged On"
+				remarks="Chanaged On" length="10" restricted="false" haslongdesc="false" />
+			<attrdef attribute="DESCRIPTION" maxtype="ALN" title="Description"
+				remarks="Describes the bucket.  To enter or view additional information, click the Long Description button"
+				length="100" persistent="true" haslongdesc="true" restricted="false" />
+	      	<attrdef attribute="ISBOUND" maxtype="YORN" title="Bound" 
+		  		remarks="This object is a Maximo proxy for an Autodek Forge object, This field s true if the instance is bound to an Autodesk object" 
+				length="1" restricted="false" required="true" haslongdesc="false"  defaultvalue="0"/>
+				
+	      	<attrdef attribute="AUTOLINK" maxtype="YORN" title="Also Link Viewable" 
+		  		remarks="Also try and link a viewable of the same name" 
+				length="1" persistent="false"  restricted="false" required="true" haslongdesc="false"  defaultvalue="0"/>
+	      	<attrdef attribute="AUTOREG" maxtype="YORN" title="Also Register Viewable" 
+		  		remarks="Automatically register the viewable when the upload is complete" 
+				length="1" persistent="false"  restricted="false" required="true" haslongdesc="false"  defaultvalue="0"/>
+
+	      	<attrdef attribute="ONLINE" maxtype="YORN" title="Online" 
+		  		remarks="True if the data in the Autodesk cloud is accessible" 
+				length="1" persistent="false"  restricted="false" required="true" haslongdesc="false"  defaultvalue="0"/>
+	      	<attrdef attribute="LASTERROR"  maxtype="ALN" title="Last error" 
+		  		remarks="The last error from the Autodesk cloud or blan if the last operation was successful" 
+				length="1024" haslongdesc="true" 
+		  		required="false" persistent="false" restricted="false" />
+
+			<attrdef attribute="URL" maxtype="ALN" title="URL"
+				remarks="URL for the object in the Autodesk cloud"
+				length="250" persistent="false" haslongdesc="false" restricted="false" />
+			<attrdef attribute="SIZE" maxtype="INTEGER" title="Object size"
+				remarks="Size of objeext in bytes"
+				length="15" persistent="false" haslongdesc="false" restricted="false" />
+			<attrdef attribute="SHA1" maxtype="ALN" title="Sha-1"
+				remarks="Sha-1 checksum of object"
+				length="250" persistent="false" haslongdesc="false" restricted="false" />
+			<attrdef attribute="CONTENTTYPE" maxtype="ALN" title="Content-type"
+				remarks="MIME type of object"
+				length="40" persistent="false" haslongdesc="false" restricted="false" />
+			<attrdef attribute="MODELURN" maxtype="ALN" title="Model URN"
+				remarks="Model URN" length="250" persistent="false" required="false" mustbe="true"  />		
+	      	<attrdef attribute="FILENAME" maxtype="ALN" title="File Name" remarks="File Name" length="1024" haslongdesc="false" 
+		  		required="false" persistent="false" restricted="false" />
+	      	<attrdef attribute="MESSAGE"  maxtype="CLOB" title="Log" 
+			    remarks="Messages from upload and the Autodesk cloud" length="999999" haslongdesc="false" 
+		  		required="false" persistent="false" restricted="false" searchtype="WILDCARD"/>
+		</define_table>
+
+		<modify_attribute object="BIMLMVMODEL" attribute="DESCRIPTION_LONGDESCRIPTION" title="Details" />
+		<modify_attribute object="BIMLMVMODEL" attribute="LASTERROR_LONGDESCRIPTION" title="Error Details" />
+
+		<create_relationship parent="BIMLMVMODEL" name="BUCKET"
+			child="BIMLMVBUCKET" whereclause="BUCKETKEYFULL = :BUCKETKEYFULL"
+			remarks="Bucket model is stored in" />
+
+		<define_table persistent="true"
+			classname="psdi.app.bim.viewer.lmv.ModelUploadSet" object="BIMLMVMODELUPLOAD" 
+			service="BIMLMV" type="system" 
+			description="Audit record and status of model file uploads">
+			<attrdef attribute="BIMLMVMODELID" maxtype="BIGINT" title="Model Unique ID"
+				remarks="Foreign key to Model" length="19" required="true" />
+			<attrdef attribute="DESCRIPTION" maxtype="ALN" title="Description"
+				remarks="Describes the OmniClass import session.  To enter or view additional information, click the Long Description button"
+				length="100" persistent="true" haslongdesc="true" restricted="false" />
+		  <attrdef attribute="IMPORTEDBY" maxtype="UPPER" title="Imported By"
+				remarks="Imported By" sameasobject="PERSON" sameasattribute="PERSONID" 
+				restricted="false" haslongdesc="false" required="false" />				
+
+	      <attrdef attribute="DELETEFILES" maxtype="YORN" title="Delete Files after Upload" 
+		  		remarks="Delete staging files from the server after upload to Autodesk cloud?" length="1" restricted="false" 
+		  		haslongdesc="false"  defaultvalue="1"/>
+
+	      <attrdef attribute="FILENAME" maxtype="ALN" title="File Name" remarks="File Name" length="260" haslongdesc="false" 
+		  		required="true" restricted="false" />
+	      <attrdef attribute="STATUS" domain="BIMIMPORTSTATUS" classname="psdi.app.bim.project.FldSessionStatus" maxtype="ALN" title="Status" remarks="Status" length="25" haslongdesc="false" 
+		  		required="false" restricted="false" />
+	      <attrdef attribute="UPLOADTIME"  maxtype="DATETIME" title="Upload Time" remarks="Timestamp of completed file upload" length="10" haslongdesc="false" 
+		  		required="false" restricted="false" />
+	       <attrdef attribute="PERCENTCOMP" maxtype="INTEGER" canautonum="false" title="Percentage of Upload Complete" remarks="Percentage Complete" length="5" 
+		  		required="false" mustbe="false" defaultvalue="0"/>
+	       <attrdef attribute="ERRORCOUNT" maxtype="INTEGER" canautonum="false" title="Number of Errors" remarks="Number of Errors" length="5" 
+		  		required="false" mustbe="false" defaultvalue="0"/>
+	       <attrdef attribute="LOG"  maxtype="CLOB" title="Log" remarks="Log of upload and import activity" length="999999" haslongdesc="false" 
+		  		required="false" restricted="false" searchtype="WILDCARD"/>
+		</define_table>
+
+		<modify_attribute object="BIMLMVMODELUPLOAD" attribute="DESCRIPTION_LONGDESCRIPTION" title="Details" />
+
+		<create_relationship parent="BIMLMVMODEL" name="UPLOADSTATUS"
+			child="BIMLMVMODELUPLOAD" whereclause="BIMLMVMODELID = :BIMLMVMODELID"
+			remarks="Upload record" />
+
+		<create_relationship parent="BIMLMVMODELUPLOAD" name="UPLOADMODEL"
+			child="BIMLMVMODEL" whereclause="BIMLMVMODELID = :BIMLMVMODELID"
+			remarks="Owning mode for upload record" />
+
+		<define_table persistent="true"
+			classname="psdi.app.bim.viewer.lmv.ModelLinkSet" object="BIMLMVMODELLINK" 
+			service="BIMLMV" type="system" primarykey="PARENTMODELID, CHILDMODELID"
+			description="Links related models for viewer translation">
+	        <attrdef attribute="BIMLMVMODELLINKID" maxtype="INTEGER" canautonum="false" title="Link ID" remarks="Link ID" 
+	        	length="19"	required="true" mustbe="true" />
+			<attrdef attribute="PARENTMODELID" maxtype="BIGINT" title="Parent Model Unique ID"
+				remarks="Foreign key to Model" length="19" required="true" canautonum="false" 
+				sameasobject="BIMLMVMODEL" sameasattribute="BIMLMVMODELID" />
+			<attrdef attribute="ORGID" maxtype="UPPER" title="Organization"
+				remarks="Organization Identifier" length="8" required="false"
+				classname="psdi.app.bim.project.FldOrgId" sameasobject="ORGANIZATION" sameasattribute="ORGID" />		
+			<attrdef attribute="SITEID" maxtype="UPPER" title="Site"
+				remarks="Site Identifier" length="8" required="false" sameasobject="SITE"
+				sameasattribute="SITEID" classname="psdi.app.bim.FldBIMSiteID"/>
+			<attrdef attribute="CHILDMODELID" maxtype="BIGINT" title="Child Model ID"
+				remarks="Foreign key to Model" length="19" required="true" canautonum="false" 
+				sameasobject="BIMLMVMODEL" sameasattribute="BIMLMVMODELID" />
+			<attrdef attribute="CHILDKEY" maxtype="LOWER" title="Model Name"
+				sameasobject="BIMLMVMODEL"	sameasattribute="OBJECTKEY" 
+				classname="psdi.app.bim.viewer.lmv.FldModelLinkURN"
+				remarks="Name of model.  When the model is uploaded this is the base file name" 
+				required="true" mustbe="true"  />		
+			<attrdef attribute="CHILDURN" maxtype="ALN" title="Child Model URN"
+				sameasobject="BIMLMVMODEL"	sameasattribute="MODELURN" 
+				remarks="Model URN" length="250" persistent="true" required="true" mustbe="true"  />		
+		</define_table>
+
+		<create_relationship parent="BIMLMVMODEL" name="MODELLINK"
+			child="BIMLMVMODELLINK" whereclause="PARENTMODELID = :BIMLMVMODELID"
+			remarks="Linked model files for viable translation" />
+
+		<define_table persistent="true"
+			classname="psdi.app.bim.viewer.lmv.ViewablelSet" object="BIMLMVVIEWABLE" 
+			service="BIMLMV" type="systemorgsite" primarykey="MODELURN, ORGID, SITEID"
+			description="Proxy object for viewable models stored in the Autodesk viewer cloud" >
+			<attrdef attribute="BIMLMVMODELID" maxtype="BIGINT" title="Model Unique ID"
+				remarks="Foreign key to Model" length="19" required="false" />
+			<attrdef attribute="MODELURN" maxtype="ALN" title="Model URN"
+				sameasobject="BIMLMVMODEL"	sameasattribute="MODELURN" length="250" 
+				remarks="Model URN"  persistent="true" required="false" mustbe="true"  />		
+			<attrdef attribute="OBJECTKEY" maxtype="LOWER" title="Model Name"
+				sameasobject="BIMLMVMODEL"	sameasattribute="OBJECTKEY"
+				classname="psdi.app.bim.viewer.lmv.FldObjectKeyView"
+				remarks="Name of model.  When the model is uploaded this is the base file name" 
+				required="true" mustbe="true"  />		
+			<attrdef attribute="ORGID" maxtype="UPPER" title="Organization"
+				remarks="Organization Identifier" length="8" 
+				classname="psdi.app.bim.viewer.lmv.FldViewOrgId" sameasobject="ORGANIZATION" sameasattribute="ORGID" />		
+			<attrdef attribute="SITEID" maxtype="UPPER" title="Site"
+				remarks="Site Identifier" length="8" required="false" sameasobject="SITE"
+				sameasattribute="SITEID" classname="psdi.app.bim.viewer.lmv.FldViewSiteId"/>
+	      	<attrdef attribute="ISBOUND" maxtype="YORN" title="Bound" 
+		  		remarks="This object is a Maximo proxy for an Autodek Forge object, This field s true if the instance is bound to an Autodesk object" 
+				length="1" restricted="false" required="true" haslongdesc="false"  defaultvalue="0"/>
+			<attrdef attribute="CHANGEBY" maxtype="UPPER" title="Changed By"
+				remarks="Chanaged By" sameasobject="PERSON" sameasattribute="PERSONID" 
+				restricted="false" haslongdesc="false" required="true" />
+			<attrdef attribute="CHANGEDATE" maxtype="DATETIME" title="Chanaged On"
+				remarks="Chanaged On" length="10" restricted="false" haslongdesc="false" />
+			<attrdef attribute="DESCRIPTION" maxtype="ALN" title="Description"
+				remarks="Describes the bucket.  To enter or view additional information, click the Long Description button"
+				length="100" persistent="true" haslongdesc="true" restricted="false" />
+				
+	      	<attrdef attribute="ONLINE" maxtype="YORN" title="Online" 
+		  		remarks="True if the data in the AUtodesk cloud is accessible" 
+				length="1" persistent="false"  restricted="false" required="true" haslongdesc="false"  defaultvalue="0"/>
+	      	<attrdef attribute="LASTERROR"  maxtype="ALN" title="Last error" 
+		  		remarks="The last error from the Autodesk cloud or blan if the last operation was successful" 
+				length="1024" haslongdesc="true" 
+		  		required="false" persistent="false" restricted="false" />
+
+			<attrdef attribute="BASE64URN" maxtype="ALN" title="Base 64 encoded URN"
+				sameasobject="BIMLMVMODEL"	sameasattribute="MODELURN" length="250" 
+				remarks="Model URN Base 64 encoded"  persistent="false" required="false" mustbe="true"  />	
+			<attrdef attribute="GUID" maxtype="ALN" title="GUID"
+				remarks="Viewable GUID"
+				length="2048" persistent="false" haslongdesc="false" restricted="false" />
+	      	<attrdef attribute="HASTHUMBNAIL" maxtype="YORN" title="Has Thumbnail" 
+		  		remarks="The viewable has a thumbnail" 
+				length="1" persistent="false" restricted="false" required="true" haslongdesc="false"  defaultvalue="0"/>
+	      	<attrdef attribute="STARTEDAT"  maxtype="ALN" title="Started At" 
+		  		remarks="Timestamp when translation was started" length="50" haslongdesc="false" 
+		  		required="false" persistent="false" restricted="false" />
+			<attrdef attribute="PROGRESS" maxtype="ALN" title="Progress"
+				remarks="Progress of translation"
+				length="25" persistent="false" haslongdesc="false" restricted="false" />
+			<attrdef attribute="STATUS" maxtype="ALN" title="Status"
+				remarks="Status of translation"
+				length="25" persistent="false" haslongdesc="false" restricted="false" />
+			<attrdef attribute="SUCCESS" maxtype="ALN" title="Percentage of Translation Successful"
+				remarks="Status of translation"
+				length="25" persistent="false" haslongdesc="false" restricted="false" />
+	      	<attrdef attribute="DETAILS"  maxtype="CLOB" title="Log" remarks="Log of upload and import activity" length="999999" haslongdesc="false" 
+		  		required="false" persistent="false" restricted="false" searchtype="WILDCARD"/>
+		</define_table>
+
+		<modify_attribute object="BIMLMVVIEWABLE" attribute="DESCRIPTION_LONGDESCRIPTION" title="Details" />
+		<modify_attribute object="BIMLMVVIEWABLE" attribute="LASTERROR_LONGDESCRIPTION" title="Error Details" />
+
+		<create_relationship parent="BIMLMVVIEWABLE" name="SOURCEMODEL"
+			child="BIMLMVMODEL" whereclause="MODELURN = :MODELURN"
+			remarks="Linked model files for viewable translation" />
+
+		<define_table persistent="true"
+			classname="psdi.app.bim.viewer.lmv.SavedViewSet" object="BIMLMVSAVEDVIEW" 
+			service="BIMLMV" type="site" primarykey="BIMLMVSAVEDVIEWID, ORGID, SITEID"
+			description="Saved Forge Viewer state tied to a specific model" >
+	        <attrdef attribute="BIMLMVSAVEDVIEWID" maxtype="INTEGER" canautonum="true" title="View ID" remarks="View ID" length="12" 
+		  		required="true" mustbe="true" />
+	        <attrdef attribute="BUILDINGMODELID" maxtype="INTEGER" title="Model ID" remarks="Model ID"  
+		  		sameasobject="BUILDINGMODEL" sameasattribute="BUILDINGMODELID"
+		  		length="12" required="true" mustbe="true" />
+			<attrdef attribute="ORGID" maxtype="UPPER" title="Organization"
+				remarks="Organization Identifier" length="8" 
+				classname="psdi.app.bim.project.FldOrgId" sameasobject="ORGANIZATION" sameasattribute="ORGID" />		
+			<attrdef attribute="SITEID" maxtype="UPPER" title="Site"
+				remarks="Site Identifier" length="8" required="false" sameasobject="SITE"
+				sameasattribute="SITEID" classname="psdi.app.bim.FldBIMSiteID"/>
+			<attrdef attribute="OWNER" maxtype="UPPER" title="Created by"
+				remarks="The user who created the saved view." sameasobject="PERSON" sameasattribute="PERSONID" 
+				restricted="false" haslongdesc="false" required="true" />
+			<attrdef attribute="DESCRIPTION" maxtype="ALN" title="Description"
+				remarks="Description of saved view"
+				length="100" persistent="true" haslongdesc="true" restricted="false" />
+	      	<attrdef attribute="SHARED" maxtype="YORN" title="Public" 
+		  		remarks="Indicates that the view is visible to all users who have access to the site." 
+				length="1" restricted="false" required="true" haslongdesc="false"  defaultvalue="0"/>
+	        <attrdef attribute="VIEWERSTATE"  maxtype="CLOB" title="Viewer state" 
+	      		remarks="Base 64 encode JSON of the viewer's state" length="999999" haslongdesc="false" 
+		  		required="false" restricted="false" searchtype="NONE"/>
+		</define_table>
+
+		<create_relationship parent="BUILDINGMODEL" name="SAVEDVIEWS"
+			child="BIMLMVSAVEDVIEW" whereclause="BUILDINGMODELID=:BUILDINGMODELID and siteid=:siteid"
+			remarks="All saved views for a model. (buildingmodel.BUILDINGMODELID = BIMLMVSAVEDVIEW.BUILDINGMODELID and siteid = siteid).  this resulting set will contain zero or more objects" />
+
+		<modify_attribute object="BIMLMVSAVEDVIEW" attribute="DESCRIPTION_LONGDESCRIPTION" title="Details" />
+
+		<modify_attribute object="BUILDINGMODEL" attribute="ATTRIBUTENAME" defaultvalue="Guid" />
+
+		<add_attributes object="BUILDINGMODEL">
+			<attrdef attribute="OBJECTKEY" maxtype="LOWER" title="Model Name"
+				sameasobject="BIMLMVMODEL"	sameasattribute="OBJECTKEY"
+				classname="psdi.app.bim.viewer.lmv.FldBase64URN"
+				remarks="Name of model.  When the model is uploaded this is the base file name" 
+				required="false" mustbe="true"  />		
+		</add_attributes>
+		
+		<create_relationship parent="ASSET" name="BIMMODELLIST"
+			child="BUILDINGMODEL" 
+			whereclause="location IN (select ancestor from locancestor where location 
+								IN ( select loc.location from LOCATIONS loc 
+									JOIN ASSET asset ON loc.location = asset.location AND loc.siteid = asset.siteid  
+										where assetuid = :assetuid ) 
+								AND systemid in (select systemid from locsystem where primarysystem = 1)) 
+						AND siteid IN ( select siteid from asset where assetuid = :assetuid )
+						AND viewertype IN ( select value from synonymdomain where domainid = 'BIMVIEWERTYPE' and maxvalue = 'lmv' )"
+			remarks="Return all building models associated with any ancestor location  in the primary system of the asset" />
+
+		<define_table persistent="true"
+			classname="psdi.app.bim.viewer.lmv.WorkViewSet" object="BIMLMVWORKVIEW" 
+			service="BIMLMV" type="site" primarykey="BIMLMVWORKVIEWID, ORGID, SITEID"
+			description="Saved Forge Viewer state tied to a specific work order" >
+	        <attrdef attribute="BIMLMVWORKVIEWID" maxtype="INTEGER" canautonum="true" title="View ID" remarks="View ID" length="12" 
+		  		required="true" mustbe="true" />
+	        <attrdef attribute="BUILDINGMODELID" maxtype="INTEGER" title="Model ID" remarks="Model ID"  
+		  		sameasobject="BUILDINGMODEL" sameasattribute="BUILDINGMODELID"
+		  		length="12" required="true" mustbe="true" />
+	        <attrdef attribute="WONUM" maxtype="UPPER" title="Work Order" remarks="Identifies the work order."  
+		  		sameasobject="WORKORDER" sameasattribute="WONUM"
+		  		length="10" required="true" mustbe="true" />
+			<attrdef attribute="ORGID" maxtype="UPPER" title="Organization"
+				remarks="Organization Identifier" length="8" 
+				classname="psdi.app.bim.project.FldOrgId" sameasobject="ORGANIZATION" sameasattribute="ORGID" />		
+			<attrdef attribute="SITEID" maxtype="UPPER" title="Site"
+				remarks="Site Identifier" length="8" required="false" sameasobject="SITE"
+				sameasattribute="SITEID" classname="psdi.app.bim.FldBIMSiteID"/>
+			<attrdef attribute="OWNER" maxtype="UPPER" title="Owner"
+				remarks="View owner" sameasobject="PERSON" sameasattribute="PERSONID" 
+				restricted="false" haslongdesc="false" required="true" />
+			<attrdef attribute="DESCRIPTION" maxtype="ALN" title="Description"
+				remarks="Description of saved view"
+				length="100" persistent="true" haslongdesc="true" restricted="false" />
+	        <attrdef attribute="VIEWERSTATE"  maxtype="CLOB" title="Viewer state" 
+	      		remarks="Base 64 encode JSON of the viewer's state" length="999999" haslongdesc="false" 
+		  		required="false" restricted="false" searchtype="NONE"/>
+		</define_table>
+
+		<create_relationship parent="WORKORDER" name="WORKVIEWS"
+			child="BIMLMVWORKVIEW" whereclause="WONUM=:WONUM and siteid=:siteid"
+			remarks="All saved views for a work order WORKORDER.WONUM = BIMLMVWORKVIEW.WONUM and siteid = siteid).  this resulting set will contain zero or more objects" />
+
+		<modify_attribute object="BIMLMVWORKVIEW" attribute="DESCRIPTION_LONGDESCRIPTION" title="Details" />
+
+	  <freeform description="Create Object structure for the BIM Viewer to find model">
+		  <sql target="all">
+		  	  delete from maxintobject where intobjectname = 'BIMASSETMODELS';
+		  	  delete from maxintobjdetail where intobjectname = 'BIMASSETMODELS';
+
+	          insert into maxintobject
+	               (intobjectname, description, selfreferencing, userdefined, changeby,	CHANGEDATE,	LANGCODE, HASLD, queryonly,	configurable, flatsupported, usewith, aliasconflict, maxintobjectid)
+	      	  values
+	               ('BIMASSETMODELS', 'Provide models for launch in context of BIM mobile viewer', 0,	0, 'MAXIMO',CURRENT_TIMESTAMP,	'EN', 0, 0,	1,	1,'INTEGRATION', 1,	maxintobjectseq.nextval);
+	          insert into maxintobjdetail
+	               (intobjectname,     objectname, objectorder, processorder,	userdefined, changeby, CHANGEDATE,                objectid, hierarchypath, excludeparentkey, deleteoncreate, propagateevent, maxintobjdetailid)
+	      	  values
+	               ('BIMASSETMODELS', 'ASSET',	   1,			1,				0,			'MAXIMO',  CURRENT_TIMESTAMP, 1,	    'ASSET',	   0,				  0,			 0,				 maxintobjdetailseq.nextval);
+	          insert into maxintobjdetail
+	               (intobjectname,   objectname,      relation,      objectorder,    processorder,	userdefined, changeby, CHANGEDATE,       objectid, parentobjid, hierarchypath,   	  excludeparentkey, deleteoncreate, propagateevent, maxintobjdetailid)
+	      	  values
+	               ('BIMASSETMODELS','BUILDINGMODEL', 'BIMMODELLIST', 1,			 2,			    0,			'MAXIMO',  CURRENT_TIMESTAMP, 2,  	   1,           'ASSET/BUILDINGMODEL', 1,			    1,			    1,		        maxintobjdetailseq.nextval);
+		  </sql>
+	   </freeform>
+	   
+	  <freeform description="Create Object structure - LMV Models">
+		  <sql target="all">
+		  	  delete from maxintobject where intobjectname = 'MXBIMLMVMODEL';
+		  	  delete from maxintobjdetail where intobjectname = 'MXBIMLMVMODEL';
+
+	          insert into maxintobject
+	               (intobjectname, description, selfreferencing, userdefined, changeby,	CHANGEDATE,	LANGCODE, HASLD, queryonly,	configurable, flatsupported, usewith, aliasconflict, maxintobjectid)
+	      	  values
+                   ('MXBIMLMVMODEL', 'Autodesk Forge Viewer Model definition', 0, 0, 'MAXIMO', CURRENT_TIMESTAMP, 'EN',  0, 0,	1,	1,'INTEGRATION', 1,	maxintobjectseq.nextval);	               
+
+	          insert into maxintobjdetail
+	               (intobjectname,   objectname,                         objectorder, processorder,	userdefined, changeby, CHANGEDATE,        objectid,              hierarchypath,                   excludeparentkey, deleteoncreate, propagateevent, maxintobjdetailid)
+	      	  values
+	               ('MXBIMLMVMODEL', 'BIMLMVMODEL',	                     1,			  1,		    0,			 'MAXIMO', CURRENT_TIMESTAMP, 1,	                 'BIMLMVMODEL',	                  0,				  0,			0,				 maxintobjdetailseq.nextval);
+
+	          insert into maxintobjdetail
+	               (intobjectname,   objectname,         relation,       objectorder, processorder,	userdefined, changeby, CHANGEDATE,        objectid, parentobjid, hierarchypath,   	              excludeparentkey, deleteoncreate, propagateevent, maxintobjdetailid)
+	      	  values
+	               ('MXBIMLMVMODEL','BIMLMVMODELUPLOAD', 'UPLOADSTATUS', 1,			  2,			0,		     'MAXIMO', CURRENT_TIMESTAMP, 2,  	    1,           'BIMLMVMODEL/BIMLMVMODELUPLOAD', 1,				 1,			     1,		         maxintobjdetailseq.nextval);
+
+	          insert into maxintobjdetail
+	               (intobjectname,   objectname,         relation,       objectorder, processorder,	userdefined, changeby, CHANGEDATE,        objectid, parentobjid, hierarchypath,   	               excludeparentkey, deleteoncreate, propagateevent, maxintobjdetailid)
+	      	  values
+	               ('MXBIMLMVMODEL','BIMLMVMODELLINK',   'MODELLINK',    2,			  3,			0,			 'MAXIMO', CURRENT_TIMESTAMP, 3,  	    1,           'BIMLMVMODEL/BIMLMVMODELLINK',    1,				 1,			     1,		         maxintobjdetailseq.nextval);
+		  </sql>
+	   </freeform>
+	   
+
+	   <add_sigoption visible="true" app="BIMMODELS" optionname="LMV_CLOUD" description="Manage Autodesk Cloud" grantapp="BIMMODELS" 
+					  grantoption="READ" esigenabled="false" langcode="EN" />
+	   <add_sigoption visible="true" app="BIMMODELS" optionname="LMV_BUCKET" description="Manage Model Storage" grantapp="BIMMODELS" 
+					  grantoption="READ" esigenabled="false" langcode="EN" />
+	   <add_sigoption visible="true" app="BIMMODELS" optionname="LMV_MODEL" description="Manage Model Files" grantapp="BIMMODELS" 
+					  grantoption="READ" esigenabled="false" langcode="EN" />
+	   <add_sigoption visible="true" app="BIMMODELS" optionname="LMV_VIEW" description="Manage Viewable Models" grantapp="BIMMODELS" 
+					  grantoption="READ" esigenabled="false" langcode="EN" />
+	   <add_sigoption visible="true" app="BIMMODELS" optionname="LMV_SAVE" description="Manage Saved Views" grantapp="BIMMODELS" 
+					  grantoption="READ" esigenabled="false" langcode="EN" />
+	
+		<additional_app_menu app="BIMMODELS" type="action">
+			<app_menu_option tabdisplay="MAIN" option="LMV_SAVE" />
+			<app_menu_header headerdescription="Manage Autodesk Forge Service">
+				<app_menu_option tabdisplay="ALL" option="LMV_BUCKET" />
+				<app_menu_option tabdisplay="ALL" option="LMV_MODEL" />
+				<app_menu_option tabdisplay="ALL" option="LMV_VIEW" />
+			</app_menu_header>
+		</additional_app_menu>
+
+		<add_synonyms domainid="BIMIMPORTSTATUS">
+        	<synonymvalueinfo value="LINKED" maxvalue="LINKED" defaults="true" description="The reord is link to a file that was upload to the Autodesk Cloud outside of Maximo." />
+        	<synonymvalueinfo value="EXPIRED" maxvalue="EXPIRED" defaults="true" description="The storage holding period for the file has expire and it was removed." />
+		</add_synonyms> 
+
+		<!--
+		- Add system properties
+		-->
+		<set_property name='bim.viewer.active' value='lmv'/>
+		<add_property name='bim.viewer.LMV.key' description='Autodesk Forge Service customer key'
+		              maxtype='ALN' secure_level='secure'  />
+		<add_property name='bim.viewer.LMV.secret' description='Autodesk Forge Service customer secret'
+		              maxtype='ALN' secure_level='secure' encrypted='true' masked='true'/>
+		<add_property name='bim.viewer.LMV.host' description='Autodesk Forge Service API host'
+		              maxtype='ALN' secure_level='secure' default_value="developer.api.autodesk.com" />
+		<add_property name='bim.viewer.LMV.api.version' description='Autodesk Forge API version'
+		              maxtype='ALN' secure_level='secure' default_value='v1' />
+		<add_property name='bim.viewer.LMV.api.version.auth' description='Autodesk Forge Auth API version'
+		              maxtype='ALN' secure_level='secure' default_value='v1' />
+		<add_property name='bim.viewer.LMV.viewer.version' description='Autodesk JavaScript viewer code version'
+		              maxtype='ALN' secure_level='secure' default_value='?v=v1.2.23'/>
+		<add_property name='bim.viewer.LMV.model.maxuploadsize' description='Limit in MB on midel upload size'
+		              maxtype='INTEGER' secure_level='secure' default_value='200' />
+		<add_property name='bim.viewer.LMV.theme' description='Default color and light theme for viewer'
+		              maxtype='INTEGER' secure_level='secure' default_value='15' />
+		<add_property name='bim.model.dir' description='Staging directory for model file uploads to Autodesk cloud'
+		              maxtype='ALN' secure_level='secure' default_value="c:/bim/Models" />
+	</statements>
+</script>

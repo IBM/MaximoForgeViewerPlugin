@@ -1,0 +1,1823 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<presentation beanclass="psdi.webclient.beans.bim.BIMProjectBean"
+	id="bimproject" ismobile="false" mboname="BIMPROJECT" resultstableid="results_showlist"
+	version="6.0.0"
+	apphelp="com.ibm.mbs.doc,bimproject/t_ctr_manage_bim.html">
+	<page id="mainrec">
+		<include id="pageHeader" />
+		<clientarea id="clientarea">
+			<tabgroup id="maintabs" style="form">
+				<tab default="true" id="results" label="List" type="list">
+					<menubar event="search" id="actiontoolbar1" sourcemethod="getAppSearchOptions" />
+					<table datasrc="results_showlist" id="results_showlist" inputmode="readonly" label="Building Information Modeling (BIM) Projects" mboname="BIMPROJECT" selectmode="multiple">
+						<tablebody displayrowsperpage="20" filterexpanded="true" id="results_showlist_tablebody">
+							<tablecol dataattribute="BIMPROJECTID" filterable="false"
+								id="results_showlist_column_select" mxevent="toggleselectrow"
+								mxevent_desc="Select Row {0}" sortable="false" type="event" />
+							<tablecol dataattribute="BIMPROJECTID" id="results_showlist_column_link"
+								inputmode="readonly" mxevent="selectrecord" mxevent_desc="Go To %1"
+								type="link" usefieldsizegroup="false" />
+							<tablecol dataattribute="ProjectName" id="results_showlist_column1"  
+							     mxevent="selectrecord" mxevent_desc="Go To %1"	type="link"/>
+							<tablecol dataattribute="DESCRIPTION" id="results_showlist_column3" />
+							<tablecol dataattribute="SITEID" id="results_showlist_column2" inputmode="query" lookup="site" />
+							<tablecol filterable="false" id="results_bookmark"
+								mxevent="BOOKMARK" mxevent_desc="Add to Bookmarks" mxevent_icon="btn_addtobookmarks.gif"
+								sortable="false" type="event" />
+						</tablebody>
+					</table>
+				</tab>
+				<tab id="main" label="Project" type="insert">
+					<section id="maintab_section_1">
+						<sectionrow id="maintab_section_1_1">
+							<sectioncol id="maintab_section_1_1_1">
+								<textbox dataattribute="PROJECTNAME" id="project_name"
+									inputmode="required" />
+								<textbox dataattribute="DESCRIPTION" id="project_desc"
+									lookup="longdesc" />
+								<blankline id="maintab_section_1_1_1_bl1"/>
+								<blankline id="maintab_section_1_1_1_bl2"/>
+							</sectioncol>
+							<sectioncol id="maintab_section_1_1_2">
+								<textbox dataattribute="PARENTLOC" id="project_parent_loc"
+									inputmode="required" lookup="locations" menutype="locations" />
+								<textbox dataattribute="LOCATIONPREFIX" id="project_loc_prefix"
+									inputmode="required" />
+								<blankline id="maintab_section_1_1_2_bl1"/>
+								<blankline id="maintab_section_1_1_2_bl2"/>
+							</sectioncol>
+							<sectioncol id="maintab_section_1_1_3">
+								<textbox dataattribute="ITEMSETID" id="project_itemsetid" inputmode="readonly" />
+								<textbox dataattribute="ORGID" id="project_orgid" inputmode="readonly"/>
+								<textbox dataattribute="SITEID" id="project_siteid" lookup="site"/>
+								<attachments id="maintab_attachments"/>
+							</sectioncol>
+						</sectionrow>
+					</section>
+					<table beanclass="psdi.webclient.beans.bim.BIMSessionBean"
+						id="sessions_table" label="Project Sessions" relationship="BIMSESSION">
+						<tablebody displayrowsperpage="20" filterable="true" id="sessions_tablebody">
+							<tablecol filterable="true" id="sessions_tablebody_1"
+								mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+								type="event" />
+							<tablecol dataattribute="BIMSESSIONID" id="sessions_tablebody_2" inputmode="readonly" />
+							<tablecol dataattribute="FACILITYNAME" id="sessions_tablebody_3" lookup="longdesc" />
+							<tablecol dataattribute="SESSIONTYPE" id="sessions_tablebody_session_type" inputmode="readonly"/>
+							<tablecol dataattribute="UPLOADTIME" id="sessions_tablebody_4" inputmode="readonly" />
+							<tablecol dataattribute="STATUS" id="sessions_tablebody_5" inputmode="readonly"/>
+							<tablecol id="sessions_tablebody_6" mxevent="uploadCOBieCVSFiles"
+								mxevent_icon="bim/bim_file_upload.gif" type="event" extendedtooltip="Display Session dialog" />
+							<tablecol filterable="false" id="sessions_tablebody_7"
+								mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+								mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+						</tablebody>
+						<tabledetails id="sessions_tablebody_details">
+							<section collapsed="false" id="sessions_tablebody_details_1">
+								<sectionrow id="sessions_tablebody_details_1_1">
+									<sectioncol id="sessions_tablebody_details_1_1_1">
+										<section collapsed="false"
+											id="sessions_tablebody_details_1_1_1_1" label="Details">
+											<sectionrow id="sessions_tablebody_details_1_1_1_1_1">
+												<sectioncol id="sessions_tablebody_details_1_1_1_1_1_2">
+													<textbox dataattribute="UPLOADTIME"
+														id="sessions_tablebody_details_upload_time" inputmode="readonly" />
+													<textbox dataattribute="IMPORTEDBY"
+														id="sessions_tablebody_details_importedby" inputmode="readonly" />
+												</sectioncol>
+												<sectioncol id="sessions_tablebody_details_1_1_1_1_3">
+													<textbox dataattribute="DESCRIPTION"
+														id="sessions_tablebody_details_1_1_1_1_3_1" lookup="longdesc" />
+													<textbox dataattribute="SESSIONTYPE"
+														id="sessions_tablebody_details_session_type" inputmode="readonly"/>
+												</sectioncol>
+												<sectioncol id="sessions_tablebody_details_1_1_1_1_1_4">
+													<textbox dataattribute="STATUS"
+														id="sessions_tablebody_details_status" inputmode="readonly" />
+													<textbox dataattribute="ERRORCOUNT"
+														id="sessions_tablebody_details_error_count" inputmode="readonly" />
+												</sectioncol>
+											</sectionrow>
+										</section>
+									</sectioncol>
+								</sectionrow>
+								<sectionrow id="sessions_tablebody_details_1_2">
+									<sectioncol id="sessions_tablebody_details_1_2_1">
+										<section collapsed="false"
+											id="sessions_tablebody_details_1_2_1_1" label="Facility description">
+											<sectionrow id="sessions_tablebody_details_1_2_1_1_1">
+												<sectioncol id="sessions_tablebody_details_1_2_1_1_1_1">
+													<section collapsed="false"
+														id="sessions_tablebody_details_1_2_1_1_1_1_1">
+														<sectionrow id="sessions_tablebody_details_1_2_1_1_1_1_1_1">
+															<sectioncol
+																id="sessions_tablebody_details_1_2_1_1_1_1_1_1_1">
+															</sectioncol>
+														</sectionrow>
+													</section>
+												</sectioncol>
+											</sectionrow>
+
+											<sectionrow id="sessions_tablebody_details_1_2_1_1_2">
+												<sectioncol id="sessions_tablebody_details_1_2_1_1_2_1">
+													<section collapsed="false"
+														id="sessions_tablebody_details_1_2_1_1_2_1_1">
+														<sectionrow id="sessions_tablebody_details_1_2_1_1_2_1_1_1">
+															<sectioncol id="sessions_tablebody_details_1_2_1_1_2_1_1_1_1">
+																<textbox dataattribute="FACILITY" 
+																    id="sessions_tablebody_details_1_3_1_1_2_1_1" inputmode="readonly" applink="location"  menutype="normal" />
+																<textbox dataattribute="LINEARUNITS"
+																	id="sessions_tablebody_details_1_3_1_1_2_1_2" inputmode="readonly" />
+																<textbox dataattribute="AREAUNITS"
+																	id="sessions_tablebody_details_1_3_1_1_2_1_3" inputmode="readonly" />
+															</sectioncol>
+															<sectioncol	id="sessions_tablebody_details_1_2_1_1_2_1_1_1_2">
+																<textbox dataattribute="FACILITYNAME"
+																	id="sessions_tablebody_details_1_3_1_1_2_2_1" inputmode="readonly" />
+																<textbox dataattribute="VOLUMEUNITS"
+																	id="sessions_tablebody_details_1_3_1_1_2_2_2" inputmode="readonly" />
+																<textbox dataattribute="CURRENCYCODE"
+																	id="sessions_tablebody_details_1_3_1_1_2_2_3" inputmode="readonly" />
+															</sectioncol>
+														</sectionrow>
+													</section>
+												</sectioncol>
+											</sectionrow>
+										</section>
+									</sectioncol>
+								</sectionrow>
+							</section>
+						</tabledetails>
+						<buttongroup id="managemodel_table_2">
+							<pushbutton default="true" id="managemodel_table_2_1"
+								label="Select Session" mxevent="session_type_selection" />
+						</buttongroup>
+					</table>
+				</tab>
+				<tab id="mappings" label="Mappings" type="insert"  >
+					<section id="attrib_map_header">
+						<sectionrow id="attrib_map_header_1_1">
+							<sectioncol id="attrib_map_header_1_1_1">
+								<textbox dataattribute="PROJECTNAME" id="attrib_map_header_project_name" inputmode="readonly" />
+							</sectioncol>
+							<sectioncol id="attrib_map_header_1_1_2">
+								<textbox dataattribute="SITEID" id="attrib_map_header_siteid" inputmode="readonly"/>
+							</sectioncol>
+							<sectioncol id="attrib_map_header_1_1_3">
+								<textbox dataattribute="ORGID" id="attrib_map_header_orgid" inputmode="readonly"/>
+							</sectioncol>
+						</sectionrow>
+					</section>
+
+					<table id="attrib_map_list_table" label="Attribute Field Maps" relationship="BIMATTRIBUTEMAPLIST">
+						<tablebody displayrowsperpage="20" filterable="true" id="attrib_map_list_tablebody">
+							<tablecol filterable="false" id="attrib_map_list_tbl_detail"
+								mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+								type="event" />
+							<tablecol dataattribute="MAPNAME" id="attrib_map__tablebody_mapname" lookup="bimattributemap" />
+							<tablecol dataattribute="BIMATTRIBUTEMAPFORLIST.DESCRIPTION" id="attrib_map__tablebody_desc" lookup="longdesc" />
+							<tablecol filterable="false" id="attrib_map_list_tablebody_delete"
+								mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+								mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+						</tablebody>
+						<tabledetails id="attrib_map_list_table_details"  border="false" >
+						<section id="attrib_map_list_table_map"  border="false" relationship="BIMATTRIBUTEMAPFORLIST">
+							<sectionrow id="attrib_map_list_table_main_row">
+								<sectioncol id="attrib_map_list_table_main_left">
+									<section id="attrib_map_list_table_0" border="false">
+									</section>
+									<section id="attrib_map_list_table_1" border="false">
+										<sectionrow id="attrib_map_list_table_1_1">
+											<sectioncol id="cattrib_map_list_table_1_1_2">
+												<textbox dataattribute="SITEID" id="attrib_map_list_table_details_siteid" inputmode="readonly"/>
+												<textbox dataattribute="MAPNAME" id="attrib_map_list_table_details_name" inputmode="readonly" />
+											</sectioncol>
+											<sectioncol id="attrib_map_list_table_1_1_3" >
+												<textbox dataattribute="ORGID" id="attrib_map_list_table_details_orgid" inputmode="readonly"/>
+												<blankline id="attrib_map_list_table_1_1_3_blank_1"/>
+											</sectioncol>
+										</sectionrow>
+									</section>
+									<section id="attrib_map_list_table_4" border="false">
+										<textbox dataattribute="DESCRIPTION" id="attrib_map_list_table_details_desc" lookup="longdesc" inputmode="readonly" />
+										<sectionrow id="attrib_map_list_table_4_1">
+										</sectionrow>
+									</section>
+									<section id="attrib_map_list_table_5" border="false">
+										<blankline id="attrib_map_list_table_5_blank_1"/>
+									</section>
+								</sectioncol>
+								<sectioncol id="attrib_map_list_table_main_right">
+									<section id="attrib_map_list_table_2" border="false">
+									<table id="attrib_map_entry_list_tbl" relationship="ENTRYLIST" selectmode="single"  >
+										<tablebody displayrowsperpage="5" filterable="true" id="attrib_map_list_entry_tablebody" >
+											<tablecol dataattribute="OBJECTNAME" id="attrib_map_entry_list_tbl_obj" filterable="true" inputmode="readonly" />
+											<tablecol dataattribute="ATTRIBUTENAME" id="attrib_map_entry_list_tbl_attrib" filterable="true" inputmode="readonly" />
+											<tablecol dataattribute="COBIEATTRIBUTE" id="attrib_map_entry_list_tbl_cobie_attrib" filterable="true" inputmode="readonly"/>
+										</tablebody>
+									</table>	
+									</section>
+								</sectioncol>
+							</sectionrow>
+						</section>
+						</tabledetails>
+						<buttongroup id="attrib_map_list_table_3">
+							<pushbutton default="true" id="attrib_map_list_table_3_1"
+								label="New Row" mxevent="addrow" />
+						</buttongroup>
+					</table>
+					<table id="type_map_list_table" label="Attribute Specifications Maps" relationship="BIMTYPEMAPLIST">
+						<tablebody displayrowsperpage="20" filterable="true" id="type_map_list_tablebody">
+							<tablecol filterable="false" id="type_map_list_tbl_detail"
+								mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+								type="event" />
+							<tablecol dataattribute="MAPNAME" id="type_map__tablebody_mapname" lookup="bimattributemap" />
+							<tablecol dataattribute="BIMTYPEMAPFORLIST.DESCRIPTION" id="type_map__tablebody_desc" lookup="longdesc" />
+							<tablecol filterable="false" id="type_map_list_tablebody_delete"
+								mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+								mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+						</tablebody>
+						<tabledetails id="type_map_list_tbl_details"  border="false" >
+						<section id="type_map_list_table_map"  border="false" relationship="BIMTYPEMAPFORLIST">
+											<sectionrow id="type_map_list_tbl_main_row">
+								<sectioncol id="type_map_list_tbl_main_left">
+									<section id="type_map_list_tbl_0" border="false">
+									</section>
+									<section id="type_map_list_tbl_1" border="false">
+										<sectionrow id="type_map_list_tbl_1_1">
+											<sectioncol id="ctype_map_list_tbl_1_1_2">
+												<textbox dataattribute="SITEID" id="type_map_list_tbl_details_siteid" inputmode="readonly"/>
+												<textbox dataattribute="MAPNAME" id="type_map_list_tbl_details_name" />
+											</sectioncol>
+											<sectioncol id="type_map_list_tbl_1_1_3" >
+												<textbox dataattribute="ORGID" id="type_map_list_tbl_details_orgid" inputmode="readonly"/>
+												<blankline id="type_map_list_tbl_1_1_3_blank_1"/>
+											</sectioncol>
+										</sectionrow>
+									</section>
+									<section id="type_map_list_tbl_3" border="false">
+										<textbox dataattribute="DESCRIPTION" id="type_map_list_tbl_details_desc" lookup="longdesc" inputmode="readonly"/>
+										<sectionrow id="type_map_list_tbl_3_1">
+										</sectionrow>
+									</section>
+									<section id="type_map_list_tbl_4" border="false">
+										<blankline id="type_map_list_tbl_4_blank_1"/>
+									</section>
+								</sectioncol>
+								<sectioncol id="type_map_tbl_list_main_right">
+									<table id="spec_map_entry_list_tbl" relationship="SPECLIST" selectmode="single"  >
+										<tablebody displayrowsperpage="5" filterable="true" id="spec_map_entry_list_tablebody" >
+											<tablecol dataattribute="ASSETATTRID" id="spec_map_entry_list_tbl_spec" filterable="true" inputmode="readonly"/>
+											<tablecol dataattribute="DESCRIPTION" id="spec_map_entry_list_tbl_desc" filterable="true" inputmode="readonly"/>
+											<tablecol dataattribute="COBIEATTRIBUTE" id="spec_map_entry_list_tbl_cobie_attrib" filterable="true" inputmode="readonly" />
+										</tablebody>
+									</table>	
+								</sectioncol>
+							</sectionrow>
+							</section>
+						</tabledetails>
+						<buttongroup id="type_map_list_table_5">
+							<pushbutton default="true" id="type_map_list_table_5_1"
+								label="New Row" mxevent="addrow" />
+						</buttongroup>
+					</table>
+					<table id="system_map_table" label="System Map" relationship="BIMSYSTEMMAPENTRY">
+						<tablebody displayrowsperpage="20" filterable="true" id="system_map_tablebody">
+							<tablecol dataattribute="COBIESYSTEM" id="attrib_map__tablebody_cobiesyste,"  />
+							<tablecol dataattribute="SYSTEMID" id="attrib_map__tablebody_systemid," lookup="system" />
+							<tablecol dataattribute="NETWORK" id="attrib_map__tablebody_network," inputmode="readonly" />
+							<tablecol dataattribute="LOCATION" id="attrib_map__tablebody_loc," lookup="locations" />
+							<tablecol filterable="false" id="system_map_tablebody_delete"
+								mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+								mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+						</tablebody>
+						<buttongroup id="system_map_table_2">
+							<pushbutton default="true" id="system_map_table_2_1"
+								label="New Row" mxevent="addrow" />
+						</buttongroup>
+					</table>
+				</tab>
+			</tabgroup>
+		</clientarea>
+		<include id="pageFooter" />
+	</page>
+
+	<dialog beanclass="psdi.webclient.system.beans.QbeBean" id="searchmore"
+		inputmode="query" label="More Search Fields">
+		<section id="searchmore_1">
+			<sectionrow id="searchmore_1_1">
+				<sectioncol id="searchmore_1_1_1">
+					<textbox dataattribute="BIMPROJECTID" id="searchmore_id" />
+					<textbox dataattribute="SITEID" id="searchmore_siteid" lookup="site" />
+				</sectioncol>
+				<sectioncol id="searchmore_1_1_2">
+					<textbox dataattribute="PROJECTNAME" id="searchmore_name" />
+					<textbox dataattribute="DESCRIPTION" id="searchmore_description" />
+				</sectioncol>
+				<sectioncol id="searchmore_1_1_3">
+					<textbox dataattribute="PARENTLOC" id="searchmore_parentloc"
+						lookup="locations" menutype="locations" />
+					<textbox dataattribute="LOCATIONPREFIX" id="searchmore_prefix" />
+				</sectioncol>
+			</sectionrow>
+		</section>
+		<buttongroup id="searchmore_buttongroup">
+			<pushbutton default="true" id="searchmore_buttongroup_1"
+				label="Find" mxevent="dialogok" />
+			<pushbutton id="qbe_restoreappdefault_button" label="Restore Application Defaults"
+				mxevent="qbeclear" />
+			<pushbutton id="qbe_revisebutton" label="Revise" menutype="SEARCHMOREREVISE"
+				targetid="searchmore" />
+			<pushbutton id="searchmore_buttongroup_3" label="Cancel"
+				mxevent="qbecancel" />
+		</buttongroup>
+	</dialog>
+
+	<dialog beanclass="psdi.webclient.system.beans.ViewBookmarksBean"
+		id="searchbook" label="My Bookmarks" mboname="BIMPROJECT">
+		<table id="bookmarks_table" inputmode="readonly" selectmode="single">
+			<tablebody displayrowsperpage="20" filterable="true"
+				id="bookmarks_table_tablebody">
+				<tablecol dataattribute="BIMPROJECTID" id="bookmarks_tablecolumn_1"
+					mxevent="selectrecord" type="link" />
+				<tablecol dataattribute="description" id="bookmarks_tablecolumn_2" />
+				<tablecol filterable="false" id="bookmarks_tablecolumn_3"
+					mxevent="instantdelete" mxevent_desc="Delete" mxevent_icon="btn_delete.gif"
+					sortable="false" type="event" />
+			</tablebody>
+		</table>
+		<buttongroup id="bookmarks_2">
+			<pushbutton default="true" id="bookmarks_2_1" label="OK"
+				mxevent="dialogok" />
+		</buttongroup>
+	</dialog>
+
+	<dialog beanclass="psdi.webclient.beans.bim.DlgSessionTypeBean"  mboname="BIMSESSIONTYPE"
+		id="session_type_selection" label="Select Session Type" >
+	    <radiobuttongroup id="session_type_selection_rb" label="Session Type" dataattribute="SESSIONTYPE">
+			<radiobutton id="session_type_selection_rb_validate" label="Validate" value="VALIDATE" /> 
+			<radiobutton id="session_type_selection_rb_import" label="Import" value="IMPORT" /> 
+			<radiobutton id="session_type_selection_rb_merge" label="Merge" value="MERGE" /> 
+			<radiobutton id="session_type_selection_rb_update" label="Update" value="UPDATE" /> 
+			<radiobutton id="session_type_selection_rb_export" label="Export" value="EXPORT" /> 
+		</radiobuttongroup>
+		<buttongroup id="session_selection_type_btns">
+			<pushbutton default="true" id="session_selection_type_ok" label="OK" mxevent="dialogok" />
+			<pushbutton id="session_selection_type_cancel" label="Cancel" mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+
+	<dialog beanclass="psdi.webclient.beans.bim.DlgUploadFileBean"
+		id="lookup_upload_bim_file" label="Select BIM File" mboname="BIMUPLOAD">
+		<section id="upload_bim_file_1">
+			<uploadfile cancellabel="Cancel" event="loadFile"
+				id="upload_bim_file_1a" label="Browse for File:" maxfilesize="200"
+				oklabel="OK" />
+		</section>
+	</dialog>
+
+	<dialog beanclass="psdi.webclient.beans.bim.BIMUploadBean" id="cobieup"
+		label="Export COBie Data" mboname="BIMSESSION">
+		<section id="cobieup_1">
+			<sectionrow id="cobieup_1_1">
+				<sectioncol id="cobieup_1_1_1">
+					<textbox dataattribute="BIMSESSIONID" id="cobieup_1_1_1_1"
+						inputmode="readonly" />
+					<textbox dataattribute="DESCRIPTION" id="cobieup_desc"
+						lookup="longdesc" />
+				</sectioncol>
+				<sectioncol id="cobieup_1_1_4">
+					<textbox dataattribute="STATUS" id="cobieup_1_1_4_1"
+						inputmode="readonly" />
+					<textbox dataattribute="UPLOADTIME" id="cobieup_updatetime"
+						inputmode="readonly" />
+				</sectioncol>
+			</sectionrow>
+		</section>
+		<tabgroup id="cobieup_tabs" style="form">
+			<tab default="true" id="cobieup_upload_tab" label="Files">
+		        <section id="cobieup_upload_tab_1">
+					<sectionrow id="cobie_upload_1_1">
+						<sectioncol id="cobie_upload_1_1_1">
+						    <textbox dataattribute="targetfacility" id="cobie_target_facility" label="Merge with previous import" lookup="locations"/>
+						</sectioncol>
+						<sectioncol id="cobie_upload_1_1_2">
+						    <textbox dataattribute="mergefacility" id="cobie_merge_facility" label="Merge with existing data" lookup="locations"/>
+						</sectioncol>
+					</sectionrow>
+		        </section>
+				<table id="cobieup_upload_tbl" relationship="BIMFILE" selectmode="single"  
+				       beanclass="psdi.webclient.beans.bim.BIMUploadTableBean">
+					<tablebody filterable="true" displayrowsperpage="9"
+						id="cobieup_upload_tablebody">
+						<tablecol dataattribute="COBIESHEET" id="cobieup_upload_tbl_1"
+							lookup="valuelist" />
+						<tablecol dataattribute="SOURCEFILENAME" id="cobieup_upload_tbl_2"
+							lookup="upload_bim_file" />
+						<tablecol filterable="false" id="cobieup_upload_tbl_4"
+							mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+							mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+						<tablecol filterable="true" id="cobieup_upload_tbl_5"
+							mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+							type="event" />
+					</tablebody>
+					<tabledetails id="cobieup_upload_tbl_details" collapsed="true">
+				        <section id="cobieup_upload_tbl_details_1" border="true" label="Select Tables to Import" >
+					        <sectionrow id="cobieup_upload_tbl_details_1_1">
+						        <sectioncol id="cobieup_upload_tbl_details_1_1_1">
+									<section id="cobieup_upload_tbl_details_1_1_1_1" border="false" >
+										<checkbox dataattribute="IMPORTFACILITY" id="cobieup_op_file_import_facility"  />
+										<checkbox dataattribute="IMPORTFLOOR" id="cobieup_op_file_import_floor"  />
+										<checkbox dataattribute="IMPORTSPACE" id="cobieup_op_file_import_space"  />
+										<checkbox dataattribute="IMPORTZONE" id="cobieup_op_file_import_zone"  />
+					                </section>
+						        </sectioncol>
+						        <sectioncol id="cobieup_upload_tbl_details_1_1_2">
+									<section id="cobieup_upload_tbl_details_1_1_2_1" border="false" >
+										<checkbox dataattribute="IMPORTCOMPONENT" id="cobieup_op_file_import_component"  />
+										<checkbox dataattribute="IMPORTTYPE" id="cobieup_op_file_import_type"  />
+										<checkbox dataattribute="IMPORTSYSTEM" id="cobieup_op_file_import_system"  />
+										<checkbox dataattribute="IMPORTJOB" id="cobieup_op_file_import_job"  />
+										<checkbox dataattribute="IMPORTASSEMBLY" id="cobieup_op_file_import_assembly"  />
+					                </section>
+						        </sectioncol>
+						        <sectioncol id="cobieup_upload_tbl_details_1_1_3">
+									<section id="cobieup_upload_tbl_details_1_1_3_1" border="false" >
+										<checkbox dataattribute="IMPORTCONTACT" id="cobieup_op_file_import_contact"  />
+										<checkbox dataattribute="IMPORTDOCUMENT" id="cobieup_op_file_import_document"  />
+										<checkbox dataattribute="IMPORTATTRIBUTE" id="cobieup_op_file_import_attribute"  />
+										<checkbox dataattribute="IMPORTRESOURCE" id="cobieup_op_file_import_resource"  />
+										<checkbox dataattribute="IMPORTSPARES" id="cobieup_op_file_import_spare"  />
+					                </section>
+						        </sectioncol>
+					        </sectionrow>
+		                </section>
+					</tabledetails>
+					<buttongroup id="cobieup_upload_tab_btn_1">
+						<pushbutton default="true" id="cobieup_btn_newrow"
+							label="New Row" mxevent="addrow" />
+					</buttongroup>
+				</table>
+			</tab>
+			<tab id="cobieup_options_tab" label="Options">
+				<section id="cobieup_options_tab_update" border="true" label="Update">
+					<sectionrow id="cobie_opt_update_1_1">
+						<sectioncol id="cobie_opt_update_1_1_1">
+							<combobox dataattribute="UPDATEMODE" id="cobie_update_mode"  />
+							<checkbox dataattribute="UPDATECATEGORY" id="cobieup_update_cat" />
+						</sectioncol>
+						<sectioncol id="cobie_opt_update_1_1_2">
+							<checkbox dataattribute="UPDATEATTRIBUTES" id="cobieup_update_spec" />
+							<checkbox dataattribute="DELETESYSTEMMEMBERS" id="cobieup_update_delete_sys_members" />
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<section id="cobieup_options_tab_opt" border="false" >
+					<sectionrow id="cobieup_options_tab_opt_1">
+						<sectioncol id="cobieup_options_tab_opt_1_1">
+							<textbox  dataattribute="TYPEMAPNAME" id="cobieup_op_spec_map_name" lookup="bimattributemap" />
+						</sectioncol>
+						<sectioncol id="cobieup_options_tab_opt_1_2">
+							<textbox  dataattribute="MAPNAME" id="cobieup_op_attrib_map_name" lookup="bimattributemap" />
+						</sectioncol>
+					</sectionrow>
+					<checkbox dataattribute="TYPESARESPECS" id="cobieup_op_types_are_spec"  />
+					<checkbox dataattribute="POPULATESYSTEMMAP" id="cobieup_op_populate_system_map"  />
+				</section>
+				<section id="cobieup_default_tab_opt_defaults" border="true" label="Defaults">
+					<textbox dataattribute="FACILITYCLASS.HIERARCHYPATH" id="cobieup_facility_class"
+						menutype="bimdefaultclassification" />
+					<sectionrow id="cobie_opt_default_1_1">
+						<sectioncol id="cobie_opt_default_1_1_1">
+							<textbox dataattribute="serviceaddresscode" id="cobieup_service_address" lookup="address"/>
+							<textbox dataattribute="billtoaddresscode" id="cobieup_bill_address" lookup="billtoshiptoaddress"/>
+						</sectioncol>
+						<sectioncol id="cobie_opt_default_1_1_2">
+							<textbox dataattribute="shiptoaddresscode" id="cobieup_ship_address" lookup="billtoshiptoaddress"/>
+							<textbox dataattribute="glaccount" id="cobieup_glaccount" lookup="glnavigator"/>
+						</sectioncol>
+					</sectionrow>
+				</section>
+			</tab>
+			<tab id="cobieup_options_tab_filter" label="Filters">
+				<table id="cobieup_options_tab_filter_tbl" relationship="BIMFILTERLIST" selectmode="single" >
+					<tablebody filterable="true" displayrowsperpage="6" id="cobieup_options_tab_filter_tablebody">
+						<tablecol dataattribute="FILTERNAME" id="cobieup_options_tab_filter_tbl_1"
+							lookup="bimfilter" />
+						<tablecol dataattribute="DESCRIPTION" id="cobieup_options_tab_filter_tbl_2" />
+						<tablecol filterable="false" id="cobieup_options_tab_filter_tbl_mark_delete"
+							mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+							mxevent_icon="btsystem_map_tablef" sortable="false" type="event" />
+					</tablebody>
+					<buttongroup id="cobieup_options_tab_filter_btn_1">
+						<pushbutton default="true" id="cobieup_options_tab_filter_btn_newrow"
+							label="New Row" mxevent="addrow" />
+					</buttongroup>
+				</table>
+			</tab>
+			<tab id="cobie_export_tab" label="Export">
+				<section id="cobie_export_1"  >
+					<sectionrow id="cobie_export_1_1">
+						<sectioncol id="cobie_export_1_1_1">
+							<textbox dataattribute="targetfacility" id="cobie_export_facility" lookup="locations"/>
+							<textbox  dataattribute="TYPEMAPNAME" id="cobie_export_spec_map_name" lookup="bimattributemap" />
+							<textbox  dataattribute="CHANGEDATEFILTER" id="cobie_export_change_filter" lookup="datelookup" />
+						</sectioncol>
+						<sectioncol id="cobie_export_1_1_2">
+							<combobox dataattribute="EXPORTID" id="cobie_export_exportid"  />
+							<textbox  dataattribute="MAPNAME" id="cobie_export_map_name" lookup="bimattributemap" />
+							<checkbox dataattribute="EXPORTNULLATTRIBUTES" id="cobie_export_exportnullattrib"  />
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<section id="cobie_export_2" collapsed="false" label="Select Tables to Export" >
+					<sectionrow id="cobie_export_2_1">
+						<sectioncol id="cobie_export_2_1_1">
+							<section id="cobie_export_2_1_1_1" border="false" >
+								<checkbox dataattribute="EXPORTFLOOR" id="cobie_export__floor"  />
+								<checkbox dataattribute="EXPORTSPACE" id="cobie_export__space"  />
+								<checkbox dataattribute="EXPORTZONE" id="cobie_export__zone"  />
+							</section>
+						</sectioncol>
+						<sectioncol id="cobie_export_2_1_2">
+							<section id="cobie_export_2_1_2_1" border="false" >
+								<checkbox dataattribute="EXPORTCOMPONENT" id="cobie_export__component"  />
+								<checkbox dataattribute="EXPORTTYPE" id="cobie_export__type"  />
+								<checkbox dataattribute="EXPORTSYSTEM" id="cobie_export__system"  />
+								<checkbox dataattribute="EXPORTJOB" id="cobie_export__job"  />
+							</section>
+						</sectioncol>
+						<sectioncol id="cobie_export_2_1_3">
+							<section id="ccobie_export_2_1_3_1" border="false" >
+								<checkbox dataattribute="EXPORTCONTACT" id="cobie_export__contact"  />
+								<checkbox dataattribute="EXPORTDOCUMENT" id="cobie_export__document"  />
+								<checkbox dataattribute="EXPORTATTRIBUTE" id="cobie_export__attribute"  />
+								<checkbox dataattribute="EXPORTRESOURCE" id="cobie_export__resource"  />
+								<checkbox dataattribute="EXPORTSPARE" id="cobie_export__spares"  />
+							</section>
+						</sectioncol>
+					</sectionrow>
+				</section>
+			</tab>
+			<tab id="cobieup_facility_tab" label="Facility">
+				<section id="cobieup_facility_tab_1" border="true">
+					<sectionrow id="cobieup_facility_tab_1_1">
+						<sectioncol id="cobieup_facility_tab_1_1_1">
+							<textbox dataattribute="FACILITYNAME" id="cobieup_facility_tab_facility_name" />
+							<textbox dataattribute="SITENAME" id="cobieup_facility_tab_site_name" />
+							<textbox dataattribute="PROJECTNAME" id="cobieup_facility_tab_project_name" />
+							<textbox dataattribute="PHASE" id="cobieup_facility_tab_phase" />
+						</sectioncol>
+						<sectioncol id="cobieup_facility_tab_1_1_2">
+							<textbox dataattribute="FACILITY" 
+								id="cobieup_facility_tab_1_1_2_1" inputmode="readonly" applink="location"  menutype="normal"/>
+							<textbox dataattribute="SITEDESC" id="cobieup_facility_tab_site_desc" />
+							<textbox dataattribute="PROJECTDESC" id="cobieup_facility_tab_project_desc" />
+							<textbox dataattribute="PROJECTTIMESTAMP" id="cobieup_facility_tab_proj_ts" inputmode="readonly" />
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<section id="cobieup_facility_tab_2" border="true">
+					<sectionrow id="cobieup_facility_tab_2_1">
+						<sectioncol id="cobieup_facility_tab_2_1_1">
+							<textbox dataattribute="LINEARUNITS"
+								id="cobieup_facility_tab_2_1_1_1" lookup="measureunit" />
+							<textbox dataattribute="AREAUNITS"
+								id="cobieup_facility_tab_2_1_1_2" lookup="measureunit" />
+						</sectioncol>
+						<sectioncol id="cobieup_facility_tab_2_1_2">
+							<textbox dataattribute="VOLUMEUNITS"
+								id="cobieup_facility_tab_2_1_2_1" lookup="measureunit" />
+							<textbox dataattribute="CURRENCYCODE"
+								id="cobieup_facility_tab_2_1_2_2"  lookup="currency" />
+						</sectioncol>
+					</sectionrow>
+					<sectionrow id="cobieup_facility_tab_2_2">
+						<sectioncol id="cobieup_facility_tab_2_2_1">
+							<textbox dataattribute="AREAMEASURMENT"	id="cobieup_facility_tab_2_2_1_1"  />
+						</sectioncol>
+						<sectioncol id="cobieup_facility_tab_2_2_2">
+						</sectioncol>
+					</sectionrow>
+				</section>
+			</tab>
+			<tab id="cobieup_advanced_tab" label="Advanced" type="Advamced" sigoption="BIM_ADVANCED_OPT" sigoptiondatasrc="MAINRECORD" >
+				<tabgroup id="cobieup_advanced_tab_group" style="form">
+					<tab id="cobieup_options_tab_cobie" label="COBie File">
+						<section id="cobieup_options_tab_1" border="false">
+							<sectionrow id="ccobieup_options_tab_1_1">
+								<sectioncol id="cobieup_options_tab_1_1_1"> 
+									<checkbox dataattribute="PROMOTESPACES" id="cobieup_op_promote_spaces" />
+									<checkbox dataattribute="PROMOTECOMPONENTS" id="cobieup_op_promote_componets" />
+									<checkbox dataattribute="MAPEXTENSIONCOLS" id="cobieup_op_map_ext_cols" />
+									<checkbox dataattribute="DELETEFILES" id="cobieup_op_deletefiles" />
+								</sectioncol>
+								<sectioncol id="cobieup_options_tab_1_1_2">
+									<checkbox dataattribute="CONVERTGUID" id="cobieup_op_convert_guids"  />
+									<checkbox dataattribute="CONVERTUNIQUEIDS" id="cobieup_op_convert_uids"  />
+									<checkbox dataattribute="SKIPNULL" id="cobieup_op_skip_null"  />
+									<checkbox dataattribute="SKIPVALUEISNAME" id="cobieup_op_skip_value_is_name"  />
+									<checkbox dataattribute="SKIPEMPTYSYS" id="cobieup_op_skip_empty_systems"  />
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</tab>
+					<tab id="cobieup_options_tab_create" label="Record Creation">
+						<section id="cobieup_options_tab_create_1" border="false">
+							<sectionrow id="ccobieup_options_tab_create_1_1">
+								<sectioncol id="cobieup_options_tab_create_1_1_1"> 
+									<combobox dataattribute="UNITTREATMENT" id="cobieup_op_unit_treatment" />
+									<combobox dataattribute="JPCREATELEVEL" id="cobieup_op_jp_at_site" />
+									<checkbox dataattribute="CREATECLASSIFICATIONS" id="cobieup_op_create_class" />
+									<checkbox dataattribute="CREATECOMAPNYMASTER" id="cobieup_op_create_company_master" />
+									<checkbox dataattribute="CREATEOPERLOC" id="cobieup_op_create_oper_loc"  />
+									<checkbox dataattribute="CREATEITEMMASTER" id="cobieup_op_item_mast" />
+								</sectioncol>
+								<sectioncol id="cobieup_options_tab_create_1_1_2"> 
+									<checkbox dataattribute="CREATEATTRIBUTETYPES" id="cobieup_op_create_attrib_type" />
+									<combobox dataattribute="ATTRIBCREATELEVEL" id="cobieup_op_attrib_at_site" />
+									<checkbox dataattribute="CREATECOMPANIES" id="cobieup_op_create_companies" />
+									<checkbox dataattribute="CREATEMASTERPM" id="cobieup_op_create_master_pm" />
+									<checkbox dataattribute="CREATEPM" id="cobieup_op_create_pm" />
+									<checkbox dataattribute="CREATEPRODUCT" id="cobieup_op_create_product" />
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</tab>
+					<tab id="cobieup_options_tab_import" label="Import Behavior">
+						<section id="cobieup_tab_1" border="true">
+							<sectionrow id="cobieup_options_tab_import_1_1">
+								<sectioncol id="cobieup_options_tab_import_1_1_1">
+									<section collapsed="false" id="cobieup_options_tab_import_ids" label="IDs">
+										<combobox dataattribute="ATTRIBTYPEID" id="cobieup_op_attribtype_id" />
+										<combobox dataattribute="FACILITYID" id="cobieup_op_facility_id" />
+										<combobox dataattribute="FLOORID" id="cobieup_op_floor_id" />
+										<combobox dataattribute="SPACEID" id="cobieup_op_space_id" />
+										<textbox dataattribute="IDSEPCHAR" id="cobieup_op_sep_char" />
+										<checkbox dataattribute="AUTONUMBER" id="cobieup_op_autonumber"  />
+										<checkbox dataattribute="BARCODEASASSETNUM" id="cobieup_op_barcode" />
+									</section>
+								</sectioncol>
+								<sectioncol id="cobieup_tab_1_1_2">
+									<section collapsed="false" id="cobieup_options_tab_import_attrib" label="Attribute Processing">
+										<checkbox dataattribute="COPYTYPEATTRIBTOASSETS" id="cobieup_op_copy_type_attribs"  />
+										<checkbox dataattribute="COPYTYPEDOCTOASSET" id="cobieup_op_copy_type_docs"  />
+										<checkbox dataattribute="COPYTYPEATTRIBTOITEM" id="cobieup_op_copy_type_item"  />
+										<combobox dataattribute="ASSETATTRIBLOC" id="cobieup_op_asset_attrib_loc" />
+									</section>
+									<section collapsed="false" id="cobieup_options_tab_import_field" label="Special Field Processing">
+										<combobox dataattribute="CONTACTTREATMENT" id="cobieup_op_contact_treatment" />
+										<checkbox dataattribute="PERSONNAMEISEMAIL" id="cobieup_op_person_email"  />
+										<combobox dataattribute="WARRANTYCALC" id="cobieup_op_warranty_calc" />
+										<textbox dataattribute="BARCODEATTRIB" id="cobieup_op_barcode_attrib" smartfilloff="true" lookup="attributename"/>
+									</section>
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</tab>
+					<tab id="cobieup_default_tab" label="Import Status">
+						<combobox dataattribute="INITASSETSTATUS" id="cobieup_op_init_asset_status"  />
+						<combobox dataattribute="INITASSETTYPE" id="cobieup_op_init_asset_type"  />
+						<combobox dataattribute="INITLOCSTATUS" id="cobieup_op_init_loc_status"  />
+						<combobox dataattribute="INITPRODSTATUS" id="cobieup_op_init_product_status"  />
+						<combobox dataattribute="INITJOBPLANSTATUS" id="cobieup_op_init_jp_status"  />
+					</tab>
+					<tab id="cobieup_attrib_tab" label="Attributes">
+						<section id="cobieup_attribt_tab_1" label="Attributes">
+							<sectionrow id="cobieup_attribt_tab_1_1">
+								<sectioncol id="cobieup_attribt_tab_1_1_1">
+									<section id="cobieup_attribt_tab_1_1_1_1">
+										<checkbox dataattribute="INFERLEVELS" id="cobieup_op_infer_levels" />
+										<checkbox dataattribute="INFERSPACES" id="cobieup_op_infer_spacess" />
+										<checkbox dataattribute="INFERSYSTEMS" id="cobieup_op_infer_systems" />
+										<checkbox dataattribute="INFEROMNICLASS" id="cobieup_op_infer_omniclass" />
+									</section>
+								</sectioncol>
+								<sectioncol id="cobieup_attribt_tab_1_1_2">
+									<section id="cobieup_attribt_tab_1_1_2_1">
+										<textbox dataattribute="LEVELATTRIBUTE" id="cobieup_op_level_attrib" />
+										<textbox dataattribute="SPACEATTRIBUTE" id="cobieup_op_space_attrib" />
+										<textbox dataattribute="SYSTEMATTRIBUTE" id="cobieup_op_system_attrib" />
+										<textbox dataattribute="OMNICALSSATTRIBUTE" id="cobieup_op_omniclass_attrib" />
+									</section>
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</tab>
+				</tabgroup>
+			</tab>
+			<tab id="cobieup_log_tab" label="Log Records" type="Log" >
+			    <helpgrid id="cobieup_log_tab_help" 
+			    	innerhtml="Select Refresh to update the progress of the session." />
+				<section id="cobieup_log_tab_1" border="true">
+					<sectionrow id="cobieup_log_tab_1_1">
+						<sectioncol id="cobieup_log_tab_1_1_1">
+							<combobox dataattribute="LOGLEVEL" id="cobieup_op_loglevel"	lookup="valuelist" />
+						</sectioncol>
+						<sectioncol id="cobieup_log_tab_1_1_2">
+							<textbox dataattribute="PERCENTCOMP" id="cobieup_log_tab_1_1_1_1" inputmode="readonly" />
+						</sectioncol>
+						<sectioncol id="cobieup_log_tab_1_1_3">
+							<textbox dataattribute="ERRORCOUNT" id="cobieup_log_tab_1_1_2_1_1" inputmode="readonly" />
+						</sectioncol>
+						<sectioncol id="cobieup_log_tab_1_1_4">
+							<textbox dataattribute="WARNINGCOUNT" id="cobieup_log_tab_warning_count" inputmode="readonly" />
+						</sectioncol>
+						<sectioncol id="cobieup_log_tab_1_1_5">
+							<buttongroup id="cobibup_log_buttons">
+								<pushbutton id="cobibup_log_buttons_1" label="Refresh"
+									type="event" mxevent="refreshLogs" />
+							</buttongroup>
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<section id="cobieup_log_tab_2" border="true">
+				<multilinetextbox columns="70" dataattribute="LOG"
+					id="cobieup_log_tab_2_1" inputmode="readonly" rows="10" hidetooltip="true" />
+				</section>
+			</tab>
+		</tabgroup>
+
+		<buttongroup id="cobieup_btn_1">
+			<pushbutton default="true" id="cobieup_btn_save" label="Save" 
+				mxevent="dialogok" />
+			<pushbutton default="true" id="cobieup_btn_validate" label="Validate" hidden="true"
+				mxevent="validateBuilding" />
+			<pushbutton default="true" id="cobieup_btn_import" label="Import" hidden="true"
+				mxevent="importBuilding" />
+			<pushbutton default="true" id="cobieup_btn_merge" label="Merge" hidden="true"
+				mxevent="updateBuilding" />
+			<pushbutton default="true" id="cobieup_btn_update" label="Update" hidden="true"
+				mxevent="updateBuilding" />
+			<pushbutton default="true" id="cobieup_btn_export" label="Export" hidden="true"
+				mxevent="exportBuilding" />
+			<pushbutton id="cobieup_btn_cancel" label="Cancel" mxevent="dialogcancel" />
+		</buttongroup>
+		<buttongroup id="cobieup_btn_2">
+			<pushbutton id="cobieup_btn_close" label="Close" mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+	
+	<dialog beanclass="psdi.webclient.beans.bim.DlgProjectSaveBean"
+		id="savecancel" label="Save Information" width="300">
+		<section id="savecancel_1"  description="Do you want to save your changes before continuing?">
+			<buttongroup id="savecancel_2">
+			<pushbutton default="true" id="savecancel_2_1" label="Save"
+				mxevent="dialogok" />
+			<pushbutton id="savecancel_2_2" label="Cancel"
+				mxevent="dialogcancel" />
+		</buttongroup>
+		</section>
+	</dialog>
+	
+	<dialog beanclass="psdi.webclient.beans.bim.BIMConfigurationBean" label="Configure Maximo Data"
+		mboname="BIMCONFIGURATION" id="BIM_CONFIG" width="600px" >
+		<helpgrid id="bim_configuration_help" 
+			innerhtml="Specify the default values for all merged, validated, imported, updated, and exported sessions for the site." />
+		<section id="bim_config_1_1_1_1" >
+			<sectionrow id="bim_config_1_1_1_1_1">
+				<sectioncol id="bim_config_1_1_1_1_1_1">
+					<textbox dataattribute="siteid" id="bim_config_siteid" inputmode="readonly" />
+				</sectioncol>
+				<sectioncol id="bim_config_1_1_1_1_1_2">
+					<textbox dataattribute="orgid" id="bim_config_orgid" inputmode="readonly" />
+				</sectioncol>
+			</sectionrow>
+		</section>
+		<tabgroup id="bim_config_options" style="form">
+			<tab default="true" id="bim_config_class_tab" label="Classifications" type="Classifications">
+				<section id="bim_config_1" label="Default Classifications">
+					<sectionrow id="bim_config_1_1">
+						<sectioncol id="bim_config_class_1_1">
+							<textbox dataattribute="FACILITYCLASS.HIERARCHYPATH" id="bim_config_facility_2_1"
+								menutype="bimdefaultclassification" label="Facility"/>
+							<textbox dataattribute="FLOORCLASS.HIERARCHYPATH" id="bim_config_floor_2_1"
+								menutype="bimdefaultclassification" label="Floor"/>
+							<textbox dataattribute="SPACECLASS.HIERARCHYPATH" id="bbim_config_space_2_1"
+								menutype="bimdefaultclassification" label="Space"/>
+							<textbox dataattribute="OPERLOCCLASS.HIERARCHYPATH" id="bim_config_opperloc_2_1"
+								menutype="bimdefaultclassification" label="Operating Location"/>
+							<textbox dataattribute="ASSETCLASS.HIERARCHYPATH" id="bim_config_asset"
+								menutype="bimdefaultclassification" label="Asset"/>
+							<textbox dataattribute="PRODUCTCLASS.HIERARCHYPATH" id="bim_config_product_2_1"
+								menutype="bimdefaultclassification" label="Product"/>
+						</sectioncol>
+						<sectioncol id="bim_config_class_1_2">
+							<textbox dataattribute="ZONECLASS.HIERARCHYPATH" id="bim_config_zone_2_1"
+								menutype="bimdefaultclassification" label="Zone"/>
+							<textbox dataattribute="SYSTEMCLASS.HIERARCHYPATH" id="bim_config_system_2_1"
+								menutype="bimdefaultclassification" label="System"/>
+							<textbox dataattribute="JOBPLANCLASS.HIERARCHYPATH" id="bim_config_system_job"
+								menutype="bimdefaultclassification" label="Job Plan"/>
+							<textbox dataattribute="COMPANYCLASS.HIERARCHYPATH" id="bim_config_company"
+								menutype="bimdefaultclassification" label="Company"/>
+							<textbox dataattribute="PERSONCLASS.HIERARCHYPATH" id="bim_config_person_2_1"
+								menutype="bimdefaultclassification" label="Person"/>
+							<textbox dataattribute="ITEMCLASS.HIERARCHYPATH" id="bim_config_item"
+								menutype="bimdefaultclassification" label="Item"/>
+						</sectioncol>
+					</sectionrow>
+				</section>
+			</tab>
+			<tab id="bim_config_options_tab" label="Import/Update Options">
+				<tabgroup id="bim_config_options_tab_group" style="form">
+					<tab id="bim_config_options_tab_create" label="Record Creation">
+						<helpgrid id="bim_configuration_help_create" 
+							innerhtml="Specify the default values to apply to each record that is created during the import." />
+						<section id="bim_config_options_tab_create_1" border="false" >
+							<sectionrow id="bim_config_options_tab_create_1_1">
+								<sectioncol id="bim_config_options_tab_create_1_1_1">
+									<combobox dataattribute="UNITTREATMENT" id="bim_config_unit_treatment" />
+								</sectioncol>
+								<sectioncol id="bim_config_options_tab_create_1_1_2">
+									<checkbox dataattribute="CREATEATTRIBUTETYPES" id="bim_config_create_attrib_type" />
+								</sectioncol>
+							<sectionrow id="bim_config_options_tab_create_1_2">
+								<sectioncol id="bim_config_options_tab_create_1_2_1">
+									<combobox dataattribute="JPCREATELEVEL" id="bim_config_jp_at_site" />
+								</sectioncol>
+								<sectioncol id="bim_config_options_tab_create_1_2_2">
+									<combobox dataattribute="ATTRIBCREATELEVEL" id="bim_config_attrib_at_site" />
+								</sectioncol>
+							</sectionrow>
+							<sectionrow id="bim_config_options_tab_create_1_3">
+								<sectioncol id="bim_config_options_tab_create_1_3_1">
+									<checkbox dataattribute="CREATECLASSIFICATIONS" id="bim_config_create_class" />
+								</sectioncol>
+								<sectioncol id="bim_config_options_tab_create_1_3_2">
+									<checkbox dataattribute="CREATECOMPANIES" id="bim_config_create_companies" />
+								</sectioncol>
+							</sectionrow>
+							<sectionrow id="bim_config_options_tab_create_1_4">
+								<sectioncol id="bim_config_options_tab_create_1_4_1">
+									<checkbox dataattribute="CREATEOPERLOC" id="bim_config_create_oper_loc"  />
+								</sectioncol>
+								<sectioncol id="bim_config_options_tab_create_1_4_2">
+									<checkbox dataattribute="CREATECOMAPNYMASTER" id="bim_config_create_company_master" />
+								</sectioncol>
+							</sectionrow>
+							<sectionrow id="bim_config_options_tab_create_1_5">
+								<sectioncol id="bim_config_options_tab_create_1_5_1">
+									<checkbox dataattribute="CREATEMASTERPM" id="bim_config_create_master_pm" />
+								</sectioncol>
+								<sectioncol id="bim_config_options_tab_create_1_5_2">
+									<checkbox dataattribute="CREATEITEMMASTER" id="bim_config_item_mast" />
+								</sectioncol>
+							</sectionrow>
+							<sectionrow id="bim_config_options_tab_create_1_6">
+								<sectioncol id="bim_config_options_tab_create_1_6_1">
+									<checkbox dataattribute="CREATEPM" id="bim_config_create_pm" />
+								</sectioncol>
+								<sectioncol id="bim_config_options_tab_create_1_6_2">
+									<checkbox dataattribute="CREATEPRODUCT" id="bim_config_attrib_create_product" />
+								</sectioncol>
+							</sectionrow>
+							</sectionrow>
+						</section>
+					</tab>
+					<tab id="bim_config_options_tab_import" label="Import Behavior">
+						<section id="bim_config_tab_1" border="true">
+							<sectionrow id="bim_config_options_tab_import_1_1">
+								<sectioncol id="bim_config_tab_1_1_1">
+									<section collapsed="false" id="bim_config_options_tab_import_field" label="Special Field Processing">
+										<combobox dataattribute="CONTACTTREATMENT" id="bim_config_contact_treatment" />
+										<checkbox dataattribute="PERSONNAMEISEMAIL" id="bim_config_person_email"  />
+										<combobox dataattribute="WARRANTYCALC" id="bim_config_warranty_calc" />
+										<textbox dataattribute="BARCODEATTRIB" id="bim_config_barcode_attrib" smartfilloff="true" lookup="attributename"/>
+									</section>
+								</sectioncol>
+								<sectioncol id="bim_config_tab_1_1_2">
+									<section collapsed="false" id="bim_config_options_tab_import_attrib" label="Attribute Processing">
+										<checkbox dataattribute="COPYTYPEATTRIBTOASSETS" id="bim_config_copy_type_attribs"  />
+										<checkbox dataattribute="COPYTYPEDOCTOASSET" id="bim_config_copy_type_docs"  />
+										<checkbox dataattribute="COPYTYPEATTRIBTOITEM" id="bim_config_copy_type_item"  />
+										<combobox dataattribute="ASSETATTRIBLOC" id="bim_config_asset_attrib_loc" />
+									</section>
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<section id="bim_config_tab_2" border="true" label="Other">
+							<checkbox dataattribute="DELETEFILES" id="bim_config_deletefiles" />
+						</section>
+					</tab>
+					<tab id="bim_config_default_tab" label="Import Status">
+						<helpgrid id="bim_configuration_help_status" 
+							innerhtml="Specifiy the initial status to apply to all records that are created during the import." />
+						<section id="bim_config_default_tab_1" border="true">
+							<sectionrow id="bim_config_default_tab_import_1_1">
+								<sectioncol id="bim_config_default_tab_1_1_1">
+									<section collapsed="false" id="bim_config_default_tab_1_1_1_1" >
+										<combobox dataattribute="INITLOCSTATUS" id="bim_config_init_loc_status"  />
+										<combobox dataattribute="INITJOBPLANSTATUS" id="bim_config_init_jp_status"  />
+									</section>
+								</sectioncol>
+								<sectioncol id="bim_config_default_tab_1_1_2">
+									<section collapsed="false" id="bim_config_default_tab_1_1_2_1" >
+										<combobox dataattribute="INITASSETSTATUS" id="bim_config_init_asset_status"  />
+										<combobox dataattribute="INITASSETTYPE" id="bim_config_init_asset_type"  />
+										<combobox dataattribute="INITPRODSTATUS" id="bim_config_init_product_status"  />
+									</section>
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</tab>
+				</tabgroup>
+			</tab>
+			<tab id="bim_config_log_tab" label="Log Records">
+				<combobox dataattribute="LOGLEVEL" id="bim_config_loglevel"	lookup="valuelist" />
+			</tab>
+		</tabgroup>
+
+		<buttongroup id="bim_config_2">
+			<pushbutton default="true" id="bim_config_2_1"
+				label="OK" mxevent="dialogok" />
+			<pushbutton id="bim_config_2_2" label="Cancel"
+				mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+
+	<dialog beanclass="psdi.webclient.beans.bim.BIMConfigurationBean"
+		mboname="BIMCONFIGURATION" id="MDL_CONFIG" label="Configure Model Data" width="500px">
+		<helpgrid id="bim_config_mdluration_help" 
+			innerhtml="Specify the default values for all imported, validated, merged, updated, and exported sessions for the site." />
+		<section id="bim_config_mdl_1_1_1_1" >
+			<sectionrow id="bim_config_mdl_1_1_1_1_1">
+				<sectioncol id="bim_config_mdl_1_1_1_1_1_1">
+					<textbox dataattribute="siteid" id="bim_config_mdl_siteid" inputmode="readonly" />
+				</sectioncol>
+				<sectioncol id="bim_config_mdl_1_1_1_1_1_2">
+					<textbox dataattribute="orgid" id="bim_config_mdl_orgid" inputmode="readonly" />
+				</sectioncol>
+			</sectionrow>
+		</section>
+		<tabgroup id="bim_config_mdl_options_tab_group" style="form">
+			<tab id="bim_config_mdl_options_tab_cobie" label="COBie File">
+				<section id="bim_config_mdl_options_tab_cobie_1" border="false">
+					<sectionrow id="bim_config_mdl_options_tab_cobie_1_1">
+						<sectioncol id="bim_config_mdl_options_tab_cobie_1_1_1">
+							<checkbox dataattribute="PROMOTESPACES" id="bim_config_mdl_promote_spaces" />
+							<checkbox dataattribute="PROMOTECOMPONENTS" id="bim_config_mdl_promote_componets" />
+							<checkbox dataattribute="MAPEXTENSIONCOLS" id="bim_config_mdl_map_ext_cols" />
+							<checkbox dataattribute="DELETEFILES" id="bim_config_mdl_deletefiles" />
+							<checkbox dataattribute="EXPORTNULLATTRIBUTES" id="bim_config_mdl_export_exportnullattrib"  />
+						</sectioncol>
+						<sectioncol id="bim_config_mdl_options_tab_cobie_1_1_2">
+							<checkbox dataattribute="CONVERTGUID" id="bim_config_mdl_convert_guids"  />
+							<checkbox dataattribute="CONVERTUNIQUEIDS" id="bim_config_mdl_convert_uids"  />
+							<checkbox dataattribute="SKIPNULL" id="bim_config_mdl_skip_null"  />
+							<checkbox dataattribute="SKIPVALUEISNAME" id="bim_config_mdl_skip_value_is_name"  />
+							<checkbox dataattribute="SKIPEMPTYSYS" id="bim_config_mdl_skip_empty_system"  />
+						</sectioncol>
+					</sectionrow>
+				</section>
+			</tab>
+			<tab id="bim_config_options_tab_id" label="Generate ID">
+			    <helpgrid id="bim_configuration_options_help" 
+							innerhtml="Specify how each identifier is converted during the import, validate, merge, update, and export sessions." />
+				<section id="bim_config_default_tab_id_1" border="true">
+					<sectionrow id="bim_config_options_tab_id_1_1">
+						<sectioncol id="bim_config_options_tab_id_1_1_1">
+							<combobox dataattribute="ATTRIBTYPEID" id="bim_config_attribtype_id" />
+						</sectioncol>
+						<sectioncol id="bim_config_options_tab_id_1_1_2">
+							<checkbox dataattribute="BARCODEASASSETNUM" id="bim_config_barcode" />
+						</sectioncol>
+					</sectionrow>
+					<sectionrow id="bim_config_options_tab_id_1_2">
+						<sectioncol id="bim_config_options_tab_id_1_2_1">
+							<combobox dataattribute="FACILITYID" id="bim_config_facility_id" />
+						</sectioncol>
+						<sectioncol id="bim_config_options_tab_id_1_2_2">
+							<checkbox dataattribute="AUTONUMBER" id="bim_config_autonumber"  />
+						</sectioncol>
+					</sectionrow>
+					<sectionrow id="bim_config_options_tab_id_1_3">
+						<sectioncol id="bim_config_options_tab_id_1_3_1">
+							<combobox dataattribute="FLOORID" id="bim_config_floor_id" />
+						</sectioncol>
+						<sectioncol id="bim_config_options_tab_id_1_3_2">
+							<textbox dataattribute="IDSEPCHAR" id="bim_config_sep_char" />
+						</sectioncol>
+					</sectionrow>
+					<sectionrow id="bim_config_options_tab_id_1_4">
+						<sectioncol id="bim_config_options_tab_id_1_4_1">
+							<combobox dataattribute="SPACEID" id="bim_config_space_id" />
+						</sectioncol>
+						<sectioncol id="bim_config_options_tab_id_1_4_2">
+							<combobox dataattribute="EXPORTID" id="bim_config_mdl_exportid"  />
+						</sectioncol>
+					</sectionrow>
+				</section>
+			</tab>
+			<tab id="bim_config_mdl_attrib_tab" label="Attributes">
+				<section id="bim_config_mdl_attribt_tab_1" label="Attributes">
+					<sectionrow id="bim_config_mdl_attribt_tab_1_1">
+						<sectioncol id="bim_config_mdl_attribt_tab_1_1_1">
+							<section id="bim_config_mdl_attribt_tab_1_1_1_1">
+								<checkbox dataattribute="INFERLEVELS" id="bim_config_mdl_op_infer_levels" />
+								<checkbox dataattribute="INFERSPACES" id="bim_config_mdl_op_infer_spacess" />
+								<checkbox dataattribute="INFERSYSTEMS" id="bim_config_mdl_op_infer_systems" />
+								<checkbox dataattribute="INFEROMNICLASS" id="bim_config_mdl_op_infer_omniclass" />
+							</section>
+						</sectioncol>
+						<sectioncol id="bim_config_mdl_attribt_tab_1_1_2">
+							<section id="bim_config_mdl_attribt_tab_1_1_2_1">
+								<textbox dataattribute="LEVELATTRIBUTE" id="bim_config_mdl_op_level_attrib" />
+								<textbox dataattribute="SPACEATTRIBUTE" id="bim_config_mdl_op_space_attrib" />
+								<textbox dataattribute="SYSTEMATTRIBUTE" id="bim_config_mdl_op_system_attrib" />
+								<textbox dataattribute="OMNICALSSATTRIBUTE" id="bim_config_mdl_op_omniclass_attrib" />
+							</section>
+						</sectioncol>
+					</sectionrow>
+				</section>
+			</tab>
+		</tabgroup>
+
+		<buttongroup id="bim_config_mdl_2">
+			<pushbutton default="true" id="bim_config_mdl_2_1"
+				label="OK" mxevent="dialogok" />
+			<pushbutton id="bim_config_mdl_2_2" label="Cancel"
+				mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+
+	<dialog beanclass="psdi.webclient.beans.bim.OmniClassImportBean"
+		mboname="BIMOMNICLASSIMPORT" id="OMNI_ADD" label="Import OmniClass Classifications">
+		<helpgrid id="omniclass_help" 
+		innerhtml="Import a single OmniClass table that is in  .csv, .xls or .xlxs format into the Maximo classification hierarchy." morehelp="com.ibm.mbs.doc/bim,c_classifications.html" />
+		<tabgroup id="omniclass_tabs" type="import">
+			<tab default="true" id="omniclass_upload_tab" label="Import">
+				<section id="omniclass_upload_tab_1" >
+					<sectionrow id="omniclass_upload_tab_1_1">
+						<sectioncol id="omniclass_upload_tab_1_1_1">
+							<textbox dataattribute="OMNICLASSTABLE" id="omniclass_name" inputmode="readonly" />
+							<textbox dataattribute="DESCRIPTION" id="omniclass_desc" lookup="longdesc" />
+						</sectioncol>
+						<sectioncol id="omniclass_upload_tab_1_1_3">
+							<textbox dataattribute="ORGID" id="omniclass_orgid" lookup="org" />
+							<textbox dataattribute="SITEID" id="omniclass_siteid" lookup="site" />
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<section id="omniclass_upload_tab_3" label="Import">
+					<sectionrow id="omniclass_upload_tab_3_2">
+						<sectioncol id="omniclass_upload_tab_3-2_1">
+							<textbox dataattribute="CLASSSTRUCTURE.HIERARCHYPATH" id="omniclass_parent_class"
+									 menutype="classification" label="Parent Classification"/>
+						</sectioncol>
+						<sectioncol id="omniclass_upload_tab_3-2_2">
+							<textbox dataattribute="SOURCEFILENAME" id="omniclass_filename" lookup="upload_bim_file" />
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<table id="omniclass_usewith_tbl" relationship="USEWITHLIST" selectmode="single" label="Select Objects">
+					<tablebody displayrowsperpage="20" filterable="true" id="omniclass_usewith_tablebody">
+						<tablecol dataattribute="CLASSUSEWITH" id="omniclass_usewith_tbl_1"
+							filterable="true" lookup="valuelist" />
+						<tablecol filterable="false" id="omniclass_usewith_tablebody_delete"
+							mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+							mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+					</tablebody>
+					<buttongroup id="omniclass_upload_tab_btn">
+						<pushbutton default="true" id="omniclass_upload_tab_btn_newrow"
+							label="New Row" mxevent="addrow" />
+					</buttongroup>
+				</table>
+			</tab>
+			<tab id="omniclass_option_tab" label="Options" type="Options" >
+				<combobox dataattribute="LOGLEVEL" id="omniclass_op_loglevel"	lookup="valuelist" />
+				<checkbox dataattribute="DELETEFILES" id="omniclass_op_deletefiles" />
+				<checkbox dataattribute="GENASSETDESC" id="omniclass_op_gen_desc" />
+			</tab>
+			<tab id="omniclass_log_tab" label="Log Records" type="Log" >
+				<section id="omniclass_log_tab_1" border="true">
+					<sectionrow id="omniclass_log_tab_1_1">
+						<sectioncol id="omniclass_log_tab_1_1_1">
+							<textbox dataattribute="PERCENTCOMP" id="omniclass_log_tab_1_1_1_1" inputmode="readonly" />
+						</sectioncol>
+						<sectioncol id="omniclass_log_tab_1_1_2">
+							<textbox dataattribute="ERRORCOUNT" id="omniclass_log_tab_1_1_2_1_1" inputmode="readonly" />
+						</sectioncol>
+						<sectioncol id="omniclass_log_tab_1_1_3">
+							<buttongroup id="omniclass_log_buttons">
+								<pushbutton id="omniclass_log_buttons_1" label="Refresh"
+									type="event" mxevent="refreshLogs" />
+							</buttongroup>
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<section id="omniclass_log_tab_2" border="true">
+				<multilinetextbox columns="70" dataattribute="LOG"
+					id="omniclass_log_tab_2_1" inputmode="readonly" rows="10" hidetooltip="true" />
+				</section>
+			</tab>
+		</tabgroup>
+		<buttongroup id="omniclass_bg">
+			<pushbutton id="omniclass_import"
+				label="Import" mxevent="omniclassImport" />
+			<pushbutton id="omniclass_cancel" label="Cancel"
+				mxevent="dialogcancel" />
+		</buttongroup>
+		<buttongroup id="omniclass_bg_Close">
+			<pushbutton id="omniclass_close" label="Close"
+				mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+
+	<dialog mboname="BIMOMNICLASSIMPORT" id="OMNI_HIST" label="OmniClass Import History">
+		<table id="oc_hist_tbl" mboname="BIMOMNICLASSIMPORT" selectmode="single" beanclass="psdi.webclient.beans.bim.OmniClassManagerBean">
+			<tablebody displayrowsperpage="20" filterable="true" id="oc_hist_tablebody">
+				<tablecol filterable="false" id="oc_hist_tablebody_detail"
+					mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+					type="event" />
+				<tablecol dataattribute="BIMOMNICLASSIMPORTID" id="oc_hist_tbl_1"
+					inputmode="readonly" filterable="true"/>
+				<tablecol dataattribute="OMNICLASSTABLE" id="oc_hist_tbl_2"
+					filterable="true" inputmode="readonly"/>
+				<tablecol dataattribute="ORGID" id="oc_hist_tbl_org"
+					lookup="valuelist" filterable="true" inputmode="readonly" />
+				<tablecol dataattribute="SITEID" id="oc_hist_tbl_3"
+					lookup="valuelist" filterable="true" inputmode="readonly" />
+				<tablecol dataattribute="DESCRIPTION" id="oc_hist_tbl_4" filterable="true" inputmode="readonly" />
+				<tablecol dataattribute="STATUS" id="oc_hist_tbl_5" filterable="true" inputmode="readonly" />
+				<tablecol dataattribute="UPLOADTIME" id="oc_hist_tbl_6" filterable="true" inputmode="readonly" />
+			</tablebody>
+			<tabledetails id="oc_hist_tbl_details" >
+				<tabgroup id="oc_hist_tabs" type="import">
+					<tab default="true" id="oc_hist_upload_tab" label="Import">
+						<section id="oc_hist_upload_tab_1" >
+							<sectionrow id="oc_hist_upload_tab_1_1">
+								<sectioncol id="oc_hist_upload_tab_1_1_1" label="Default classification">
+									<textbox dataattribute="OMNICLASSTABLE" id="oc_hist_name" inputmode="readonly" />
+									<textbox dataattribute="DESCRIPTION" id="oc_hist_desc" lookup="longdesc" inputmode="readonly" />
+									<textbox dataattribute="IMPORTEDBY" id="oc_hist_importedby" inputmode="readonly" />
+								</sectioncol>
+								<sectioncol id="oc_hist_upload_tab_1_1_3" label="Default classification">
+									<textbox dataattribute="ORGID" id="oc_hist_orgid" inputmode="readonly" />
+									<textbox dataattribute="SITEID" id="oc_hist_siteid" inputmode="readonly" />
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<section id="oc_hist_upload_tab_3" label="Import">
+							<sectionrow id="oc_hist_upload_tab_3_2">
+								<sectioncol id="oc_hist_upload_tab_3_2_1">
+									<textbox dataattribute="CLASSSTRUCTURE.HIERARCHYPATH" id="oc_hist_parent_class"
+											 inputmode="readonly" label="Parent Classification"/>
+								</sectioncol>
+								<sectioncol id="oc_hist_upload_tab_3_2_2">
+									<textbox dataattribute="FILENAME" id="oc_hist_filename" inputmode="readonly" />
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<table id="oc_hist_usewith_tbl" relationship="USEWITHLIST" selectmode="single" >
+							<tablebody displayrowsperpage="20" filterable="true" id="oc_hist_usewith_tablebody">
+								<tablecol dataattribute="CLASSUSEWITH" id="oc_hist_usewith_tbl_1"
+									inputmode="readonly" filterable="true"/>
+							</tablebody>
+						</table>
+					</tab>
+					<tab id="oc_hist_log_tab" label="Log Records" type="Log" >
+						<section id="oc_hist_log_tab_1" border="true">
+							<sectionrow id="oc_hist_log_tab_1_1">
+								<sectioncol id="oc_hist_log_tab_1_1_1">
+									<textbox dataattribute="PERCENTCOMP" id="oc_hist_log_tab_1_1_1_1" inputmode="readonly" />
+								</sectioncol>
+								<sectioncol id="oc_hist_log_tab_1_1_2">
+									<textbox dataattribute="ERRORCOUNT" id="oc_hist_log_tab_1_1_2_1_1" inputmode="readonly" />
+								</sectioncol>
+								<sectioncol id="oc_hist_log_tab_1_1_3" >
+									<buttongroup id="oc_hist_log_buttons">
+										<pushbutton id="oc_hist_log_buttons_1" label="Refresh"
+											type="event" mxevent="refreshLogs" />
+									</buttongroup>
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<section id="oc_hist_log_tab_2" border="true">
+						<multilinetextbox columns="70" dataattribute="LOG"
+							id="oc_hist_log_tab_2_1" inputmode="readonly" rows="10" hidetooltip="true" />
+						</section>
+					</tab>
+				</tabgroup>
+			</tabledetails>
+		</table>	
+		<buttongroup id="oc_hist_bg">
+			<pushbutton id="oc_hist_cancel" label="Close"
+				mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+	
+	<dialog beanclass="psdi.webclient.beans.bim.CommissioningBean"
+		relationship="BIMCOMMISSION" id="COMMISSION" label="Commission Building">
+		<helpgrid id="commission_help" 
+		innerhtml="Select the record types whose status you want to change from the selected current status to the selected new status." />
+		<tabgroup id="commission_tabs" type="import">
+			<tab default="true" id="commission_status_tab" label="Status">
+				<section id="commission_status_tab_1" >
+					<sectionrow id="commission_status_tab_1_1">
+						<sectioncol id="commission_status_tab_1_1_1">
+						    <textbox dataattribute="FACILITY" id="commission_facility" lookup="locations"/>
+						</sectioncol>
+						<sectioncol id="commission_status_tab_1_1_2">
+							<combobox dataattribute="LOGLEVEL" id="commission_loglevel"	lookup="valuelist" />
+						</sectioncol>
+						<sectioncol id="commission_status_tab_1_1_3">
+							<textbox dataattribute="STATUS" id="commission_status" inputmode="readonly" />
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<section id="commission_status_tab_2" >
+					<textbox dataattribute="MEMO" id="commission_memo" />
+				</section>
+				<section id="commission_status_tab_3" label="Records to Update?">
+					<sectionrow id="commission_status_tab_3_2">
+						<sectioncol id="commission_status_tab_3_2_1">
+							<checkbox dataattribute="UPDATEFACILITY" id="commission_status_update_facility"  />
+							<checkbox dataattribute="UPDATEFLOORS" id="commission_status_update_floor"  />
+							<checkbox dataattribute="UPDATESPACE" id="commission_status_update_space"  />
+						</sectioncol>
+						<sectioncol id="commission_status_tab_3_2_2">
+							<checkbox dataattribute="UPDATEASSET" id="commission_status_update_asset"  />
+							<checkbox dataattribute="UPDATEREQ" id="commission_status_update_req"  />
+							<checkbox dataattribute="UPDATEPRODUCT" id="commission_status_update_product"  />
+						</sectioncol>
+						<sectioncol id="commission_status_tab_3_2_3">
+							<checkbox dataattribute="UPDATEJOBPLAN" id="commission_status_update_jp"  />
+							<checkbox dataattribute="UPDATEPM" id="commission_status_update_pm"  />
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<tabgroup id="commission_status_tg" style="form">
+					<tab default="true" id="commission_status_tg_asset" label="Asset" type="Asset">
+						<section id="commission_status_tg_4" >
+							<sectionrow id="commission_status_tg_4_2">
+								<sectioncol id="commission_status_tg_4_2_1">
+									<combobox dataattribute="CURRENTASSETSTATUS" id="commission_status_cur_asset_status"  />
+									<blankline id="commission_status_blank_1" /> 
+									<blankline id="commission_status_blank_2" /> 
+									<blankline id="commission_status_blank_3" /> 
+								</sectioncol>
+								<sectioncol id="commission_status_tg_4_2_2">
+									<combobox dataattribute="NEWASSETSTATUS" id="commission_status_new_asset_status"  />
+									<checkbox dataattribute="AREMOVEFROMACTIVEROUTES" id="commission_status_asset_routes"  />
+									<checkbox dataattribute="AREMOVEFROMACTIVESP" id="commission_status_asset_sp"  />
+									<checkbox dataattribute="AROLLTOALLCHILDREN" id="commission_status_asset_child"  />
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</tab>
+					<tab  id="commission_status_tg_location" label="Location" type="Location">
+						<section id="commission_status_tab_4" >
+							<sectionrow id="commission_status_tg_location_4_2">
+								<sectioncol id="commission_status_tg_location_4_2_1">
+									<combobox dataattribute="CURRENTLOCSTATUS" id="commission_status_cur_loc_status"  />
+									<blankline id="commission_status_blank_4" /> 
+									<blankline id="commission_status_blank_5" /> 
+									<blankline id="commission_status_blank_6" /> 
+								</sectioncol>
+								<sectioncol id="commission_status_tg_location_4_2_2">
+									<combobox dataattribute="NEWLOCSTATUS" id="commission_status_new_loc_status"  />
+									<checkbox dataattribute="LREMOVEFROMALLROUTES" id="commission_status_loc_routes"  />
+									<checkbox dataattribute="LREMOVEFROMACTIVESP" id="commission_status_loc_sp"  />
+									<checkbox dataattribute="LREMOVEFROMALLJP" id="commission_status_loc_jp"  />
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</tab>
+					<tab  id="commission_status_tg_req" label="Requirement" type="Requirement">
+						<section id="commission_status_tg_req_4">
+							<sectionrow id="commission_status_tg_req_4_2">
+								<sectioncol id="commission_status_tg_req_4_2_1">
+									<combobox dataattribute="CURRENTREQSTATUS" id="commission_status_cur_req_status"  />
+								</sectioncol>
+								<sectioncol id="commission_status_tg_req_4_2_2">
+									<combobox dataattribute="NEWREQSTATUS" id="commission_status_new_req_status"  />
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</tab>
+					<tab  id="commission_status_tg_prod" label="Product" type="Product">
+						<section id="commission_status_tg_prod_4">
+							<sectionrow id="commission_status_tg_prod_4_2">
+								<sectioncol id="commission_status_tg_prod_4_2_1">
+									<combobox dataattribute="CURRENTPRODSTATUS" id="commission_status_cur_prod_status"  />
+								</sectioncol>
+								<sectioncol id="commission_status_tg_prod_4_2_2">
+									<combobox dataattribute="NEWPRODSTATUS" id="commission_status_new_prod_status"  />
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</tab>
+					<tab  id="commission_status_tg_jp" label="Job Plan" type="Job Plan">
+						<section id="commission_status_tg_jp_4">
+							<sectionrow id="commission_status_tg_jpb_4_2">
+								<sectioncol id="commission_status_tg_jp_4_2_1">
+									<combobox dataattribute="CURRENTJOBPLANSTATUS" id="commission_status_cur_jp_status"  />
+								</sectioncol>
+								<sectioncol id="commission_status_tg_jp_4_2_2">
+									<combobox dataattribute="NEWJOBPLANSTATUS" id="commission_status_new_jp_status"  />
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</tab>
+					<tab  id="commission_status_tg_pm" label="PM" type="PM">
+						<section id="commission_status_tg_pm_4">
+							<sectionrow id="commission_status_tg_pm_4_2">
+								<sectioncol id="commission_status_tg_pm_4_2_1">
+									<combobox dataattribute="CURRENTPMSTATUS" id="commission_status_cur_pm_status"  />
+								</sectioncol>
+								<sectioncol id="commission_status_tg_pm_4_2_2">
+									<combobox dataattribute="NEWPMSTATUS" id="commission_status_new_pm_status"  />
+								</sectioncol>
+							</sectionrow>
+						</section>
+					</tab>
+				</tabgroup>
+			</tab>
+			<tab id="commission_log_tab" label="Log Records" type="Log" >
+				<section id="commission_log_tab_1" border="true">
+					<sectionrow id="commission_log_tab_1_1">
+						<sectioncol id="commission_log_tab_1_1_1">
+							<textbox dataattribute="PERCENTCOMP" id="commission_log_tab_1_1_1_1" inputmode="readonly" />
+						</sectioncol>
+						<sectioncol id="commission_log_tab_1_1_2">
+							<textbox dataattribute="ERRORCOUNT" id="commission_log_tab_1_1_2_1_1" inputmode="readonly" />
+						</sectioncol>
+						<sectioncol id="commission_log_tab_1_1_3">
+							<buttongroup id="commission_log_buttons">
+								<pushbutton id="commission_log_buttons_1" label="Refresh"
+									type="event" mxevent="refreshLogs" />
+							</buttongroup>
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<section id="commission_log_tab_2" border="true">
+				<multilinetextbox columns="70" dataattribute="LOG"
+					id="commission_log_tab_2_1" inputmode="readonly" rows="10" hidetooltip="true" />
+				</section>
+			</tab>
+		</tabgroup>
+		<buttongroup id="commission_bg">
+			<pushbutton id="commission_ok"
+				label="Commission" mxevent="commission" />
+			<pushbutton id="commission_cancel" label="Cancel"
+				mxevent="dialogcancel" />
+		</buttongroup>
+		<buttongroup id="commission_bg_close">
+			<pushbutton id="commission_close" label="Close"
+				mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+
+	<dialog mboname="BIMPROJECT" id="COMS_HIST" label="Building Commissioning History" datasrc="MAINRECORD">
+		<table id="comm_hist_tbl" relationship="BIMCOMMISSION" selectmode="single" beanclass="psdi.webclient.beans.bim.OmniClassManagerBean" >
+			<tablebody displayrowsperpage="5" filterable="true" id="comm_hist_tablebody">
+				<tablecol filterable="false" id="comm_hist_tablebody_detail"
+					mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+					type="event" />
+				<tablecol dataattribute="FACILITY" id="comm_hist_tbl_1"
+					inputmode="readonly" filterable="true"/>
+				<tablecol dataattribute="SITEID" id="comm_hist_tbl_3"
+					lookup="valuelist" filterable="true" inputmode="readonly" />
+				<tablecol dataattribute="MEMO" id="comm_hist_tbl_4" filterable="true" inputmode="readonly" />
+				<tablecol dataattribute="STATUS" id="comm_hist_tbl_5" filterable="true" inputmode="readonly" />
+				<tablecol dataattribute="UPLOADTIME" id="comm_hist_tbl_6" filterable="true" inputmode="readonly" />
+			</tablebody>
+			<tabledetails id="comm_hist_tbl_details" >
+				<tabgroup id="comm_hist_tabs" type="import">
+					<tab default="true" id="comm_hist_status_tab" label="Status">
+						<section id="comm_hist_status_tab_1" >
+							<sectionrow id="comm_hist_status_tab_1_1">
+								<sectioncol id="comm_hist_status_tab_1_1_1">
+									<textbox dataattribute="FACILITY" id="comm_hist_facility" lookup="locations"/>
+								</sectioncol>
+								<sectioncol id="comm_hist_status_tab_1_1_2">
+									<textbox dataattribute="UPLOADTIME" id="comm_hist_facility_upload_time" 
+									         label="Time Stamp" inputmode="readonly" />
+								</sectioncol>
+								<sectioncol id="comm_hist_status_tab_1_1_3">
+									<combobox dataattribute="LOGLEVEL" id="comm_hist_loglevel"	lookup="valuelist" />
+								</sectioncol>
+								<sectioncol id="comm_hist_status_tab_1_1_4">
+									<textbox dataattribute="STATUS" id="comm_hist_status" inputmode="readonly" />
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<section id="comm_hist_status_tab_2" >
+							<textbox dataattribute="MEMO" id="comm_hist_memo" inputmode="readonly" />
+						</section>
+						<section id="comm_hist_status_tab_3" label="Records to Update?">
+							<sectionrow id="comm_hist_status_tab_3_2">
+								<sectioncol id="comm_hist_status_tab_3_2_1">
+									<checkbox dataattribute="UPDATEFACILITY" id="comm_hist_status_update_facility"  />
+									<checkbox dataattribute="UPDATEFLOORS" id="comm_hist_status_update_floor"  />
+									<checkbox dataattribute="UPDATESPACE" id="comm_hist_status_update_space"  />
+								</sectioncol>
+								<sectioncol id="comm_hist_status_tab_3_2_2">
+									<checkbox dataattribute="UPDATEASSET" id="comm_hist_status_update_asset"  />
+									<checkbox dataattribute="UPDATEPRODUCT" id="comm_hist_status_update_product"  />
+								</sectioncol>
+								<sectioncol id="comm_hist_status_tab_3_2_3">
+									<checkbox dataattribute="UPDATEJOBPLAN" id="comm_hist_status_update_jp"  />
+									<checkbox dataattribute="UPDATEPM" id="comm_hist_status_update_pm"  />
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<tabgroup id="comm_hist_status_tg" style="form">
+							<tab default="true" id="comm_hist_status_tg_asset" label="Asset" type="Asset">
+								<section id="comm_hist_status_tg_4" >
+									<sectionrow id="comm_hist_status_tg_4_2">
+										<sectioncol id="comm_hist_status_tg_4_2_1">
+											<combobox dataattribute="CURRENTASSETSTATUS" id="comm_hist_status_cur_asset_status"  />
+											<blankline id="comm_hist_status_blank_1" /> 
+											<blankline id="comm_hist_status_blank_2" /> 
+											<blankline id="comm_hist_status_blank_3" /> 
+										</sectioncol>
+										<sectioncol id="comm_hist_status_tg_4_2_2">
+											<combobox dataattribute="NEWASSETSTATUS" id="comm_hist_status_new_asset_status"  />
+											<checkbox dataattribute="AREMOVEFROMACTIVEROUTES" id="comm_hist_status_asset_routes"  />
+											<checkbox dataattribute="AREMOVEFROMACTIVESP" id="comm_hist_status_asset_sp"  />
+											<checkbox dataattribute="AROLLTOALLCHILDREN" id="comm_hist_status_asset_child"  />
+										</sectioncol>
+									</sectionrow>
+								</section>
+							</tab>
+							<tab  id="comm_hist_status_tg_location" label="Location" type="Location">
+								<section id="comm_hist_status_tab_4" >
+									<sectionrow id="comm_hist_status_tg_location_4_2">
+										<sectioncol id="comm_hist_status_tg_location_4_2_1">
+											<combobox dataattribute="CURRENTLOCSTATUS" id="comm_hist_status_cur_loc_status"  />
+											<blankline id="comm_hist_status_blank_4" /> 
+											<blankline id="comm_hist_status_blank_5" /> 
+											<blankline id="comm_hist_status_blank_6" /> 
+										</sectioncol>
+										<sectioncol id="comm_hist_status_tg_location_4_2_2">
+											<combobox dataattribute="NEWLOCSTATUS" id="comm_hist_status_new_loc_status"  />
+											<checkbox dataattribute="LREMOVEFROMALLROUTES" id="comm_hist_status_loc_routes"  />
+											<checkbox dataattribute="LREMOVEFROMACTIVESP" id="comm_hist_status_loc_sp"  />
+											<checkbox dataattribute="LREMOVEFROMALLJP" id="comm_hist_status_loc_jp"  />
+										</sectioncol>
+									</sectionrow>
+								</section>
+							</tab>
+							<tab  id="comm_hist_status_tg_prod" label="Product" type="Product">
+								<section id="comm_hist_status_tg_prod_4">
+									<sectionrow id="comm_hist_status_tg_prod_4_2">
+										<sectioncol id="comm_hist_status_tg_prod_4_2_1">
+											<combobox dataattribute="CURRENTPRODSTATUS" id="comm_hist_status_cur_prod_status"  />
+										</sectioncol>
+										<sectioncol id="comm_hist_status_tg_prod_4_2_2">
+											<combobox dataattribute="NEWPRODSTATUS" id="comm_hist_status_new_prod_status"  />
+										</sectioncol>
+									</sectionrow>
+								</section>
+							</tab>
+							<tab  id="comm_hist_status_tg_jp" label="Job Plan" type="Job Plan">
+								<section id="comm_hist_status_tg_jp_4">
+									<sectionrow id="comm_hist_status_tg_jpb_4_2">
+										<sectioncol id="comm_hist_status_tg_jp_4_2_1">
+											<combobox dataattribute="CURRENTJOBPLANSTATUS" id="comm_hist_status_cur_jp_status"  />
+										</sectioncol>
+										<sectioncol id="comm_hist_status_tg_jp_4_2_2">
+											<combobox dataattribute="NEWJOBPLANSTATUS" id="comm_hist_status_new_jp_status"  />
+										</sectioncol>
+									</sectionrow>
+								</section>
+							</tab>
+							<tab  id="comm_hist_status_tg_pm" label="PM" type="PM">
+								<section id="comm_hist_status_tg_pm_4">
+									<sectionrow id="comm_hist_status_tg_pm_4_2">
+										<sectioncol id="comm_hist_status_tg_pm_4_2_1">
+											<combobox dataattribute="CURRENTPMSTATUS" id="comm_hist_status_cur_pm_status"  />
+										</sectioncol>
+										<sectioncol id="comm_hist_status_tg_pm_4_2_2">
+											<combobox dataattribute="NEWPMSTATUS" id="comm_hist_status_new_pm_status"  />
+										</sectioncol>
+									</sectionrow>
+								</section>
+							</tab>
+						</tabgroup>
+					</tab>
+					<tab id="comm_hist_log_tab" label="Log Records" type="Log" >
+						<section id="comm_hist_log_tab_1" border="true">
+							<sectionrow id="comm_hist_log_tab_1_1">
+								<sectioncol id="comm_hist_log_tab_1_1_1">
+									<textbox dataattribute="PERCENTCOMP" id="comm_hist_log_tab_1_1_1_1" inputmode="readonly" />
+								</sectioncol>
+								<sectioncol id="comm_hist_log_tab_1_1_2">
+									<textbox dataattribute="ERRORCOUNT" id="comm_hist_log_tab_1_1_2_1_1" inputmode="readonly" />
+								</sectioncol>
+								<sectioncol id="comm_hist_log_tab_1_1_3" >
+									<buttongroup id="comm_hist_log_buttons">
+										<pushbutton id="comm_hist_log_buttons_1" label="Refresh"
+											type="event" mxevent="refreshLogs" />
+									</buttongroup>
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<section id="comm_hist_log_tab_2" border="true">
+						<multilinetextbox columns="70" dataattribute="LOG"
+							id="comm_hist_log_tab_2_1" inputmode="readonly" rows="10" hidetooltip="true" />
+						</section>
+					</tab>
+				</tabgroup>
+			</tabledetails>
+		</table>	
+		<buttongroup id="comm_hist_bg">
+			<pushbutton id="comm_hist_cancel" label="Close"
+				mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+	
+	<dialog mboname="BIMFILTER" id="BIM_FILTER" label="Configure Import Filters" 
+			beanclass="psdi.webclient.beans.bim.FilterBean" >
+		<table id="filter_tbl" selectmode="single"  >
+			<tablebody displayrowsperpage="8" filterable="true" id="filter_tablebody" filterexpanded="true">
+				<tablecol filterable="false" id="filter_tbl_detail"
+					mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+					type="event" />
+				<tablecol dataattribute="FILTERNAME" id="filter_tbl_name" filterable="true" />
+				<tablecol dataattribute="SITEID" id="filter_tbl_site" lookup="site" filterable="true"  />
+				<tablecol dataattribute="ORGID" id="filter_tbl_org" lookup="org"  filterable="true" />
+				<tablecol filterable="false" id="filter_tbl_tog_delete"
+					mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+					mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+			</tablebody>
+			<tabledetails id="filter_tbl_details"  border="false" >
+				<sectionrow id="filter_tbl_details_main_row">
+					<sectioncol id="filter_tbl_details_left">
+						<section id="filter_tbl_1" border="false">
+						</section>
+						<section id="filter_tbl_2" border="false">
+							<sectionrow id="filter_tbl_1_1">
+								<sectioncol id="cfilter_tbl_1_1_2">
+									<textbox dataattribute="SITEID" id="filter_tbl_siteid" lookup="site"/>
+									<textbox dataattribute="FILTERNAME" id="filter_tbl_details_name" />
+								</sectioncol>
+								<sectioncol id="filter_tbl_1_1_3" >
+									<textbox dataattribute="ORGID" id="filter_tbl_orgid" lookup="org"/>
+									<textbox dataattribute="FILTERTYPE" id="filter_tbl_filtertype" lookup="valuelist"/>
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<section id="filter_tbl_3" border="false">
+							<textbox dataattribute="DESCRIPTION" id="filter_tbl_desc" lookup="longdesc" />
+							<sectionrow id="filter_tbl_2_1">
+							</sectionrow>
+						</section>
+						<section id="filter_tbl_4" border="false" >
+							<blankline id="filter_tbl_3filter_tbl_3filter_tbl_3_blank_1"/>
+							<blankline id="filter_tbl_3filter_tbl_3filter_tbl_3_blank_2"/>
+							<blankline id="filter_tbl_3filter_tbl_3filter_tbl_3_blank_3"/>
+						</section>
+					</sectioncol>
+					<sectioncol id="filter_tbl_details_right">
+						<table id="filter_entry_tbl" relationship="ENTRYLIST" selectmode="single"  >
+							<tablebody displayrowsperpage="5" filterable="true" id="filter__entry_tablebody" >
+								<tablecol dataattribute="COBIESHEET" id="filter_entry_tbl_sheet" filterable="true" lookup="valuelist" />
+								<tablecol dataattribute="FILTER" id="filter_entry_tbl_expression" filterable="true"  />
+								<tablecol dataattribute="EXPRESSIONTYPE" id="filter_entry_tbl_expression_type" filterable="true" lookup="valuelist" />
+								<tablecol filterable="false" id="filter_entry_tbl_tog_delete"
+									mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+									mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+							</tablebody>
+							<buttongroup id="filter_entry_tbl__btn_1">
+								<pushbutton default="true" id="filter_tbl_btn_newrow"
+									label="New Row" mxevent="addrow" />
+							</buttongroup>
+						</table>	
+					</sectioncol>
+				</sectionrow>
+			</tabledetails>
+			<buttongroup id="filter_tbl__btn_1">
+				<pushbutton default="true" id="filter_entry_tbl_btn_newrow"
+					label="New Row" mxevent="addrow" />
+			</buttongroup>
+		</table>	
+		<buttongroup id="filter_bg">
+			<pushbutton default="true" id="filter_bg_save" label="Save"
+				mxevent="dialogok" />
+			<pushbutton id="filter_bg_cancel" label="Close"
+				mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+
+	<dialog mboname="BIMATTRIBUTEMAP" id="BIM_MAP" label="Map Attributes to Fields" 
+			beanclass="psdi.webclient.beans.bim.AttributeMapBean" >
+		<helpgrid id="attrib_map_tbl_help" innerhtml="Specify the attributes that are copied from COBie files to Maximo fields. "/>	
+		<table id="attrib_map_tbl" selectmode="single"  >
+			<tablebody displayrowsperpage="8" filterable="true" id="attrib_map_tablebody" filterexpanded="true">
+				<tablecol filterable="false" id="attrib_map_tbl_detail"
+					mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+					type="event" />
+				<tablecol dataattribute="MAPNAME" id="attrib_map_tbl_name" filterable="true" />
+				<tablecol dataattribute="SITEID" id="attrib_map_tbl_site" lookup="site" filterable="true"  />
+				<tablecol dataattribute="ORGID" id="attrib_map_tbl_org" lookup="org"  filterable="true" />
+				<tablecol filterable="false" id="attrib_map_tbl_tog_delete"
+					mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+					mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+			</tablebody>
+			<tabledetails id="attrib_map_tbl_details"  border="false" >
+				<sectionrow id="attrib_map_tbl_main_row">
+					<sectioncol id="attrib_map_tbl_main_left">
+						<section id="attrib_map_tbl_0" border="false">
+						</section>
+						<section id="attrib_map_tbl_1" border="false">
+							<sectionrow id="attrib_map_tbl_1_1">
+								<sectioncol id="cattrib_map_tbl_1_1_2">
+									<textbox dataattribute="SITEID" id="attrib_map_tbl_details_siteid" lookup="site"/>
+									<textbox dataattribute="MAPNAME" id="attrib_map_tbl_details_name" />
+								</sectioncol>
+								<sectioncol id="attrib_map_tbl_1_1_3" >
+									<textbox dataattribute="ORGID" id="attrib_map_tbl_details_orgid" lookup="org"/>
+									<blankline id="attrib_map_tbl_1_1_3_blank_1"/>
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<section id="attrib_map_tbl_3" border="false">
+							<textbox dataattribute="DESCRIPTION" id="attrib_map_tbl_details_desc" lookup="longdesc" />
+							<sectionrow id="attrib_map_tbl_3_1">
+							</sectionrow>
+						</section>
+						<section id="attrib_map_tbl_4" border="false">
+							<blankline id="attrib_map_tbl_4_blank_1"/>
+						</section>
+					</sectioncol>
+					<sectioncol id="attrib_map_tbl_main_right">
+						<section id="attrib_map_tbl_2" border="false">
+						<table id="attrib_map_entry_tbl" relationship="ENTRYLIST" selectmode="single"  >
+							<tablebody displayrowsperpage="5" filterable="true" id="attrib_map__entry_tablebody" >
+								<tablecol dataattribute="OBJECTNAME" id="attrib_map_entry_tbl_obj" filterable="true" inputmode="readonly" />
+								<tablecol dataattribute="ATTRIBUTENAME" id="attrib_map_entry_tbl_attrib" filterable="true" lookup="attnameandtype" />
+								<tablecol dataattribute="COBIEATTRIBUTE" id="attrib_map_entry_tbl_cobie_attrib" filterable="true" />
+								<tablecol filterable="false" id="attrib_map_entry_tbl_tog_delete"
+									mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+									mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+							</tablebody>
+							<buttongroup id="attrib_map_entry_tbl__btn_1">
+								<pushbutton default="true" id="attrib_map_tbl_btn_newrow"
+									label="New Row" mxevent="addrow" />
+							</buttongroup>
+						</table>	
+						</section>
+					</sectioncol>
+				</sectionrow>
+			</tabledetails>
+			<buttongroup id="attrib_map_tbl__btn_1">
+				<pushbutton default="true" id="attrib_map_entry_tbl_btn_newrow"
+					label="New Row" mxevent="addrow" />
+			</buttongroup>
+		</table>	
+		<buttongroup id="attrib_map_bg">
+			<pushbutton default="true" id="attrib_map_bg_save" label="Save"
+				mxevent="dialogok" />
+			<pushbutton id="attrib_map_bg_cancel" label="Close"
+				mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+
+	<dialog mboname="BIMTYPEMAP" id="TYPE_MAP" label="Map Attributes to Specifications" 
+			beanclass="psdi.webclient.beans.bim.AttributeMapBean" >
+		<helpgrid id="type_map_tbl_help" innerhtml="Specify the Maximo attribute types that are used to create specifications from COBie attributes."/>	
+		<table id="type_map_tbl" selectmode="single"  >
+			<tablebody displayrowsperpage="8" filterable="true" id="type_map_tablebody" filterexpanded="true">
+				<tablecol filterable="false" id="type_map_tbl_detail"
+					mxevent="toggledetailstate" mxevent_desc="Show Detail" sortable="false"
+					type="event" />
+				<tablecol dataattribute="MAPNAME" id="type_map_tbl_name" filterable="true" />
+				<tablecol dataattribute="SITEID" id="type_map_tbl_site" lookup="site" filterable="true"  />
+				<tablecol dataattribute="ORGID" id="type_map_tbl_org" lookup="org"  filterable="true" />
+				<tablecol filterable="false" id="type_map_tbl_tog_delete"
+					mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+					mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+			</tablebody>
+			<tabledetails id="type_map_tbl_details"  border="false" >
+				<sectionrow id="type_map_tbl_main_row">
+					<sectioncol id="type_map_tbl_main_left">
+						<section id="type_map_tbl_0" border="false">
+						</section>
+						<section id="type_map_tbl_1" border="false">
+							<sectionrow id="type_map_tbl_1_1">
+								<sectioncol id="ctype_map_tbl_1_1_2">
+									<textbox dataattribute="SITEID" id="type_map_tbl_details_siteid" lookup="site"/>
+									<textbox dataattribute="MAPNAME" id="type_map_tbl_details_name" />
+								</sectioncol>
+								<sectioncol id="type_map_tbl_1_1_3" >
+									<textbox dataattribute="ORGID" id="type_map_tbl_details_orgid" lookup="org"/>
+									<blankline id="type_map_tbl_1_1_3_blank_1"/>
+								</sectioncol>
+							</sectionrow>
+						</section>
+						<section id="type_map_tbl_3" border="false">
+							<textbox dataattribute="DESCRIPTION" id="type_map_tbl_details_desc" lookup="longdesc" />
+							<sectionrow id="type_map_tbl_3_1">
+							</sectionrow>
+						</section>
+						<section id="type_map_tbl_4" border="false">
+							<blankline id="type_map_tbl_4_blank_1"/>
+						</section>
+					</sectioncol>
+					<sectioncol id="type_map_tbl_main_right">
+						<table id="spec_map_entry_tbl" relationship="SPECLIST" selectmode="single"  >
+							<tablebody displayrowsperpage="5" filterable="true" id="spec_map_entry_tablebody" >
+								<tablecol dataattribute="ASSETATTRID" id="spec_map_entry_tbl_spec" filterable="true" lookup="ASSETATTRIBUTE"/>
+								<tablecol dataattribute="DESCRIPTION" id="spec_map_entry_tbl_desc" filterable="true" inputmode="readonly"/>
+								<tablecol dataattribute="COBIEATTRIBUTE" id="spec_map_entry_tbl_cobie_attrib" filterable="true" />
+								<tablecol filterable="false" id="spec_map_entry_tbl_tog_delete"
+									mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete"
+									mxevent_icon="btn_garbage.gif" sortable="false" type="event" />
+							</tablebody>
+							<buttongroup id="spec_map_entry_tbl__btn_1">
+								<pushbutton default="true" id="spec_map_tbl_btn_newrow"
+									label="New Row" mxevent="addrow" />
+							</buttongroup>
+						</table>	
+					</sectioncol>
+				</sectionrow>
+			</tabledetails>
+			<buttongroup id="type_map_tbl__btn_1">
+				<pushbutton default="true" id="type_map_entry_tbl_btn_newrow"
+					label="New Row" mxevent="addrow" />
+			</buttongroup>
+		</table>	
+		<buttongroup id="type_map_bg">
+			<pushbutton default="true" id="type_map_bg_save" label="Save"
+				mxevent="dialogok" />
+			<pushbutton id="type_map_bg_cancel" label="Close"
+				mxevent="dialogcancel" />
+		</buttongroup>
+	</dialog>
+	
+	<dialog beanclass="psdi.webclient.beans.bim.OmniClassImportBean" id="UNI_ADD" label="Import Uniformat Classifications" mboname="BIMOMNICLASSIMPORT">
+		<helpgrid id="uniformat_help" 
+		innerhtml="Import a single Uniformat table that is in .csv, .xls or .xlxs format into the Maximo classification hierarchy." morehelp="com.ibm.mbs.doc/bim,c_classifications.html" />
+		<tabgroup id="uniformat_tabs" type="import">
+			<tab default="true" id="uniformat_upload_tab" label="Import">
+				<section id="uniformat_upload_tab_1">
+					<sectionrow id="uniformat_upload_tab_1_1">
+						<sectioncol id="uniformat_upload_tab_1_1_1">
+							<textbox dataattribute="OMNICLASSTABLE" id="uniformat_name" inputmode="readonly"/>
+							<textbox dataattribute="DESCRIPTION" id="uniformat_desc" lookup="longdesc"/>
+						</sectioncol>
+						<sectioncol id="uniformat_upload_tab_1_1_3">
+							<textbox dataattribute="ORGID" id="uniformat_orgid" lookup="org"/>
+							<textbox dataattribute="SITEID" id="uniformat_siteid" lookup="site"/>
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<section id="uniformat_upload_tab_3" label="Import">
+					<sectionrow id="uniformat_upload_tab_3_2">
+						<sectioncol id="uniformat_upload_tab_3-2_1">
+							<textbox dataattribute="CLASSSTRUCTURE.HIERARCHYPATH" id="uniformat_parent_class" label="Parent Classification" menutype="classification"/>
+						</sectioncol>
+						<sectioncol id="uniformat_upload_tab_3-2_2">
+							<textbox dataattribute="SOURCEFILENAME" id="uniformat_filename" lookup="upload_bim_file"/>
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<table id="uniformat_usewith_tbl" label="Select Objects" relationship="USEWITHLIST" selectmode="single">
+					<tablebody displayrowsperpage="20" filterable="true" id="uniformat_usewith_tablebody">
+						<tablecol dataattribute="CLASSUSEWITH" filterable="true" id="uniformat_usewith_tbl_1" lookup="valuelist"/>
+						<tablecol filterable="false" id="uniformat_usewith_tablebody_delete" mxevent="toggledeleterow" mxevent_desc="Mark Row for Delete" mxevent_icon="btn_garbage.gif" sortable="false" type="event"/>
+					</tablebody>
+					<buttongroup id="uniformat_upload_tab_btn">
+						<pushbutton default="true" id="uniformat_upload_tab_btn_newrow" label="New Row" mxevent="addrow"/>
+					</buttongroup>
+				</table>
+			</tab>
+			<tab id="uniformat_option_tab" label="Options" type="Options">
+				<combobox dataattribute="LOGLEVEL" id="uniformat_op_loglevel" lookup="valuelist"/>
+				<checkbox dataattribute="DELETEFILES" id="uniformat_op_deletefiles"/>
+				<checkbox dataattribute="GENASSETDESC" id="uniformat_op_gen_desc"/>
+			</tab>
+			<tab id="uniformat_log_tab" label="Log Records" type="Log">
+				<section border="true" id="uniformat_log_tab_1">
+					<sectionrow id="uniformat_log_tab_1_1">
+						<sectioncol id="uniformat_log_tab_1_1_1">
+							<textbox dataattribute="PERCENTCOMP" id="uniformat_log_tab_1_1_1_1" inputmode="readonly"/>
+						</sectioncol>
+						<sectioncol id="uniformat_log_tab_1_1_2">
+							<textbox dataattribute="ERRORCOUNT" id="uniformat_log_tab_1_1_2_1_1" inputmode="readonly"/>
+						</sectioncol>
+						<sectioncol id="uniformat_log_tab_1_1_3">
+							<buttongroup id="uniformat_log_buttons">
+								<pushbutton id="uniformat_log_buttons_1" label="Refresh" mxevent="refreshLogs" type="event"/>
+							</buttongroup>
+						</sectioncol>
+					</sectionrow>
+				</section>
+				<section border="true" id="uniformat_log_tab_2">
+					<multilinetextbox columns="70" dataattribute="LOG" hidetooltip="true" id="uniformat_log_tab_2_1" inputmode="readonly" rows="10"/>
+				</section>
+			</tab>
+		</tabgroup>
+			<buttongroup id="uniformat_bg">
+				<pushbutton id="uniformat_import" label="Import" mxevent="uniformatImport"/>
+				<pushbutton id="uniformat_cancel" label="Cancel" mxevent="dialogcancel"/>
+			</buttongroup>
+			<buttongroup id="uniformat_bg_close">
+				<pushbutton id="uniformat_close" label="Close" mxevent="dialogcancel"/>
+			</buttongroup>
+	</dialog>
+	
+	
+</presentation>

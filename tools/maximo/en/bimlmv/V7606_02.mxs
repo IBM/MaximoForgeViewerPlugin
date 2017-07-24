@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+-->
+<updatescript version="">
+	<systemlib apptype="webclient" id="menus">
+		<add before="assetmain3" container="assetmain" control="menuitem">
+			<set property="event" value="bim_asset_select"/>
+			<set property="id" value="assetmain2b"/>
+			<set property="image" value="bim/menu_icon_model.gif"/>
+			<set property="label" value="Building model"/>
+			<set property="sigoption" value="BIMLOOKUP"/>
+		</add>
+		<add container="ss_assetmain" control="menuitem">
+			<set property="event" value="bim_asset_select"/>
+			<set property="id" value="ss_assetmain4"/>
+			<set property="image" value="bim/menu_icon_model.gif"/>
+			<set property="label" value="Building model"/>
+			<set property="sigoption" value="BIMLOOKUP"/>
+		</add>
+		<add container="select_assets_sub" control="menuitem">
+			<set property="event" value="bim_asset_select_multi"/>
+			<set property="id" value="select_assets_model"/>
+			<set property="label" value="Building model"/>
+			<set property="sigoption" value="BIMLOOKUP"/>
+		</add>
+	</systemlib>
+</updatescript>

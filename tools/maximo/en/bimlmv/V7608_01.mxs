@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+-->
+<updatescript version="6.0.0">
+	<app apptype="webclient" id="bimmodels">
+		<modify control="bucket_manage_tbl_details_region">
+			<clear property="lookup"/>
+		</modify>
+		<add before="model_upload_1" container="lmv_model_upload" control="helpgrid">
+			<set property="id" value="model_upload_help"/>
+			<set property="innerhtml" value="A multi-part model can be uploaded as a single zip file containing all the model files"/>
+		</add>
+		<add before="viewable_manage_tbl_details_giud" container="viewable_manage_tab_main" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="viewable_manage_tbl_4"/>
+		</add>
+		<add container="viewable_manage_tbl_4" control="sectionrow">
+			<set property="id" value="viewable_manage_tbl_4_1"/>
+		</add>
+		<add container="viewable_manage_tbl_4_1" control="sectioncol">
+			<set property="id" value="cviewable_manage_tbl_4_1_1"/>
+		</add>
+		<move child="viewable_manage_tbl_details_startedat" container="cviewable_manage_tbl_4_1_1"/>
+		<add container="viewable_manage_tbl_4_1" control="sectioncol">
+			<set property="id" value="viewable_manage_tbl_4_1_2"/>
+		</add>
+		<move child="viewable_manage_tbl_details_hasthumbnail" container="viewable_manage_tbl_4_1_2"/>
+		<move before="viewable_manage_tbl_3" child="viewable_manage_tbl_details_viewableurn" container="viewable_manage_tab_main"/>
+		<move before="viewable_manage_tbl_details_viewableurn" child="viewable_manage_tbl_details_modelurn" container="viewable_manage_tab_main"/>
+		<add before="viewable_manage_tbl_2_1_2" container="viewable_manage_tbl_2_1" control="sectioncol">
+			<set property="id" value="viewable_manage_tbl_2_1_1"/>
+		</add>
+		<move child="viewable_manage_tbl_details_desc" container="viewable_manage_tbl_2_1_1"/>
+		<add container="viewable_manage_tbl_2_1_2" control="textbox">
+			<set property="dataattribute" value="REGION"/>
+			<set property="id" value="viewable_manage_tbl_details_region"/>
+		</add>
+		<add container="viewable_manage_tbl_3_1" control="sectioncol">
+			<set property="id" value="viewable_manage_tbl_3_1_4"/>
+		</add>
+		<move child="viewable_manage_tbl_details_refresh_btn" container="viewable_manage_tbl_3_1_4"/>
+		<add before="viewable_manage_tbl_3_1_4" container="viewable_manage_tbl_3_1" control="sectioncol">
+			<set property="id" value="viewable_manage_tbl_3_1_3"/>
+		</add>
+		<move child="viewable_manage_tbl_details_success" container="viewable_manage_tbl_3_1_3"/>
+		<move child="viewable_manage_tbl_details_progress" container="cviewable_manage_tbl_3_1_1"/>
+		<move child="viewable_manage_tbl_details_status" container="viewable_manage_tbl_3_1_2"/>
+		<add before="viewable_register_1_1_2" container="viewable_register1_1" control="sectioncol">
+			<set property="id" value="viewable_register_1_1_1"/>
+		</add>
+		<add container="viewable_register_1_1_1" control="combobox">
+			<set property="dataattribute" value="REGION"/>
+			<set property="id" value="viewable_register_create_region"/>
+		</add>
+		<add container="viewable_register_2" control="sectionrow">
+			<set property="id" value="viewable_register2_3"/>
+		</add>
+		<move child="viewable_register_2_1_3" container="viewable_register2_3"/>
+		<add container="viewable_register2_2" control="sectioncol">
+			<set property="id" value="viewable_register_2_2_1"/>
+		</add>
+		<add container="viewable_register_2_2_1" control="section">
+			<set property="border" value="false"/>
+			<set property="id" value="viewable_register_2_1_1_1"/>
+		</add>
+		<add container="viewable_register_2_1_1_1" control="sectionrow">
+			<set property="id" value="viewable_register_2_1_1_1_1"/>
+		</add>
+		<add container="viewable_register_2_1_1_1_1" control="sectioncol">
+			<set property="id" value="viewable_register_2_1_1_1_1_1"/>
+		</add>
+		<add container="viewable_register_2_1_1_1_1_1" control="checkbox">
+			<set property="dataattribute" value="COMPRESSED"/>
+			<set property="id" value="viewable_register_compressed"/>
+			<set property="inputmode" value="required"/>
+		</add>
+		<add container="viewable_register_2_1_1_1_1" control="sectioncol">
+			<set property="id" value="viewable_register_2_1_1_1_1_2"/>
+		</add>
+		<add container="viewable_register_2_1_1_1_1_2" control="textbox">
+			<set property="dataattribute" value="ROOTFILENAME"/>
+			<set property="id" value="viewable_register_rootfilename"/>
+		</add>
+		<remove container="bimmodels" control="lmv_model_link"/>
+		<remove container="model_manage_tbl_tabs" control="model_manage_tab_links"/>
+		<remove container="viewable_manage_tbl_2_1" control="cviewable_manage_tbl_2_1_1"/>
+		<remove container="viewable_manage_tbl_2_1" control="viewable_manage_tbl_2_1_3"/>
+		<remove container="viewable_manage_tbl_2_1" control="viewable_manage_tbl_2_1_4"/>
+	</app>
+</updatescript>

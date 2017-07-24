@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+-->
+<!DOCTYPE script SYSTEM "script.dtd">
+<script author="Doug Wood" scriptname="Maximo for Buildings 7.5">
+	<description>Maximo for Buildings 7.6 Product application</description>
+	<statements>
+		<!--
+		  - Product application  
+		-->		
+		<freeform description="Create Product application">
+			<sql target="all">
+				delete from maxapps where app='PRODUCT' AND maintbname='BIMPRODUCT';
+
+				insert into maxapps
+				(maintbname,ismobile,apptype,maxappsid,description,app,originalapp)
+				values ('BIMPRODUCT',0,'RUN',maxappsseq.nextval,'Product','PRODUCT','CUSTAPP');
+		  	</sql>
+		</freeform>
+
+
+		<freeform description="Add Product to BIM menu">
+			<sql target="all">
+				delete from maxmenu where keyvalue='PRODUCT' AND moduleapp='PURCHASE';
+
+				insert into maxmenu
+				(menutype,position,keyvalue,subposition,maxmenuid,visible,moduleapp,elementtype,image)
+				values ('MODULE',77809,'PRODUCT',0,maxmenuseq.nextval,1,'BIM','APP', 'bim/appimg_product.gif');
+			</sql>
+		</freeform>
+		
+		<add_sigoption visible="true" app="PRODUCT" optionname="SEARCHSQRY"
+			description="Save Current Query" grantapp="PRODUCT" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="SEARCHVMQR"
+			description="View/Manage Queries" grantapp="PRODUCT" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="SEARCHWHER"
+			description="Where Clause" grantapp="PRODUCT" esigenabled="false"
+			langcode="EN" />
+
+		<add_sigoption visible="true" app="PRODUCT" optionname="SAVE"
+			description="Save Product" alsorevokes="INSERT,DUPLICATE,DELETE"
+			grantapp="PRODUCT" grantoption="READ" esigenabled="false" langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="INSERT"
+			description="New Product" alsorevokes="DUPLICATE" grantapp="PRODUCT"
+			alsogrants="SAVE" esigenabled="false" langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="CLEAR"
+			description="Clear Changes" grantapp="PRODUCT" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="PREVIOUS"
+			description="Previous Product" grantapp="PRODUCT" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="NEXT"
+			description="Next Product" grantapp="PRODUCT" esigenabled="false"
+			langcode="EN" />
+
+		<add_sigoption visible="true" app="PRODUCT" optionname="DUPLICATE"
+			description="Duplicate Product" grantapp="PRODUCT" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="DELETE"
+			description="Delete Product" grantapp="PRODUCT" esigenabled="false" langcode="EN" />
+
+		<add_sigoption visible="true" app="PRODUCT" optionname="MANAGELIB"
+			description="Manage Library" grantapp="PRODUCT" esigenabled="false" langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="ASSOCFOLD"
+			description="Associate Folders" grantapp="PRODUCT" esigenabled="false" langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="MANAGEFOLD"
+			description="Manage Folders" grantapp="PRODUCT" esigenabled="false" langcode="EN" />
+
+		<add_sigoption visible="true" app="PRODUCT" optionname="BOOKMARK"
+			description="Add to Bookmarks" grantapp="PRODUCT" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="SEARCHMORE"
+			description="More Search Fields" grantapp="PRODUCT" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="SEARCHATTR"
+			description="Attribute Search" grantapp="PRODUCT" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="SEARCHTIPS"
+			description="View Search Tips" grantapp="PRODUCT" esigenabled="false"
+			langcode="EN" />
+		<add_sigoption visible="true" app="PRODUCT" optionname="SEARCHBOOK"
+			description="Bookmarks" grantapp="PRODUCT" esigenabled="false" langcode="EN" />
+
+		<add_sigoption visible="true" app="PRODUCT" optionname="READ"
+			description="Read Access to Product App" alsogrants="CLEAR" alsorevokes="ALL"
+			grantapp="STARTCNTR" grantoption="READ" esigenabled="false" langcode="EN" />
+			
+	   <add_sigoption visible="true" app="PRODUCT" optionname="PRODSTATUS" 
+	        description="Change Status" grantapp="PRODUCT" 
+		    grantoption="READ" esigenabled="false" langcode="EN" />
+
+	   <add_sigoption visible="true" app="PRODUCT" optionname="VIEWHIST" 
+	        description="View History" grantapp="PRODUCT" 
+		    grantoption="READ" esigenabled="false" langcode="EN" />
+
+		
+
+
+		<freeform description="remove rights from MAXEVERYONE group">
+			<sql target="all">
+				delete from applicationauth where (groupname='MAXEVERYONE' OR groupname='MAXDEFLTREG' )  and app='PRODUCT';
+				delete from applicationauth where groupname='MAXADMIN'  and app='PRODUCT' and optionname='READ';
+			</sql>
+		</freeform>
+
+		<freeform description="Design Specification applicationauthoolbar">
+			<sql target="all">
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','DUPLICATE',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','READ',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','SAVE',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','BOOKMARK',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','SEARCHBOOK',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','SEARCHWHER',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','SEARCHMORE',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','SEARCHSQRY',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','SEARCHATTR',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','SEARCHTIPS',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','SEARCHVMQR',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','DELETE',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','INSERT',applicationauthseq.nextval,'');
+				
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','CLEAR',applicationauthseq.nextval,'');
+
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','PREVIOUS',applicationauthseq.nextval,'');
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','NEXT',applicationauthseq.nextval,'');	
+
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','MANAGELIB',applicationauthseq.nextval,'');	
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','ASSOCFOLD',applicationauthseq.nextval,'');	
+
+				insert into applicationauth (groupname, app, optionname,
+				applicationauthid, conditionnum)
+				Values ('MAXADMIN','PRODUCT','MANAGEFOLD',applicationauthseq.nextval,'');	
+  			</sql>
+		</freeform>
+
+		<create_app_menu app="PRODUCT" type="tool">
+			<app_menu_option tabdisplay="ALL" option="INSERT"
+				image="nav_icon_insert.gif" />
+			<app_menu_option tabdisplay="MAIN" option="SAVE"
+				image="nav_icon_save.gif" />
+			<app_menu_option tabdisplay="MAIN" option="CLEAR"
+				image="nav_icon_clear.gif" />
+			<menu_separator tabdisplay="MAIN" />
+			<app_menu_option tabdisplay="MAIN" option="PREVIOUS"
+				image="nav_icon_previous.gif" />
+			<app_menu_option tabdisplay="MAIN" option="NEXT"
+				image="nav_icon_next.gif" />
+			<app_menu_option tabdisplay="MAIN" option="PRODSTATUS"
+				image="nav_icon_changestatus.gif" />
+		</create_app_menu>
+
+		<create_app_menu app="PRODUCT" type="action">
+			<app_menu_option tabdisplay="MAIN" option="PRODSTATUS"
+				image="nav_icon_changestatus.gif" />
+			<app_menu_option tabdisplay="MAIN" option="VIEWHIST" />
+			<app_menu_option tabdisplay="MAIN" option="DUPLICATE" />
+			<app_menu_option tabdisplay="MAIN" option="DELETE" />
+			<app_menu_option tabdisplay="MAIN" option="BOOKMARK" />
+			<app_menu_header headerdescription="Attachment Library/Folders">
+				<app_menu_option tabdisplay="ALL" option="MANAGELIB" />
+				<app_menu_option tabdisplay="ALL" option="ASSOCFOLD" />
+				<app_menu_option tabdisplay="ALL" option="MANAGEFOLD" />
+			</app_menu_header>
+		</create_app_menu>
+
+		<create_app_menu app="PRODUCT" type="search">
+			<app_menu_header headerdescription="Advanced Search"
+				image="atb_search.gif">
+				<app_menu_option tabdisplay="ALL" option="SEARCHMORE" />
+				<app_menu_option tabdisplay="ALL" option="SEARCHWHER" />
+				<app_menu_option tabdisplay="ALL" option="SEARCHATTR" />
+				<app_menu_option tabdisplay="ALL" option="SEARCHTIPS" />
+			</app_menu_header>
+			<app_menu_header headerdescription="Save Query"
+				image="atb_save.gif">
+				<app_menu_option tabdisplay="ALL" option="SEARCHSQRY" />
+				<app_menu_option tabdisplay="ALL" option="SEARCHVMQR" />
+			</app_menu_header>
+			<app_menu_option tabdisplay="ALL" option="SEARCHBOOK" image="atb_bookmark.gif" />
+		</create_app_menu>
+
+		<freeform description="Associate attachments with Product applcation">
+			<sql target="all">
+				delete from appdoctype where app='PRODUCT';
+
+				insert into appdoctype(app, doctype) values ('PRODUCT','Attachments');
+				insert into appdoctype(app, doctype) values ('PRODUCT','Diagrams');
+				insert into appdoctype(app, doctype) values ('PRODUCT','Images');
+		  	</sql>
+		</freeform>
+		
+	   <additional_app_menu app="ASSET" type="action" menu_position="last" >
+	   		<app_menu_option option="BIM_VPT" tabdisplay="MAIN"/>
+	   </additional_app_menu>
+	   
+		  <freeform description="Create Object structure for BIMProduct">
+			  <sql target="all">
+		  	  delete from maxintobject where intobjectname = 'MXPRODUCT';
+		  	  delete from maxintobjdetail where intobjectname = 'MXPRODUCT';
+
+	          insert into maxintobject
+	               (intobjectname, description,          selfreferencing, userdefined, changeby,	changedate,	langcode, hasld, queryonly,	configurable, flatsupported, usewith, aliasconflict, maxintobjectid)
+	      	  values
+ 				   ('MXPRODUCT',  'Product definition',	 0,               0,           'MAXIMO',CURRENT_TIMESTAMP,	'EN', 0, 0,	1,	1,'INTEGRATION', 1,	maxintobjectseq.nextval);
+	          insert into maxintobjdetail
+	               (intobjectname, objectname,                                     objectorder, processorder, userdefined, changeby, changedate,        objectid,              hierarchypath,                  excludeparentkey, deleteoncreate, propagateevent, maxintobjdetailid)
+	      	  values
+	               ('MXPRODUCT', 'BIMPRODUCT',                                     1,			1,			  0,		   'MAXIMO', CURRENT_TIMESTAMP, 1,	                   'BIMPRODUCT',	               0,				0,			    0,				maxintobjdetailseq.nextval);
+	          insert into maxintobjdetail
+	               (intobjectname,  objectname,          relation,                 objectorder, processorder, userdefined, changeby, changedate,        objectid, parentobjid, hierarchypath,   	           excludeparentkey, deleteoncreate, propagateevent, maxintobjdetailid)
+	      	  values
+	               ('MXPRODUCT',  'BIMPRODUCTBASESPEC', 'BIMPRODUCTBASESPECCLASS', 1,			2,			  0,		   'MAXIMO', CURRENT_TIMESTAMP, 2,  	  1,          'BIMPRODUCT/BIMPRODUCTBASESPEC', 1,		        1,			    1,		        maxintobjdetailseq.nextval);
+	          insert into maxintobjdetail
+	               (intobjectname,  objectname,          relation,                 objectorder, processorder, userdefined, changeby, changedate,        objectid, parentobjid, hierarchypath,   	           excludeparentkey, deleteoncreate, propagateevent, maxintobjdetailid)
+	      	  values
+	               ('MXPRODUCT',  'BIMPRODUCTPART',      'BIMPRODUCTPARTS',        2,			3,			  0,		   'MAXIMO', CURRENT_TIMESTAMP, 3,  	  1,          'BIMPRODUCT/BIMPRODUCTPART',     1,		        1,			    1,		        maxintobjdetailseq.nextval);
+	          insert into maxintobjdetail
+	               (intobjectname,  objectname,          relation,                 objectorder, processorder, userdefined, changeby, changedate,        objectid, parentobjid, hierarchypath,   	           excludeparentkey, deleteoncreate, propagateevent, maxintobjdetailid)
+	      	  values
+	               ('MXPRODUCT',  'BIMPRODUCTJOB',       'BIMPRODUCTJOBS',         3,			4,			  0,		   'MAXIMO', CURRENT_TIMESTAMP, 4,  	  1,          'BIMPRODUCT/BIMPRODUCTJOB',      1,		        1,			    1,		        maxintobjdetailseq.nextval);
+		  </sql>
+	   </freeform>
+
+		<!--
+		  - Change sessiond defaults to turn on product options 
+		 -->
+		<modify_attribute object="BIMSESSION"       attribute="COPYTYPEDOCTOASSET" defaultvalue="0" />
+		<modify_attribute object="BIMCONFIGURATION" attribute="COPYTYPEDOCTOASSET" defaultvalue="0" />
+		<modify_attribute object="BIMSESSION"       attribute="CREATEPRODUCT" defaultvalue="1" />
+		<modify_attribute object="BIMCONFIGURATION" attribute="CREATEPRODUCT" defaultvalue="1" />
+		<modify_attribute object="BIMSESSION"       attribute="COPYTYPEATTRIBTOASSETS" defaultvalue="0" />
+		<modify_attribute object="BIMCONFIGURATION" attribute="COPYTYPEATTRIBTOASSETS" defaultvalue="0" />
+		<modify_attribute object="BIMCONFIGURATION" attribute="COPYTYPEATTRIBTOASSETS" defaultvalue="0" />
+		<modify_attribute object="BIMCOMMISSION" attribute="UPDATEPRODUCT" defaultvalue="1" />
+		<modify_attribute object="BIMCOMMISSION" attribute="UPDATEREQ" defaultvalue="1" />
+		<modify_attribute object="BIMCOMMISSION" attribute="UPDATEPM" defaultvalue="1" />
+		<modify_attribute object="BIMCOMMISSION" attribute="UPDATEJOBPLAN" defaultvalue="1" />
+		<modify_attribute object="BIMSESSION" attribute="EXPORTJOB" defaultvalue="1" />
+		<modify_attribute object="BIMSESSION" attribute="EXPORTRESOURCE" defaultvalue="1" />
+		<modify_attribute object="BIMSESSION" attribute="EXPORTSPARE" defaultvalue="1" />
+		
+		<modify_attribute object="COMPANIES" attribute="COMPANY" defaultvalue="&amp;AUTOKEY&amp;" />
+		<modify_attribute object="ITEM" attribute="ITEMNUM" defaultvalue="&amp;AUTOKEY&amp;" />
+
+	</statements>
+</script>

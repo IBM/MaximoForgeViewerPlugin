@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="applications/maximo/businessobjects/src"/>
+	<classpathentry kind="src" path="applications/maximo/maximouiweb/src"/>
+	<classpathentry kind="src" path="tools/maximo/src"/>
+	<classpathentry kind="lib" path="B:/Source/maximo_7608_EAR/businessobjects.jar"/>
+	<classpathentry kind="lib" path="maximouiweb"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/com.ibm.ws.st.core.runtimeClasspathProvider/WebSphere Application Server Liberty"/>
+	<classpathentry kind="src" path=".apt_generated">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="B:/Source/maximo_7608_EAR/tools/maximo/classes"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
