@@ -55,7 +55,32 @@ import psdi.mbo.MboRemote;
 import psdi.security.UserInfo;
 import psdi.util.MXException;
 
-
+/**
+ * All of the key objects used by the COBie loader are created through a factory class which must implement:  
+ * 
+ * psdi.app.bim.loade.Factory
+ * 
+ * The factory instance is access from the BIM service.  On initialization, the BIM service creates and registers 
+ * an instance of the default factory. The default instance can be replaced, typically in the init() method of a 
+ * service such as the LMV service that starts after the BIM service. The code to register a new service instance is:
+ * 
+ * 		try
+ *		{
+ *	    	BIMServiceRemote bsr = (BIMServiceRemote) MXServer.getMXServer().lookup( BIMService.SERVICE_NAME );
+ *	    	bsr.setFactory( new ExtCOBie24Factory() );
+ *		}
+ *		catch( MXException e )
+ *		{
+ *			e.printStackTrace();
+ *		}
+ *      catch( RemoteException e )
+ *      {
+ *	        e.printStackTrace();
+ *      }
+ *      
+ * The factory may extend or replace any of the classes. Most objects are accessed as interfaces or as base 
+ * classes.  It should retain no context, and be completely thread-safe.
+ */
 public class ExtCOBie24Factory extends COBie24Factory
 {
 
