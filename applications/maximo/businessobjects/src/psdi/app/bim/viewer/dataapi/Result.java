@@ -1,20 +1,18 @@
-/**
-* Copyright IBM Corporation 2009-2017
-*
-* Licensed under the Eclipse Public License - v 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* https://www.eclipse.org/legal/epl-v10.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-* 
-* @Author Doug Wood
-**/
+/*
+ *
+ * IBM Confidential
+ *
+ * OCO Source Materials
+ *
+ * 5724-U18
+ *
+ * (C) COPYRIGHT IBM CORP. 2006,2016
+ *
+ * The source code for this program is not published or otherwise
+ * divested of its trade secrets, irrespective of what has been
+ * deposited with the U.S. Copyright Office.
+ *
+ */
 package psdi.app.bim.viewer.dataapi;
 
 import java.io.BufferedReader;
@@ -30,6 +28,19 @@ import com.ibm.json.java.JSONArtifact;
 import com.ibm.json.java.JSONObject;
 
 
+/**
+ * @author Doug
+ *
+ * 
+ * 504: {
+ * 		"fault":{
+ *       	"faultstring":"Gateway timeout","detail":{
+ *       		"code":"GATEWAY_TIMEOUT"
+ *      	}
+ *       }
+ *   }
+ *
+ */
 public class Result
 {
 
@@ -46,17 +57,17 @@ public class Result
     public static final int API_ERR_NO_OBJECT      = -2;
     public static final int API_ERR_FILE_NOT_FOUND = -3;
 
-    private ERROR_TYPE _errorType        = ERROR_TYPE.NONE;
-    private int        _httpStatus       = -1;
-    private int        _apiErrorCode     = 0;
-    private String     _errorCode        = "";
-    private String     _errorMessage     = "";
-    private String     _moreInfo         = "";
-    private String     _result           = "";
-    private Exception  _except           = null;
+    protected ERROR_TYPE _errorType        = ERROR_TYPE.NONE;
+    private int          _httpStatus       = -1;
+    private int          _apiErrorCode     = 0;
+    private String       _errorCode        = "";
+    private String       _errorMessage     = "";
+    private String       _moreInfo         = "";
+    private String       _result           = "";
+    private Exception    _except           = null;
     
-    private String     _rawError;
-    private String     _rawData;
+    protected String     _rawError;
+    protected String     _rawData;
     
     private static final String KEY_DETAIL         = "detail";
 	private static final String KEY_DEV_MSG        = "developerMessage";
@@ -418,7 +429,7 @@ public class Result
         return _rawData;
     }
      
-     private String stream2string(
+     protected String stream2string(
     	 InputStream is
 	 ) 
 		 throws IOException 

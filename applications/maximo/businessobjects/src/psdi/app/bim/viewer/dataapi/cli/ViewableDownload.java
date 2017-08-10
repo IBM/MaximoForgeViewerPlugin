@@ -4,14 +4,15 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import psdi.app.bim.viewer.dataapi.DataRESTAPI;
-import psdi.app.bim.viewer.dataapi.ResultViewerService;
+import psdi.app.bim.viewer.dataapi.Result;
 
-
-public class ViewableQuery
+public class ViewableDownload
 {
 
+	// urn:adsk.viewing:fs.file:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6dmFsbGV5X2ZvcmdlN2FwZmtvd3RvbHN4ZXJnY2FicWp2ZzNvYmdndW5oZGEvYmFydG9ua2VlcC56aXA/output/Resource/
+
 	private DataRESTAPI _service;
-	public ViewableQuery()
+	public ViewableDownload()
 	{
 		_service = new APIImpl();
 	}
@@ -21,13 +22,15 @@ public class ViewableQuery
 		return _service;
 	}
 
-	public ResultViewerService viewableQuery(
-		String objectKey
+	public Result viewableDownload(
+		String derivitiveURN,
+		String dirName,
+		String fileName
 	) 	
 		throws IOException, 
 			   URISyntaxException 
 	{
-		return _service.viewableQuery( objectKey );
+		return _service.viewableDownload( derivitiveURN, dirName, fileName );
 	}
 
 
@@ -44,20 +47,17 @@ public class ViewableQuery
 	{
 		if( arg.length < 1 )
 		{
-			System.out.println( "Usage: viewableQuery urn" );
+			System.out.println( "Usage: viewableDownload urn derivitive" );
 			return;
 		}
-		ViewableQuery query = new ViewableQuery();
+		ViewableDownload download = new ViewableDownload();
 		
-		ResultViewerService result = query.viewableQuery( arg[0] );
+		Result result = download.viewableDownload( arg[0], arg[1], arg[2] );
 		if( result.isError() )
 		{
 			System.out.println( result.toString() );
 			return;
 		}
-		String bucketKey = DataRESTAPI.bucketFromBase64URN( result.getURN() );
-		System.out.println( bucketKey );
-		result.setShowDetails(  true  );
 		System.out.println( result.toString() );
 	}
 }

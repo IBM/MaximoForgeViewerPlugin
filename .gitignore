@@ -46,3 +46,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 /.apt_generated/
+
+# Property file with creadentials - required for testing but not shared
+lmv.properties
+
+# Don't include 3rd party jars
+*.jar

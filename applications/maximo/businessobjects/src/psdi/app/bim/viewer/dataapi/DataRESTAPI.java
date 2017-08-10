@@ -1,26 +1,25 @@
-/**
-* Copyright IBM Corporation 2009-2017
-*
-* Licensed under the Eclipse Public License - v 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* https://www.eclipse.org/legal/epl-v10.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-* 
-* @Author Doug Wood
-**/
+/*
+ *
+ * IBM Confidential
+ *
+ * OCO Source Materials
+ *
+ * 5724-U18
+ *
+ * (C) COPYRIGHT IBM CORP. 2006,2016
+ *
+ * The source code for this program is not published or otherwise
+ * divested of its trade secrets, irrespective of what has been
+ * deposited with the U.S. Copyright Office.
+ *
+ */
 package psdi.app.bim.viewer.dataapi;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -148,9 +147,10 @@ public abstract class DataRESTAPI
 	protected final static String PATT_LINK                    = "/references/v1/setreference";
 	protected final static String PATT_VIEW_DEREGISTER         = "/modelderivative/v2/designdata/%1/manifest";
 	protected final static String PATT_VIEW_REGISTER           = "/modelderivative/v2/designdata/job";
-	protected final static String PATT_VIEW_QUERY              = "/modelderivative/v2/designdata/%1/manifest";
+	protected final static String PATT_VIEW_QUERY              = "/derivativeservice/v2/manifest/%1";
 	protected final static String PATT_VIEW_SUPPORTED          = "/modelderivative/v2/designdata/formats";
 	protected final static String PATT_VIEW_METADATA           = "/modelderivative/v2/designdata/%1/metadata";
+	protected final static String PATT_VIEW_DOWNLOAD           = "/derivativeservice/v2/derivatives/%1";
 
 	/**
 	 * Schema for bucket create
@@ -1307,6 +1307,66 @@ public abstract class DataRESTAPI
 //        connection.setRequestProperty( "Accept", "Application/json" );
 		
 		return new Result( connection );
+	}
+	
+	public ResultDownload viewableDownload(
+		String derivitiveURN,
+		String dirName,
+		String fileName
+	)
+	    throws IOException, 
+        URISyntaxException
+    {
+		if( fileName.startsWith( "/" ))
+		{
+			fileName = fileName.substring( 1 );
+		}
+		
+		int idx = fileName.lastIndexOf( "/" );
+		if( idx >= 0 )
+		{
+			String relPath = fileName.substring( 0, idx );
+			File path = new File( dirName + "/" + relPath );
+			path.mkdirs();
+		}
+		File file = new File( dirName + "/" + fileName );
+		file.delete();
+		file.createNewFile();
+				
+		FileOutputStream fos = new FileOutputStream( dirName + "/" + fileName );
+
+		String urnPrefix = "urn:adsk.viewing:fs.file:";
+		return viewableDownload( urnPrefix + derivitiveURN + "/" + fileName, fos );
+	}
+
+	
+	public ResultDownload viewableDownload(
+		String       derivitiveURN,
+		OutputStream os
+	) 
+	    throws IOException, 
+	           URISyntaxException
+	{
+		String scope[] = { SCOPE_DATA_READ };
+		ResultAuthentication authResult = authenticate( scope );
+		if( authResult.isError() )
+		{
+			return new ResultDownload( authResult );
+		}
+		
+		String params[] = { derivitiveURN };
+		String frag = makeURN( API_VIEWING, PATT_VIEW_DOWNLOAD, params );
+	
+		URI uri = new URI( _protocol, null, lookupHostname(), _port, frag, null, null );
+		
+		URL url = new URL( uri.toASCIIString() );
+		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+	
+		connection.setRequestMethod( "GET" );
+		authResult.setAuthHeader( connection );
+	    connection.setRequestProperty( "Content-Type", "application/octet-stream" );
+	    
+		return new ResultDownload( connection, os );
 	}
 
 		
