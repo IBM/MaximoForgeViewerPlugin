@@ -1,0 +1,166 @@
+<!-- 
+* Copyright Wipro 2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+ -->
+<link rel="import" href="../polymer/polymer-element.html">
+
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+
+<dom-module id="forge-model-sidebar">
+
+  	<template>
+		<style>
+		    html, body {
+				margin  : 0;
+				padding : 0;
+				height  : 100%;
+				width   : 100%;
+		    }
+			.bucketItem {
+				width            : 100%;
+				cursor           : pointer;
+				padding          : 0;
+			}
+			div.displayItem {
+				display          : inline;
+		        width            : 100%;
+			}
+		</style>
+
+		<paper-listbox id="list" selected="0" style="background-color: #B0BEC5; width:100% ">
+		    <template id="repeat" is="dom-repeat" items="[[bucketlist]]">
+				<paper-item value="{{item.bucketKey}}" on-click="onBucketSelect" class="bucketItem">
+		    		{{item.bucketName}}
+		    		<span style="width:100%; padding:6px;"></span>
+		    		<span style="padding-right:12px">{{item.policyKey}}</span>
+		    	</paper-item>
+			</template>
+		</paper-listbox>
+  	</template>
+	
+	<script>
+ 		class ForgeModelSidebar extends Polymer.Element 
+		{
+			static get is() { return 'forge-model-sidebar' }
+			
+			static get properties() {
+				return {
+					bucketlist : {
+						type     : Array,
+						readonly : true,
+						notify   : true
+					},
+					selected : {
+						type     : Number,
+						readonly : true,
+						notify   : true
+					},
+					value : {
+						type     : Object,
+						readonly : true,
+						notify   : true
+					}
+				}
+			};
+			
+  		    constructor()
+  		    {
+  		    	super();
+  		    	this.selected = -1;
+  		    	this.bucketlist = [];
+  		    };
+  		    
+  		    ready() 
+  		    {
+ 				super.ready();
+				window.addEventListener("bucket-list",   ( event ) => { this.onBucketList( event ) } ); 
+				window.addEventListener("bucket-add",    ( event ) => { this.onBucketAdd( event ) } ); 
+				window.addEventListener("bucket-delete", ( event ) => { this.onBucketDelete( event ) } ); 
+			};
+			
+			onBucketList(
+				event
+			) {
+  		    	this.selected = -1;
+				this.set( "bucketlist", event.detail );
+				if( this.bucketlist && this.bucketlist.length > 0 )
+				{
+					this.value    = this.bucketlist[0];
+					this.selected = 0;
+					this.$.list.selected = 0;
+					this.dispatchEvent( new CustomEvent('bucket-select', { bubbles: false, composed: true, detail: this.value } ));
+				}
+			}
+			
+			onBucketAdd(
+				event
+			) {
+				this.$.repeat.render();
+				this.value           = this.bucketlist[0];
+				this.selected        = 0;
+				this.$.list.selected = 0;
+				this.dispatchEvent( new CustomEvent('bucket-select', { bubbles: false, composed: true, detail: this.value } ));
+			}
+
+			onBucketDelete(
+				event
+			) {
+				this.$.repeat.render();
+				var changed = false;
+				if( this.selected > this.bucketlist.length )
+				{	
+					this.selected--;
+					changed = true;
+				}
+				else if( this.bucketlist[ this.selected ].bucketKey != this.value.bucketKey )
+				{
+					this.selected--;
+					changed = true;
+				}
+				
+				if( !changed ) return;
+				
+				var newValue;
+				if( this.selected < 0 )
+				{
+					newValue = null;
+				}
+				else
+				{
+					newValue = this.bucketlist[ this.selected ];
+				} 
+
+				this.$.list.selected = this.selected;
+				if( this.value != newValue )
+				{
+					this.value = newValue;
+					this.dispatchEvent( new CustomEvent('bucket-select', { bubbles: false, composed: true, detail: this.value } ));
+				}
+			}
+
+  			onBucketSelect(
+  				event
+  			) {
+  				this.selected = event.model.index;
+				this.value = this.bucketlist[ this.selected ];
+				this.dispatchEvent( new CustomEvent('bucket-select', { bubbles: false, composed: true, detail: this.value } ));
+  			}
+		}
+		
+		customElements.define( ForgeModelSidebar.is, ForgeModelSidebar );
+	</script>
+</dom-module>

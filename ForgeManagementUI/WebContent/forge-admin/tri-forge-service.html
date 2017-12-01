@@ -1,0 +1,31 @@
+<link rel="import" href="../triplat-view-behavior/triplat-view-behavior.html">
+
+<link rel="import" href="tri-forge.html">
+
+<style>
+    html, body {
+		margin                 : 0;
+		padding                : 0;
+		font-family            : 'Roboto', 'Noto', sans-serif;
+		-webkit-font-smoothing : antialiased;
+		background             : #f1f1f1;
+		height                 : 100%;
+		width                  : 100%;
+		overflow               : hidden;
+    }
+</style>
+
+<dom-module id="tri-forge-service">
+	<template>
+		<tri-forge></tri-forge>
+	</template>
+</dom-module>
+<script>
+	Polymer({
+
+		is: "tri-forge-service",
+
+		behaviors: [TriPlatViewBehavior]
+
+	});
+</script>

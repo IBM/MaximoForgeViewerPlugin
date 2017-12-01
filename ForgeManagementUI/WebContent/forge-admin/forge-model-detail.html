@@ -1,0 +1,328 @@
+<!-- 
+* Copyright Wipro 2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+ -->
+<link rel="import" href="../polymer/polymer-element.html">
+
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
+
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../paper-tabs/paper-tabs.html"> 
+
+<dom-module id="forge-model-detail">
+  	<template>
+		<style>
+			paper-button {
+				background-color : #204080;
+				color            : white;
+			}		
+			paper-dialog-scrollable {
+				margin-bottom : 0;
+			}
+		    paper-icon-button {
+		    	width    : 48px;
+		    	height   : 48px;
+		    }
+			paper-tabs {
+		        background-color : #B0BEC5;
+		        width            : 100%;
+			}
+			div.title {
+				display:inline-flex;
+				margin : 0;
+				width : calc( 100% - 32px );
+			}
+			h2 {
+				margin-bottom : 0;
+				width : 100%;
+			}
+			h4 {
+				margin-top    : 4px;
+				margin-bottom : 4px;
+			}
+			#dialog {
+				max-width     : 800px; 
+				min-width     : 400px;
+			}
+			.buttons {
+				float            : right;
+			}
+		</style>
+
+		<paper-dialog id="dialog" modal >
+			<div  class="title">
+				<h2>[[model.objectKey]]</h2>
+	          	<paper-icon-button icon="close" dialog-dismiss alt="Close" style="float:right"></paper-icon-button>
+			</div>
+			<paper-dialog-scrollable>
+				<paper-tabs selected="{{model.activeTab}}" scrollable >
+					<paper-tab>Model Files</paper-tab>
+				    <template is="dom-if" if="{{model.hasBubble}}">
+						<paper-tab>Bubbles</paper-tab>
+					</template>
+				    <template is="dom-if" if="[[model.hasProject]]">
+						<paper-tab>Project Information</paper-tab>
+					</template>
+				</paper-tabs>
+				<iron-pages selected="{{model.activeTab}}">
+					<!-- Model file  -->
+					<div>
+				    	<div>
+				    		<h4  class="label">Location</h4>
+			    		</div>
+				    	<div>
+				    		[[model.location]]
+				    	</div>
+				    	<div>
+				    		<h4  class="label">URN</h4>
+			    		</div>
+				    	<div>
+				    		{{model.objectId}}
+			    		</div>
+				    	<div>
+				    		<h4  class="label">SHA-1</h4>
+			    		</div>
+				    	<div>
+				    		{{model.sha1}}
+			    		</div>
+				    	<div style="display:inline;">
+				    		<span><h4 class="label">Content Type:</h4></span>
+				    		<span style="padding-left:10px;">{{model.contentType}}</span>
+				    	</div>
+				    	<div style="display:inline;">
+				    		<span><h4 class="label">Size:</h4></span>
+				    		<span style="padding-left:10px;">{{model.size}}</span>
+				          	<paper-icon-button icon="delete-forever" on-click="_deleteModel" alt="Delete model"
+				          	                   style="float:right">
+				          	</paper-icon-button>
+				    	</div>
+					</div>
+
+					<!-- Bubble  -->
+				    <template  is="dom-if" if="{{model.hasBubble}}">
+						<table>
+							<tr><td colspan="6"><h4  class="label">Base 64 Urn:</h4></td></tr>
+							<tr><td colspan="6">{{model.bubble.urn}}</td></tr>
+							<tr><td colspan="6"><h4  class="label">GUID:</h4></td></tr>
+							<tr><td colspan="6">{{model.bubble.guid}}</td></tr>
+							<tr><td colspan="6"><h4  class="label">Owner:</h4></td></tr>
+							<tr><td colspan="6">{{model.bubble.owner}}</td></tr>
+							<tr>
+								<td><h4  class="label">Has Thumbnail:</h4></td>
+								<td>{{model.bubble.hasThumbnail}}</td>
+								<td><h4  class="label">Started At:</h4></td>
+								<td>{{model.bubble.startedAt}}</td>
+								<td colspan="2" style="width:100%"></td>
+							</tr>
+							<tr>
+								<td><h4  class="label">Progress:</h4></td>
+								<td>{{model.bubble.progress}}</td>
+								<td><h4  class="label">Success:</h4></td>
+								<td>{{model.bubble.success}}</td>
+								<td colspan="2" style="width:100%"></td>
+							</tr>
+							<tr>
+								<td><h4  class="label">Status:</h4></td>
+								<td>{{model.bubble.status}}</td>
+								<td><h4  class="label">Type:</h4></td>
+								<td>{{model.bubble.type}}</td>
+								<td colspan="2" style="width:100%"></td>
+							</tr>
+							<tr><td colspan="6">{{model.bubble.message.code}}</td></tr>
+							<tr><td colspan="6">{{model.bubble.message.type}}</td></tr>
+							<tr><td colspan="6">{{model.bubble.message.message}}</td></tr>
+							<tr>
+								<td><h4  class="label">Fetch time:</h4></td>
+								<td colspan="2">{{model.bubble.fetchTimestamp}}</td>
+								<td colspan="3">
+						          	<paper-icon-button icon="delete-forever" on-click="_deleteBubble" alt="Delete bubble"></paper-icon-button>
+						          	<paper-icon-button icon="refresh" on-click="_refreshBubble" alt="Refresh bubble details"></paper-icon-button>
+								</td>
+							</tr>
+						</table>
+					</template>
+					
+					<!-- Project Info  -->
+				    <template is="dom-if" if="[[model.hasProject">
+					    <template is="dom-if" if="[[!model.projectInfo.dwgVersion]]">
+							<table>
+								<tr><td>Author</td><td>					  <td>[[model.projectInfo.author]]</td></tr>          
+								<tr><td>Building Name</td><td>			  <td>[[model.projectInfo.buildingName]]</td></tr>    
+								<tr><td>Client Name</td><td>			  <td>[[model.projectInfo.clientName]]</td></tr>
+								<tr><td>Organization Description</td><td> <td>[[model.projectInfo.orgDesc]]</td></tr>
+								<tr><td>Organization Name</td><td>		  <td>[[model.projectInfo.orgName]]</td></tr>
+								<tr><td>Project Address</td><td>		  <td>[[model.projectInfo.projectAddress]]</td></tr>
+								<tr><td>Project Issue Date</td><td>		  <td>[[model.projectInfo.issueData]]</td></tr>
+								<tr><td>Project Name</td><td>			  <td>[[model.projectInfo.projectName]]</td></tr>
+								<tr><td>Project Number</td><td>			  <td>[[model.projectInfo.projectNum]]</td></tr>
+								<tr><td>Project Status</td><td>			  <td>[[model.projectInfo.projectStatus]]</td></tr>
+							</table>
+						</template>
+					    <template is="dom-if" if="[[model.projectInfo.dwgVersion]]">
+							<table>
+								<tr><td>DWGVersion</td><td>		<td>[[model.projectInfo.dwgVersion]]</td><td>
+								<tr><td>Date Created</td><td>	<td>[[model.projectInfo.dateCreated]]</td><td>
+								<tr><td>FileSize</td><td>		<td>[[model.projectInfo.fileSize]]</td><td>
+								<tr><td>Last Write</td><td>		<td>[[model.projectInfo.lasWrite]]</td><td>
+								<tr><td>Name</td><td>			<td>[[model.projectInfo.name]]</td><td>
+							</table>
+						</template>
+					</template>
+				</iron-pages>
+			</paper-dialog-scrollable>
+		</paper-dialog>
+
+		<paper-dialog id="confirmModelDeleteDlg" >
+			<h2>Delete  Model?</h2>
+			<div>
+				<paper-input id="confirmModelDeleteDlgobjectKey" floatingLabel label="Object Key" readonly="true"" ></paper-input>
+			  	<paper-checkbox id="confirmModelDeleteDlgdeleteBubble" checked="false" >Also delete the bubble?</paper-checkbox>
+			</div>
+			<div class="buttons">
+				<paper-button dialog-confirm on-click="_deleteModelConfirm" raised>OK</paper-button>
+				<paper-button dialog-dismiss autofocus raised>Cancel</paper-button>
+			</div>
+		</paper-dialog>
+
+		<paper-dialog id="confirmBubbleDeleteDlg" >
+			<h2>Delete Bubble?</h2>
+			<div>
+				<paper-input id="confirmBubbleDeleteDlgobjectKey" floatingLabel label="Object Key" readonly="true"" ></paper-input>
+			</div>
+			<div class="buttons">
+				<paper-button dialog-confirm on-click="_deleteBubbleConfirm" raised>OK</paper-button>
+				<paper-button dialog-dismiss autofocus raised>Cancel</paper-button>
+			</div>
+		</paper-dialog>
+  	</template>
+	
+	<script>
+ 		class ForgeModelDetail extends Polymer.Element 
+		{
+			static get is() { return 'forge-model-detail' }
+			
+			static get properties() {
+				return {
+					value : {
+						type     : Object,
+						readOnly : true
+					},
+				}
+			};
+
+  		    constructor()
+  		    {
+  		    	super();
+ 				this.model = {
+					activeTab      : 0,
+					hasBubble      : false,
+					hasThumbnail   : false,
+					hasProgress    : false,
+					hasProject     : false,
+					uploadProgress : null
+ 				};
+  		    };
+  		    
+  		    ready() 
+  		    {
+ 				super.ready();
+
+				window.addEventListener("bubble-detail", ( event ) => { this._onBubbleDetail( event ) } ); 
+				window.addEventListener("bubble-delete", ( event ) => { this._onBubbleDetail( event ) } ); 
+  			}
+  			
+  			open(
+  				model
+  			) {
+  				
+				this.set( "model", { activeTab      : 0,
+									 hasBubble      : false,
+									 hasThumbnail   : false,
+									 hasProgress    : false,
+									 hasProject     : false,
+									 uploadProgress : null });
+				for( var name in model )
+				{
+					this.set( "model." + name, model[ name ] );
+				}
+				this.value = model;
+  				this.$.dialog.open();
+  			}
+  			
+  			_deleteModel(
+  				event 
+			) {
+			  	this.$.confirmModelDeleteDlgobjectKey.value = this.model.objectKey;
+  				this.$.confirmModelDeleteDlgdeleteBubble.checked = false;
+  				this.$.confirmModelDeleteDlg.open();
+			}
+  			
+			_deleteModelConfirm(
+				event
+			) {
+  				this.$.dialog.close();
+				
+				if( this.$.confirmModelDeleteDlgdeleteBubble.checked )
+				{
+					this.dispatchEvent( new CustomEvent('bubble-delete', { bubbles: false, composed: true, detail: this.model } ));
+				}
+
+				this.dispatchEvent( new CustomEvent('model-delete', { bubbles: false, composed: true, detail: this.model } ));
+			}
+
+  			_deleteBubble( 
+  				event 
+			) {
+  				this.$.confirmBubbleDeleteDlgobjectKey.value = this.model.objectKey;
+  				this.$.confirmBubbleDeleteDlg.open();
+			}
+			
+			_deleteBubbleConfirm()
+			{
+				this.dispatchEvent( new CustomEvent('bubble-delete', { bubbles: false, composed: true, detail: this.model } ));
+			}
+
+			_refreshBubble(
+  				event 
+			) {
+				this.dispatchEvent( new CustomEvent('bubble-refresh', { bubbles: false, composed: true, detail: this.model } ));
+			}
+			
+			_onBubbleDetail(
+				event
+			) {
+				if( this.$.dialog.opened && event.detail.objectId == this.model.objectId ) 
+				{
+					if( !event.detail.bubble ) 
+					{
+						this.set( "model.activeTab", 0 );
+						this.set( "model.hasBubble", false );
+						this.set( "model.hasProject", false );
+					}
+					this.set( "model.bubble", event.detail.bubble );
+					this.set( "model.projectInfo", event.detail.projectInfo );
+					this.value = this.model;
+				}
+			}
+		}
+		
+		customElements.define( ForgeModelDetail.is, ForgeModelDetail );
+	</script>
+</dom-module>

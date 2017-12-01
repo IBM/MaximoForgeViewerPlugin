@@ -1,0 +1,405 @@
+<!-- 
+* Copyright Wipro 2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+ -->
+<link rel="import" href="../polymer/polymer-element.html">
+
+	<script>
+		var __dictionary__buildingList   = "Building List";
+		var __dictionary__modellink      = "Model Link;";
+		var __dictionary__modellinkadd   = "Model Link Add";
+		var __dictionary__modellinkupate = "Model Link Update";
+		var __dictionary__modellinkelete = "Model Link Delete";
+		
+		const _listPath       = "/p/webapi/rest/v2/triBIMViewer/-1/lookupBuilding?query=true";
+		const _getLinkPath    = "/p/webapi/rest/v2/triBIMViewer/-1/modelList?query=true";
+		const _deleteLinkPath = "/p/webapi/rest/v2/triBIMViewer/-1/modelList?method=delete&actionGroup=actions&action=delete"
+		const _updateLinkPath = "/p/webapi/rest/v2/triBIMViewer/-1/modelList?actionGroup=actions&action=update";
+		const _addLinkPath    = "/p/webapi/rest/v2/triBIMViewer/-1/modelList?actionGroup=actions&action=create";
+		
+
+		class ForgeTriBldgStorage extends Polymer.Element 
+		{
+			
+			static get is() { return 'forge-tri-bldg-storage' };
+			
+			static get properties() {
+				return {
+					buildingList : {
+						type     : Array,
+       				},
+					contextroot : {
+						type     : String,
+					}
+				}
+			}
+			
+			constructor()
+			{
+				super();
+				
+				this.buildingList = [];
+			}
+			
+  		    ready() 
+  		    {
+ 				super.ready();
+ 
+				this.set( "buildingList", [] );
+  			}
+  			
+  			//============================================================================
+  			// Building List
+  			//============================================================================
+
+			getList(
+				filter, from, size
+			) {
+				if( !from || from <= 0 ) from = 0;
+				if( !size ) size = 0;
+
+				this.buildingList = [];
+				var url = this.contextroot + _listPath;
+				var query = {};
+				
+				if( filter && filter.length > 0 )
+				{
+					query = {
+						"page":	{"from":0,"size":50},
+		  				"filters":[
+	  						{
+	  							"name":"building",
+	  						 	"operator":"contains",
+	  						 	"value":filter,
+	  						 	"ignoreIfBlank":false,
+	  						 },{
+	  						 	"operator":"or"
+	 						 },{
+	 						 	"name":"city",
+	 						 	"operator":"contains",
+	 						 	"value":filter,
+	 						 	"ignoreIfBlank":false,
+							 }
+						],
+						"sorts": [
+							{
+								"name":"building",
+								"desc":false
+							}
+						]
+					}
+				}
+
+				if( size > 0 )
+				{
+					query.page = {
+						"from": from,
+						"size": size
+					}
+				}
+
+				fetch( url, 
+					   { 
+							method: "POST",
+							headers: {
+							    'content-type': 'application/json',
+							    'Accept': 'application/json',
+							},
+					   		credentials: 'same-origin', 
+					   		body : JSON.stringify( query )
+					   } 
+					).then(
+						( request ) => { this._onList( request ); },
+						( err ) => { this._onError( err ); } );
+			};
+			
+			_onList(
+				response 
+			) {
+				if( response.redirected )
+				{
+					location.href = response.url;
+				}
+				if( !response.ok )
+				{
+					this.dispatchEvent( new CustomEvent('forge-http-error', { bubbles: true, composed: true,
+					                                                          detail: { response : response, 
+					                                                                    source : __dictionary__buildingList  }} ));
+					this.dispatchEvent( new CustomEvent('building-list', { bubbles: true, composed: true, detail: null } ));
+					return;
+				}
+				response.json().then(
+					( json ) => {  
+						this.buildingList = json.items;
+						this.dispatchEvent( new CustomEvent('building-list', { bubbles: true, composed: true, detail: json.data } ));
+					},
+					( err ) => { this._onError( err ); }
+				);
+			};
+  			
+  			//============================================================================
+  			// Get Link
+  			//============================================================================
+
+			getLink(
+				buildingId
+			) {
+				var url = this.contextroot + _getLinkPath;
+				
+				var query = {
+					"page":	{"from":0,"size":50},
+	  				"filters":[
+  						{
+  							"name"         :"buildingId",
+  						 	"operator"     :"contains",
+  						 	"value"        : buildingId,
+  						 	"ignoreIfBlank": false,
+  						 }
+					]
+				}
+
+				fetch( url, 
+					   { 
+							method: "POST",
+							headers: {
+							    'content-type': 'application/json',
+							    'Accept': 'application/json',
+							},
+					   		credentials: 'same-origin', 
+					   		body : JSON.stringify( query )
+					   } 
+					).then(
+						( request ) => { this._onLink( request, buildingId ); },
+						( err ) => { this._onError( err ); } );
+			};
+			
+			_onLink(
+				response, buildingId 
+			) {
+				if( response.redirected )
+				{
+					location.href = response.url;
+				}
+				if( !response.ok )
+				{
+					this.dispatchEvent( new CustomEvent('forge-http-error', { bubbles: true, composed: true,
+					                                                          detail: { response : response, 
+					                                                                    source : __dictionary__modellink  }} ));
+					return;
+				}
+				response.json().then(
+					( json ) => {  
+						if( !json.data ) return;
+						var link = json.data;
+						if( Array.isArray( link ) )
+						{
+							if( link.length == 0 ) return;
+							link =  link[0];
+						}
+						this.dispatchEvent( new CustomEvent('model-link', { bubbles: true, composed: true, 
+						                                                   detail: { link : link, buildingId : buildingId }} ));
+					},
+					( err ) => { this._onError( err ); }
+				);
+			};
+
+  			//============================================================================
+  			// Add Link
+  			//============================================================================
+
+			addLink(
+				building, model
+			) {
+				var body = {
+						data :{
+							"buildingId" : building.buildingId,
+							"_bldgSpec"  : building._id,
+							"urn"        : model.bubble.urn,
+							"thumbnail"  : model.thumbnail,
+							"objectKey"  : model.objectKey,
+						}
+					};
+				
+				var url = this.contextroot + _addLinkPath;
+				
+				fetch( url, 
+					   { 
+							method: "POST",
+							headers: {
+							    'Accept': 'application/json',
+							    'content-type' : 'application/json',
+							},
+					   		credentials: 'same-origin',
+					   		body : JSON.stringify( body )
+					   } 
+					).then(
+						( request ) => { this._onAdd( request, building, model ); },
+						( err ) => { this._onError( err ); } );
+			};
+			
+			_onAdd(
+				response, building, model 
+			) {
+				if( response.redirected )
+				{
+					location.href = response.url;
+				}
+				if( !response.ok )
+				{
+					this.dispatchEvent( new CustomEvent('forge-http-error', { bubbles: true, composed: true,
+					                                                          detail: { response : response, 
+					                                                                    source : __dictionary__modellinkadd  }} ));
+					return;
+				}
+				response.json().then(
+					( json ) => {  
+						var id = json.createdRecordId;
+						this.dispatchEvent( new CustomEvent('link-add', { bubbles: true, composed: true, 
+						                                                  detail: { data: json.data, building : building, model : model, _id : id }} ));
+					},
+					( err ) => { this._onError( err ); }
+				);
+			};
+
+  			//============================================================================
+  			// Update Link
+  			//============================================================================
+
+			updateLink(
+				building, model
+			) {
+				var body = {
+						data :{
+							"_id"         : building.linkId,
+							"buildingId"  : building.buildingId,
+							"_bldgSpec"   : building._id,
+							"urn"         : model.bubble.urn,
+							"thumbnail"   : model.thumbnail,
+							"objectKey"   : model.objectKey,
+							"description" : model.description,
+							"binding"     : model.binding,
+						}
+					};
+				
+				var url = this.contextroot + _updateLinkPath;
+				
+				fetch( url, 
+					   { 
+							method: "PUT",
+							headers: {
+							    'Accept': 'application/json',
+							    'content-type' : 'application/json',
+							},
+					   		credentials: 'same-origin',
+					   		body : JSON.stringify( body )
+					   } 
+					).then(
+						( request ) => { this._onUpdate( request, building, model ); },
+						( err ) => { this._onError( err ); } );
+			};
+			
+			_onUpdate(
+				response, building, model
+			) {
+				if( response.redirected )
+				{
+					location.href = response.url;
+				}
+				if( !response.ok )
+				{
+					this.dispatchEvent( new CustomEvent('forge-http-error', { bubbles: true, composed: true,
+					                                                          detail: { response : response, 
+					                                                                    source : __dictionary__modellinkupate  }} ));
+					return;
+				}
+				response.json().then(
+					( json ) => {  
+						var id = json.createdRecordId;
+						this.dispatchEvent( new CustomEvent('link-update', { bubbles: true, composed: true, 
+						                                                    detail: { data: json.data, building : building, model : model }} ));
+					},
+					( err ) => { this._onError( err ); }
+				);
+			};
+
+  			//============================================================================
+  			// Delete Link
+  			//============================================================================
+
+			deleteLink(
+				building
+			) {
+				var body = {
+						data :{
+							"_id" : "",
+						}
+					};
+				
+				body.data._id = building.linkId;
+				
+				var url = this.contextroot + _deleteLinkPath;
+				
+				fetch( url, 
+					   { 
+							method: "PUT",
+							headers: {
+							    'Accept': 'application/json',
+							    'content-type' : 'application/json',
+							},
+					   		credentials: 'same-origin',
+					   		body : JSON.stringify( body )
+					   } 
+					).then(
+						( request ) => { this._onDelete( request, building ); },
+						( err ) => { this._onError( err ); } );
+			};
+			
+			_onDelete(
+				response, building
+			) {
+				if( response.redirected )
+				{
+					location.href = response.url;
+				}
+				if( !response.ok )
+				{
+					this.dispatchEvent( new CustomEvent('forge-http-error', { bubbles: true, composed: true,
+					                                                          detail: { response : response, 
+					                                                                    source : __dictionary__modellinkelete  }} ));
+					return;
+				}
+				this.dispatchEvent( new CustomEvent('link-delete', { bubbles: true, composed: true, detail : building } ));
+				response.json().then(
+					( json ) => {  
+						var id = json;
+					},
+					( err ) => { this._onError( err ); }
+				);
+			};
+
+  			//============================================================================
+  			// Utilities
+  			//============================================================================
+
+		    _onError( err )
+		    {
+		    	console.error( err );
+		    }
+		}
+		
+		customElements.define(ForgeTriBldgStorage.is, ForgeTriBldgStorage );
+	</script>
+</dom-module>

@@ -1,0 +1,438 @@
+<!-- 
+* Copyright Wipro 2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+ -->
+<link rel="import" href="../polymer/polymer-element.html">
+
+<link rel="import" href="../app-layout/app-layout.html">
+
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-input/paper-textarea.html">
+
+<link rel="import" href="forge-pager.html">
+<link rel="import" href="forge-scroll-pane.html">
+<link rel="import" href="forge-viewable-sidebar.html">
+<link rel="import" href="forge-tri-bldg-storage.html">
+<link rel="import" href="forge-tri-bldg-model-lookup.html">
+
+<dom-module id="forge-tri-bldg">
+  	<template>
+		<style>
+		    html, body {
+				margin  : 0;
+				padding : 0;
+				height  : 100%;
+				width   : 100%;
+		    }
+			app-toolbar {
+				background-color : #60a0ff;
+				font-family      : arial; 
+				width            : 100%;
+				padding          : 0;
+    		}
+			h2 {
+				font-family      : arial; 
+			}
+			h4 {
+				margin-top    : 4px;
+				margin-bottom : 4px;
+			}
+			paper-input {
+				margin-left   : 12px;
+			}
+			paper-icon-button {
+		    	width            : 48px;
+		    	height           : 48px;
+				margin-top       : 10px;
+				float            : right;
+			}
+			paper-button {
+				background-color : #204080;
+				color            : white;
+			}		
+			.buttons {
+				display: block;
+				float            : right;
+			}
+			.card-body {
+				display          : inline-block;
+				width            : 500px;
+				height           : 280px;
+				background-color : white;
+				padding-bottom   : 0px;
+				overflow-x       : auto;
+				overflow-y       : hidden;
+				box-sizing       : border-box;
+				margin           : 12px;
+				padding          : 12px;
+				padding-bottom   : 0;
+				box-shadow       : 10px 10px 5px #abc;
+			}
+			.card-title {
+				width            : 100%;
+				padding-top		 : 0px;
+				white-space      : nowrap;
+				display          : inline-flex;
+			}
+			div.thumbnail {
+				height           : 200px;
+				width            : 200px;
+				float            : right;
+			}
+			.unlink {
+				position         : relative;
+				right            : -210px;
+				bottom           : -150px;
+			}
+		</style>
+
+		<forge-tri-bldg-model-lookup id="lookup" list="[[modellist]]"
+		                             on-accept="_onModelSelect">
+		</forge-tri-bldg-model-lookup>
+
+		<app-header reveals="true">
+			<app-toolbar >
+				<span style="text-align: center; width:100%;"><h1>Buildings</h1></span>
+				<paper-input floatingLabel label="Building Name" value="{{buildingSearch}}" on-keypress="_onSearchKey"></paper-input>
+				<paper-icon-button id="search" icon="search" on-click="getBuildinglList"></paper-icon-button>
+			</app-toolbar>
+		</app-header>
+
+		<forge-scroll-pane id="scrollPane" style="--forge-scroll-pane-overflow:auto;">
+			<template id="repeat" is="dom-repeat" items="[[buildinglist]]">
+		         <div class="card-body" >
+		    		<div class="card-title">
+			    		<h3>[[item.building]]</h3>
+			    		<div style="width:100%; display: inline-flex;">
+							<paper-input floatingLabel label="Building Model" 
+							             value="[[item.objectKey]]" readonly></paper-input>
+							<paper-icon-button id="search" icon="search" on-click="_lookupModel"></paper-icon-button>
+			    		</div>
+		    		</div>
+					<table style="width:480px;">
+				    	<tr>
+				    		<td colspan="2">[[item.address]]</td>
+				    		<td rowspan="5" >
+								<div class="thumbnail">
+								    <forge-thumbnail url="[[item.thumbnail]]" on-select="_onModelDetail">
+								</div>
+							    <template is="dom-if" if="[[item.isLinked]]">
+						          	<paper-icon-button icon="delete-forever" on-click="_onModelDelete" alt="Unlink model"
+						          	                   class="unlink">
+						          	</paper-icon-button>
+								</template>
+				    		</td>
+				    	</tr><tr>
+			    			<td colspan="2">[[item.city]]</td>
+				    	</tr><tr>
+			    			<td>[[item.state]]</td>
+			    			<td>[[item.ZipPostalCode]]</td>
+			    		</tr><tr>
+			    			<td colspan="2">[[item.country]]</td>
+			    		</tr>
+			    		</tr><tr>
+			    			<td colspan="2" style="height:100%;"></td>
+			    		</tr>
+					</table>
+				</div>
+
+			</template>
+			<forge-pager id="pager" start="{{fetchStart}}" pagesize="{{fetchSize}}" count="[[buildinglist.length]]"
+			             on-page="_onPage" ></forge-pager>
+		</forge-scroll-pane>
+		
+		<paper-dialog id="modelLinkDetalDlg" >
+			<div>
+				<h2>Model Link Details</h2>
+				<div>
+					<div  style="display:inline-block; width:200px; height:200px;">
+					    <forge-thumbnail url="[[detail.thumbnail]]" >
+					</div>
+					<div style="display:inline-block">
+						<paper-textarea id="linkDesc" floatingLabel label="Details" maxlength ="1000"></paper-textarea>
+						<paper-input id="linkBinding" floatingLabel label="NavisWorks Binding"  ></paper-input>
+					</div>
+				</div>
+				<div style="height: 30px;">
+					<div class="buttons">
+						<paper-button dialog-confirm on-click="_storeDetails" raised>OK</paper-button>
+						<paper-button dialog-dismiss autofocus raised>Cancel</paper-button>
+					</div>
+				</div>
+			</div>
+		</paper-dialog>
+
+		<forge-tri-bldg-storage id="storage" contextroot="[[contextroot]]" 
+		                        on-building-list = "_onBuildingList" 
+		                        on-link-add      = "_onLinkAdd"
+		                        on-model-link    = "_onLink"
+		                        on-link-update   = "_onLinkAdd"
+		                        on-link-delete   = "_unlinkModel">
+		</forge-tri-bldg-storage>
+  	</template>
+	
+	<script>
+		class ForgeTriBldg extends Polymer.Element 
+		{
+			static get is() { return 'forge-tri-bldg' }
+			
+			static get properties() {
+				return {
+					buildinglist : {
+						type     : Array,
+						value    : [],
+       					notify   : true
+					},
+					contextroot : {
+						type     : String,
+					},
+					modellist : {
+						type     : Array,
+					}
+				}
+			};
+			
+  		    constructor()
+  		    {
+  		    	super();
+
+  		    	this.buildingSearch = "";
+  		    	this.fetchStart     = 0;
+  		    	this.fetchSize      = 30;
+  		    };
+  		    
+  		    ready() 
+  		    {
+ 				super.ready();
+ 				this.$.storage.contextroot = this.contextroot;
+ 				this.detail = {};
+ 		    	
+ 		    	// Hack for Edge
+ 		    	this.$.scrollPane.setOverflow( "auto" );
+  			}
+  			
+  			//============================================================================
+  			// Building List
+  			//============================================================================
+			getBuildinglList()
+			{
+				this.$.search.disabled = "true";
+				this.$.storage.getList( this.buildingSearch, this.fetchStart, this.fetchSize );
+			};
+			 
+			_onSearchKey(
+				event
+			) {
+				if( event.keyCode == 13 ) 
+				{
+					this.getBuildinglList();
+				}
+			};
+
+			_onPage(
+				event
+			) { 
+				this.fetchStart = event.detail.start;
+				this.fetchSize  = event.detail.pagesize;
+				this.getBuildinglList();
+			};
+
+			_onBuildingList( 
+				event 
+			) {
+				this.$.search.disabled = false;
+				if( !event.detail )		// Fetch error
+				{
+					this.set( "buildinglist", [] );
+					this.$.pager.count = 0;
+					return;
+				}
+
+				for( var i in event.detail )
+				{
+					event.detail[i].objectKey      = "";
+					event.detail[i].urn            = "";
+					event.detail[i].thumbnail      = "";
+					event.detail[i].hasThumbnail   = false;
+					event.detail[i].isLinked       = false;
+					
+					this.$.storage.getLink( event.detail[i].buildingId );
+				} 
+
+				this.set( "buildinglist", event.detail );
+				this.$.pager.setCount( this.buildinglist.length );
+				
+				if( event.detail.length == 0 )
+				{
+					this.dispatchEvent( new CustomEvent('forge-message', { bubbles: true, composed: true, 
+																		   detail: { key : "NO_BUILDINGS" }  } ));
+					return;
+				}
+			}
+			
+			_onModelSelect(
+				event
+			) {
+				var building = event.target.building;
+				if( building.linkId )
+				{
+					this.$.storage.updateLink( event.target.building, event.detail );
+				}
+				else
+				{
+					this.$.storage.addLink( event.target.building, event.detail );
+				}
+			}
+
+			_onLink(
+				event
+			) {
+				var buildingId = event.detail.buildingId;
+				var link       = event.detail.link;
+				for( var i in this.buildinglist )
+				{
+					if( this.buildinglist[i].buildingId == buildingId )
+					{
+						this.set( "buildinglist." + i + ".objectKey",    link.objectKey );
+						this.set( "buildinglist." + i + ".urn",          link.urn );
+						this.set( "buildinglist." + i + ".description",  link.description );
+						this.set( "buildinglist." + i + ".binding",      link.binding );
+						if( link.thumbnail && link.thumbnail.length > 0 )
+						{
+							this.set( "buildinglist." + i + ".thumbnail",    link.thumbnail );
+							this.set( "buildinglist." + i + ".hasThumbnail", true );
+						}
+						else
+						{
+							this.set( "buildinglist." + i + ".thumbnail",    null );
+							this.set( "buildinglist." + i + ".hasThumbnail", false );
+						}
+						this.set( "buildinglist." + i + ".linkId",       link._id );
+						this.set( "buildinglist." + i + ".isLinked",     true );
+						break;
+					}
+				}
+			}
+
+			_onLinkAdd(
+				event
+			) {
+				var building = event.detail.building;
+				var model    = event.detail.model;
+				if( model && model.bubble )
+				{
+					for( var i in this.buildinglist )
+					{
+						if( this.buildinglist[i].buildingId == building.buildingId )
+						{
+							this._setKinkValues( "buildinglist." + i, model );
+							this.set( "buildinglist." + i + ".urn",          model.bubble.urn );
+							if( event.detail._id )	// Only set on add, not update
+							{
+								this.set( "buildinglist." + i + ".linkId",       event.detail._id );
+							}
+							this.set( "buildinglist." + i + ".isLinked",     true );
+							break;
+						}
+					}
+				}
+			}
+
+			_setKinkValues(
+				path, link
+			) {
+				this.set( path + ".objectKey",    link.objectKey );
+				this.set( path + ".thumbnail",    link.thumbnail );
+				this.set( path + ".hasThumbnail", link.hasThumbnail );
+				this.set( path + ".description",  link.description );
+				this.set( path + ".binding",      link.binding );
+			}
+			
+			_onModelDelete(
+				event
+			) {
+				this.$.storage.deleteLink( event.model.item );
+			}
+			
+			_unlinkModel(
+				event
+			) {
+				var building = event.detail;
+				for( var i in this.buildinglist )
+				{
+					if( this.buildinglist[i].buildingId == building.buildingId )
+					{
+						this.set( "buildinglist." + i + ".objectKey",    "" );
+						this.set( "buildinglist." + i + ".urn",          "" );
+						this.set( "buildinglist." + i + ".thumbnail",    "" );
+						this.set( "buildinglist." + i + ".description",  "" );
+						this.set( "buildinglist." + i + ".binding",      "" );
+						this.set( "buildinglist." + i + ".hasThumbnail", false );
+						this.set( "buildinglist." + i + ".linkId",       "" );
+						this.set( "buildinglist." + i + ".isLinked",     false );
+					}
+				}
+			}
+
+			_onModelDetail(
+		    	event
+		    ) {
+		    	var link = event.model.item;
+				this._setKinkValues( "detail", link );
+		    	this.$.linkDesc.value     = link.description;
+		    	this.$.linkBinding.value  = link.binding;
+				this.$.modelLinkDetalDlg.linkId = link.linkId;
+				this.$.modelLinkDetalDlg.open();
+		    }
+
+		    _storeDetails(
+		    	event
+	    	) {
+	    		var linkId = this.$.modelLinkDetalDlg.linkId;
+		    	for( var i in this.buildinglist )
+		    	{
+		    		if( this.buildinglist[i].linkId == linkId  )
+		    		{
+						this.set( "buildinglist." + i + ".description",  this.$.linkDesc.value );
+						this.set( "buildinglist." + i + ".binding",      this.$.linkBinding.value );
+
+						var model = {
+							"bubble" : {
+								"urn"     : this.detail.urn,
+							},
+							"thumbnail"   : this.detail.thumbnail,
+							"objectKey"   : this.detail.objectKey,
+							"description" : this.$.linkDesc.value,
+							"binding"     : this.$.linkBinding.value,
+						}
+						this.$.storage.updateLink( this.buildinglist[i], model );
+						return;
+					}
+		    	}
+	    	}
+		    
+   			_lookupModel(
+  				event
+  			) {
+  				this.$.lookup.building = event.model.item;
+  				this.$.lookup.open();
+  			}
+		}
+		
+		customElements.define( ForgeTriBldg.is, ForgeTriBldg );
+	</script>
+</dom-module>

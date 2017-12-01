@@ -1,0 +1,134 @@
+<!-- 
+* Copyright Wipro 2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+ -->
+<link rel="import" href="../polymer/polymer-element.html">
+
+<link rel="import" href="../iron-localstorage/iron-localstorage.html">
+
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-input/paper-input-container.html">
+
+<link rel="import" href="../neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+
+<link rel="import" href="forge-message-box.html">
+<link rel="import" href="forge-auth-storage.html">
+
+<dom-module id="forge-auth">
+  	<template>
+	    <style>
+	    	paper-dialog {
+	    		width : 300px;
+	    	}
+	    	paper-dialog-scrollable {
+	    		overflow : auto;
+	    	}
+			paper-button {
+				background-color : #204080;
+				color            : white;
+			}		
+			.buttons {
+				float            : right;
+			}
+	    </style>
+
+		<iron-localstorage name="forge-service-auth" value="{{credentials}}"></iron-localstorage>
+
+		<paper-dialog id="authDlg" modal >
+			<h2>Authenticate</h2>
+			<div>
+				<paper-input floatingLabel label="Key" value="{{appkey}}" autofocus></paper-input>
+				<paper-input-container floatingLabel >
+					<label slot="label">Secret</label>
+					<input id="secret" slot="input" type="password" value="{{secret}}"  required  class="paper-input-input"></input>
+				</paper-input-container>
+			  	<paper-checkbox checked="{{save}}" >Save to local browser?</paper-checkbox>
+			</div>
+			<div class="buttons">
+				<paper-button dialog-confirm on-click="getToken" raised>OK</paper-button>
+				<paper-button dialog-dismiss raised>Cancel</paper-button>
+			</div>
+		</paper-dialog>
+		
+		<forge-auth-storage id="storage" appkey="[[appkey]]" restpath="[[restpath]]"></forge-auth-storage>
+	</template>
+
+	<script>
+		class ForgeAuth extends Polymer.Element 
+		{
+			static get is() { return 'forge-auth' }
+			
+			static get properties() {
+				return {
+					appkey : {
+						type     : String,
+					},
+					restpath : {
+						type     : String,
+					}
+				}
+			};
+
+			constructor()
+			{
+				super();
+				this.credentials = { key : null, secret : null };
+			}
+			
+  		    ready() 
+  		    {
+ 				super.ready();
+				this.$.storage.getKey();
+  			}
+  			
+			open() 
+			{ 
+				if( this.credentials )
+				{
+					if( this.credentials.key )
+					{
+						this.appkey = this.credentials.key;
+						this.save = true;
+					}    
+					if( this.credentials.secret ) this.secret = this.credentials.secret;
+				}
+				this.$.authDlg.open(); 
+			}
+
+			getKey()
+			{
+				this.$.storage.getKey();
+ 			}
+			
+			getToken() 
+			{
+				var ell = this.shadowRoot.getElementById( "secret" );
+				this.set( "secret", ell.value );
+				this.$.storage.getToken( this.appkey, this.secret );
+			}
+			
+			logout()
+			{
+				this.$.storage.logout();
+			}
+		}
+		
+		customElements.define(ForgeAuth.is, ForgeAuth);
+	</script>
+</dom-module>
