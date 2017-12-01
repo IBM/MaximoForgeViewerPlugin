@@ -17,6 +17,7 @@ xcopy /c /y /s /i "%SOURCE%\applications\maximo\maximouiweb\webmodule\webclient\
 mkdir "%TARGET%/%PACKAGENAME%\%BINPATH%\applications\maximo\maximouiweb\webmodule\webclient\javascript"
 copy /y "%SOURCE%\applications\maximo\maximouiweb\webmodule\webclient\javascript\Forge.js" "%TARGET%\%PACKAGENAME%\%BINPATH%\applications\maximo\maximouiweb\webmodule\webclient\javascript"
 copy /y "%SOURCE%\applications\maximo\maximouiweb\webmodule\webclient\javascript\LMV*.js" "%TARGET%\%PACKAGENAME%\%BINPATH%\applications\maximo\maximouiweb\webmodule\webclient\javascript"
+copy /y "%SOURCE%\applications\maximo\maximouiweb\webmodule\webclient\javascript\gunzip.min.js" "%TARGET%\%PACKAGENAME%\%BINPATH%\applications\maximo\maximouiweb\webmodule\webclient\javascript"
 
 mkdir "%TARGET%\%PACKAGENAME%\%BINPATH%\applications\maximo\properties\product"
 copy /y "%SOURCE%\applications\maximo\properties\product\bimlmv.xml" "%TARGET%\%PACKAGENAME%\%BINPATH%\applications\maximo\properties\product"
@@ -28,7 +29,7 @@ xcopy /c /y /s /i "%SOURCE%\tools\maximo\en\bimlmv" "%TARGET%\%PACKAGENAME%\%BIN
 set "currentdir=%cd%"
 xcopy /c /y /s /i "%SOURCE%\IBM-Forge-Viewer-CLI" "%TARGET%\%PACKAGENAME%\IBM-Forge-Viewer-CLI"
 cd "%TARGET%\%PACKAGENAME%\%BINPATH%\applications\maximo\businessobjects\classes"
-jar -cf IBM-Forge-CLI.jar psdi\app\bim\viewer\dataapi psdi\app\bim\viewer\dataapi\cli
+jar -cf IBM-Forge-1.0.jar psdi\app\bim\viewer\dataapi psdi\app\bim\viewer\dataapi\cli
 rmdir /S /Q psdi\app\bim\viewer\dataapi\cli
 cd %currentdir%
-move "%TARGET%\%PACKAGENAME%\%BINPATH%\applications\maximo\businessobjects\classes\IBM-Forge-CLI.jar"  "%TARGET%\%PACKAGENAME%\IBM-Forge-Viewer-CLI"
+move "%TARGET%\%PACKAGENAME%\%BINPATH%\applications\maximo\businessobjects\classes\IBM-Forge-1.0.jar"  "%TARGET%\%PACKAGENAME%\IBM-Forge-Viewer-CLI"

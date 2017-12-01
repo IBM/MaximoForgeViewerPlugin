@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 * Copyright IBM Corporation 2009-2017
 *
@@ -15,18 +15,14 @@
 * limitations under the License.
 * 
 * @Author Doug Wood
- -->
-<product>
-	<name>IBM Maximo BIM Extensions Autodesk Forge viewer plug-in</name>
-	<version>
-		<major>7</major>
-		<minor>6</minor>
-		<modlevel>0</modlevel>
-		<patch>9</patch>
-		<build>20171201-0100</build>
-	</version>
-	<dbmaxvarname>BIMLMV</dbmaxvarname>
-	<dbscripts>bimlmv</dbscripts>
-	<dbversion>V7609-01</dbversion>
-	<lastdbversion>V7606-00*V7606-09*V7607-04*V7608-02*V7609-01</lastdbversion>
-</product>
+-->
+<!DOCTYPE script SYSTEM "script.dtd">
+<script author="Doug Wood" scriptname="Maximo for Buildings 7.6.0.9">
+	<description>Maximo for Buildings 7.6 Autodesk Forge Viewer support</description>
+	<statements>
+		<!--
+		- Set to current viewer version
+		-->
+		<set_property name='bim.viewer.LMV.viewer.version' value='?v=v2.14'/>
+	</statements>
+</script>
