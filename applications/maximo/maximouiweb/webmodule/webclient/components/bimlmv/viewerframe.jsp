@@ -17,7 +17,7 @@
 --%>
 <%@page import="psdi.webclient.components.*"%>
 <%@ include file="../bim/bimheader.jsp" %>
- 
+    
 <html>
 <head>
     <link rel="stylesheet" href="<%=CSS_PATH%>/maximo.css">

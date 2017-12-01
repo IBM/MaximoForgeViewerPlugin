@@ -15,9 +15,8 @@
 * 
 * @Author Doug Wood
 **/
-
 //**********************************************************************
-// Manage the mode file definitions pushed from Maximo
+// Manage the model file definitions pushed from Maximo
 // Maximo pushes scripts that insert model into the list
 //**********************************************************************
 "use strict";

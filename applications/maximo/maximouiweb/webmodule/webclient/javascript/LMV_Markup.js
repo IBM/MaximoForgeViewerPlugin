@@ -504,7 +504,7 @@ IBM.LMV.Markup.Toolbar = function(
 
 		var button = new Autodesk.Viewing.UI.Button("Markup_stylepbar_submenu.style");
 		button.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "360_redline_style.png )";
-		button.setToolTip( IBM.LMV.Strings.MARKUP_SAVE );
+		button.setToolTip( IBM.LMV.Strings.MARKUP_STYLE );
 		button.onClick = function() { _self.markupMgr.displayMarkupStyleDlg(); };
 		subToolbar.addControl( button );
 		
@@ -554,14 +554,6 @@ IBM.LMV.Markup.Toolbar = function(
             };
 			subToolbar.addControl( fullscreenButton );
         }
-
-
-		// Create resize button for main page 
-		var buttonResize = new Autodesk.Viewing.UI.Button( "btnDlgResizei" );
-		buttonResize.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES+ "tb_resize.png" + ")";
-		buttonResize.setToolTip(  IBM.LMV.Strings.TOOLBAR_RESIZE );
-		buttonResize.onClick = function( event ) { resizeBtn( event ); };
-		subToolbar.addControl( buttonResize );
 
 		toolBar.addControl( subToolbar );
 

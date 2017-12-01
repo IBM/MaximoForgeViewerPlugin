@@ -274,6 +274,7 @@ private static class StringTable
 		IBM.LMV.Strings.KEY_PARENT                 = "<%=stringTable.keyParent%>";  
 
 		IBM.LMV.Strings.KEY_ASSET_PROP_TITLE       = "<%=stringTable.keyAssetPropTitle%>";
+		IBM.LMV.Strings.KEY_OF                     = "<%=stringTable.keyOf%>";
 		IBM.LMV.Strings.KEY_COMPANY_PROP_TITLE     = "<%=stringTable.keyCompanyPropTitle%>";
 		IBM.LMV.Strings.KEY_LOCATION_PROP_TITLE    = "<%=stringTable.keyLocPropTitle%>";
         IBM.LMV.Strings.KEY_PRODUCT_PROP_TITLE     = "<%=stringTable.keyProductPropTitle%>";
@@ -292,6 +293,7 @@ private static class StringTable
         
         IBM.LMV.Strings.MARKUP_START_EDIT          = "<%=stringTable.keyMarkupStart%>";
         IBM.LMV.Strings.MARKUP_CANCEL              = "<%=stringTable.keyMarkupCancel%>";
+        IBM.LMV.Strings.MARKUP_STYLE               = "<%=stringTable.dlgTitleMarkupStyle%>";
         IBM.LMV.Strings.MARKUP_SAVE                = "<%=stringTable.keyMarkupSave%>";
         IBM.LMV.Strings.MARKUP_SHOW                = "<%=stringTable.keyMarkupShow%>";
         

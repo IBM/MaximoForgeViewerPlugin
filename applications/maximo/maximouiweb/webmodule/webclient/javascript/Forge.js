@@ -216,6 +216,21 @@ IBM.LMV.ForgeViewer = function()
 			this.initDocument();
 		}
 	};
+	
+	this.resize = function(
+		height, width
+	) {
+		if( this.viewer && this.viewer.container )
+		{
+			this.viewer.container.style.height = "" + height + "px";
+			this.viewer.container.style.width  = "" + width + "px";
+			try
+			{
+				this.viewer.resize();
+			}
+			catch( e )	{} // view may not be initialized on the first call
+		}
+	}
 
 	this.initDocument = function()
 	{
@@ -240,7 +255,6 @@ IBM.LMV.ForgeViewer = function()
 		_selectionMgr.initialize( this.docURN );
 							
 		var doc = this.docURN;
-		this.docURN = null
 		Autodesk.Viewing.Document.load( doc, 
 										function( doc ) { _self.onDocumentLoad( doc ) },
 										function( errorNum, errorMsg ) { _self.onLoadError( errorNum, errorMsg ) } );
@@ -740,7 +754,6 @@ authNS.getRestURL = function()
 authNS.setRequestHeaders = function(
 	xmlReq
 ) {
-	xmlReq.setRequestHeader("Access-Control-Allow-Origin", "*");
 	xmlReq.setRequestHeader("Access-Control-Allow-Origin", "*");
 	xmlReq.setRequestHeader( "Content-Type", "application/json; charset=UTF-8" );
 	xmlReq.setRequestHeader( "Accept", "application/json; charset=utf-8" );
@@ -1397,6 +1410,7 @@ IBM.LMV.SelectionMgr = function(
 	{
 		if( _docType != "rvt" && _docType != "zip"  )
 		{
+			_guidLoading = false;
 			return;
 		}
 
@@ -1405,12 +1419,16 @@ IBM.LMV.SelectionMgr = function(
 		//get property db path
 		var propDbPath = doc.getPropertyDbPath();
 		propDbPath = propDbPath + "objects_ids.json.gz";
+
+		if( !propDbPath.startsWith( "http") )
+		{
+			propDbPath = "https://developer.api.autodesk.com//derivativeservice/v2/derivatives/"  + propDbPath;
+		}
+
 		IBM.LMV.trace('propDbPath:' + propDbPath);
 	 
-		var objectIdDbFullPath = "https://developer.api.autodesk.com//derivativeservice/v2/derivatives/"  + propDbPath;
-	 
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', objectIdDbFullPath, true);
+		xhr.open('GET', propDbPath, true);
 		xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
 		var token = this.authToken;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + _forgeViewer.authToken.access_token );
@@ -1431,7 +1449,14 @@ IBM.LMV.SelectionMgr = function(
 
 		if( xhr.status != 200 )
 		{
-			IBM.LMV.RESTError( xhr.status, IBM.LMV.Strings.ERR_REST, xhr.responseText );
+			var msg;
+			try
+			{
+				msg = xhr.responseText;
+			}
+			catch( e ) {} // Ignore
+			if( !msg ) msg = xhr.statusText;
+			IBM.LMV.RESTError( xhr.status, IBM.LMV.Strings.ERR_REST, msg );
 			_guidLoading = false;
 			this.doDeferedSearch();
 			return;
@@ -1444,7 +1469,17 @@ IBM.LMV.SelectionMgr = function(
 		//the browser unzips  the file by itself, so let's check if it did.
 		if (rawbuf[0] == 31 && rawbuf[1] == 139) 
 		{
-			rawbuf = new Zlib.Gunzip(rawbuf).decompress();
+			try
+			{
+				rawbuf = new Zlib.Gunzip(rawbuf).decompress();
+			}
+			catch( e )
+			{
+				_guidLoading = false;
+				IBM.LMV.displayError( e );
+				console.error( e );
+				return;
+			}
 		}
  
 		var str = this.ab2str(rawbuf);
