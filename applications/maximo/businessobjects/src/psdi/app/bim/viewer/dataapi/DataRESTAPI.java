@@ -1,18 +1,20 @@
-/*
- *
- * IBM Confidential
- *
- * OCO Source Materials
- *
- * 5724-U18
- *
- * (C) COPYRIGHT IBM CORP. 2006,2016
- *
- * The source code for this program is not published or otherwise
- * divested of its trade secrets, irrespective of what has been
- * deposited with the U.S. Copyright Office.
- *
- */
+/**
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+**/
 package psdi.app.bim.viewer.dataapi;
 
 import java.io.BufferedReader;
@@ -124,7 +126,13 @@ public abstract class DataRESTAPI
      * the account data the end user has entitlements to. 
      */
     public final static String SCOPE_ACCOUNT_WRITE = "account:write"; 
-
+    /**
+     * View your viewable data 
+     * The application will only be able to read the end user’s viewable data (e.g., PNG and SVF files) 
+     * within the Autodesk ecosystem 
+     */
+    public final static String SCOPE_VIEWABLE_READ = "viewables:read"; 
+    
     
     public final static String BUCKET_POLICY_TRANSIENT  = "transient";
 	public final static String BUCKET_POLICY_TEMPORARY  = "temporary";
@@ -135,7 +143,7 @@ public abstract class DataRESTAPI
 	protected final static String PATT_AUTH                    = "/authentication/v1/authenticate";
 	protected final static String PATT_BUCKET                  = "/oss/v2/buckets";
 	protected final static String PATT_BUCKET_DELETE           = "/oss/v2/buckets/%1";
-	protected final static String PATT_BUCKET_REVOKE2          = "/oss/V2/buckets/%1/revoke";
+	protected final static String PATT_BUCKET_REVOKE2          = "/oss/v2/buckets/%1/revoke";
 	protected final static String PATT_BUCKET_GRANT2           = "/oss/v2/buckets/%1/grant";
 	protected final static String PATT_BUCKET_QUERY            = "/oss/v2/buckets/%1/details";
 	protected final static String PATT_BUCKET_LIST             = "/oss/v2/buckets";
@@ -151,6 +159,7 @@ public abstract class DataRESTAPI
 	protected final static String PATT_VIEW_SUPPORTED          = "/modelderivative/v2/designdata/formats";
 	protected final static String PATT_VIEW_METADATA           = "/modelderivative/v2/designdata/%1/metadata";
 	protected final static String PATT_VIEW_DOWNLOAD           = "/derivativeservice/v2/derivatives/%1";
+	protected final static String PATT_VIEW_THUMBNAIL          = "/modelderivative/v2/designdata/%1/thumbnail";
 
 	/**
 	 * Schema for bucket create
@@ -229,9 +238,17 @@ public abstract class DataRESTAPI
 	
 	public abstract String lookupKey();
 	
-    public abstract String lookupVersion( int api );
-    
-    
+	/**
+	 * Determin if the current context should be granted an Auth toke with the specified scope
+	 * <p>
+	 * Call be authenticate each time a auth token is requested once for each scope in the authenticate
+	 * request. If the method returns false, then authneticate will return a RestultAuthenticate object
+	 * with the error type set to API and a JSON body indicating the scope that was rejected
+	 * @param scope one of the SCOPE_ constants defined in this class
+	 * @return true if the scope should eb granted
+	 */
+	public abstract boolean  requestRights( String scope );
+	
 
     public int getUploadChunkSize()
 	{
@@ -288,6 +305,11 @@ public abstract class DataRESTAPI
 		_objectListChunkSize = objectListChunkSize;
 	}
 	
+	public boolean hasAuthToken()
+	{
+		return !_authTokens.isEmpty();
+	}
+	
 	/**
 	 * Clears all auth tokens for the authorization token cache
 	 */
@@ -308,6 +330,14 @@ public abstract class DataRESTAPI
         	String key       = lookupKey();
         	String secret    = lookkupSecret();
         	
+        	for( int i = 0; scope != null && i < scope.length; i++ )
+        	{
+        		if( !requestRights( scope[i] ))
+        		{
+        			return new ResultAuthentication( scope[i] );
+        		}
+        	}
+
         	String hashKey = key;
         	for( int i = 0; scope != null && i < scope.length; i++ )
         	{
@@ -673,9 +703,9 @@ public abstract class DataRESTAPI
 		
 		/*
 		{
-		  "allow":[
-		       {"authId":"D6C9x7Bk0vo2HA1qC7l0VHM4MtYqZsN4","access":"full"}
-		  ]
+		"revoke":[
+			{"authId":"2s23v1A2uIHPNJQ2nlJjIxYKqAAOInjY"}
+			]
 		}
 		*/
 		
@@ -684,7 +714,7 @@ public abstract class DataRESTAPI
 		JSONArray j_serviceList = new JSONArray();
 		j_serviceList.add( j_rights );
 		JSONObject j_grantRequest = new JSONObject();
-		j_grantRequest.put( "allow", j_serviceList );
+		j_grantRequest.put( "revoke", j_serviceList );
 
 		String jStr = j_grantRequest.toString();
 		
@@ -696,10 +726,8 @@ public abstract class DataRESTAPI
 		URL url = new URL( uri.toASCIIString() );
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 
-		connection.setRequestMethod( "POST" );
 		authResult.setAuthHeader( connection );
-        connection.setRequestProperty( "Accept", "Application/json" );
-		connection.setRequestProperty( "Content-Length", "" + jStr.length() );
+		connection.setRequestMethod( "POST" );
 		connection.setRequestProperty( "Content-Type", "application/json; charset=utf-8" );
 
 		connection.setDoOutput( true );
@@ -864,12 +892,12 @@ public abstract class DataRESTAPI
 		return result;
 	}
 	
-	private String makeURN(
+	protected String makeURN(
 		int    api,
 		String pattern,
 		String params[]
 	) {
-		String URN = pattern.replace( "%VER", lookupVersion( api ) );
+		String URN = pattern;
 		for( int i = 0; params != null && i < params.length; i++ )
 		{
 			URN = URN.replace( "%" + (i + 1), params[i] );
@@ -891,7 +919,7 @@ public abstract class DataRESTAPI
 			return new Result( authResult );
 		}
 		
-		String params[] = { bucketKey.toLowerCase(), objectKey.toLowerCase() };
+		String params[] = { bucketKey.toLowerCase(), objectKey };
 		String frag = makeURN( API_OSS, PATT_OBJECT_DELETE, params );
 
 		URI uri = new URI( _protocol, null, lookupHostname(), _port, frag, null, null );
@@ -921,7 +949,7 @@ public abstract class DataRESTAPI
 			return new ResultObjectDetail( authResult );
 		}
 		
-		String params[] = { bucketKey.toLowerCase(), objectKey.toLowerCase() };
+		String params[] = { bucketKey.toLowerCase(), objectKey };
 		String frag = makeURN( API_OSS, PATT_OBJECT_QUERY, params );
 
 		URI uri = new URI( _protocol, null, lookupHostname(), _port, frag, null, null );
@@ -1002,6 +1030,49 @@ public abstract class DataRESTAPI
 		return result;
 	}
     
+	public ResultObjectList objectListPaged(
+		String bucketKey,
+		String keyBeginsWith,
+		String startAt,
+		String pageSize
+	) 
+	    throws IOException, 
+	           URISyntaxException
+	{
+		String params[] = { bucketKey.toLowerCase() };
+		String frag = makeURN( API_OSS, PATT_OBJECT_LIST, params );
+
+		String scope[] = { SCOPE_DATA_READ };
+		
+		ResultAuthentication authResult = authenticate( scope );
+		if( authResult.isError() )
+		{
+			return new ResultObjectList( authResult );
+		}
+		
+		String query = "limit=" + pageSize;
+		if( startAt != null && startAt.length() > 0 )
+		{
+			query = query + "&startAt=" + startAt; 
+		}
+		if( keyBeginsWith != null && keyBeginsWith.length() > 0 )
+		{
+			query = query + "&" + KEY_BEGINS_WITH + "=" + keyBeginsWith; 
+		}
+
+		URI uri = new URI( _protocol, null, lookupHostname(), _port, frag, query, null );
+
+		URL url = new URL( uri.toASCIIString() );
+		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+
+		connection.setRequestMethod( "GET" );
+		authResult.setAuthHeader( connection );
+        connection.setRequestProperty( "Accept", "Application/json" );
+		connection.setRequestProperty( "Content-Type", "application/json; charset=utf-8" );
+
+		return new ResultObjectList( connection );
+	}
+    
 	public ResultObjectDetail objectUpload(
 		String bucketKey,
 		String objectKey,
@@ -1036,7 +1107,7 @@ public abstract class DataRESTAPI
 			
 			fis = new FileInputStream( file ); 
 
-			String params[] = { bucketKey.toLowerCase(), objectKey.toLowerCase() };
+			String params[] = { bucketKey.toLowerCase(), objectKey };
 			String frag = makeURN( API_OSS, PATT_OBJECT_UPLOAD, params );
 
 			URI uri = new URI( _protocol, null, lookupHostname(), _port, frag, null, null );
@@ -1100,6 +1171,7 @@ public abstract class DataRESTAPI
 		}
 	}
 
+
 	/**
 	 * 
 	 * @return
@@ -1115,11 +1187,69 @@ public abstract class DataRESTAPI
 	           GeneralSecurityException, 
 	           IOException
     {
+		File srcFile     = new File( fileName );
+		long srcFileSize = srcFile.length();
+		String fileSha1;
+		FileInputStream  fis = null;
+		try
+		{
+			fileSha1 = createSha1( srcFile );
+	        fis = new FileInputStream( srcFile );
+		}
+		catch( FileNotFoundException fnf )
+		{
+			return new ResultObjectDetail( fnf );
+		}
+	
+		ResultObjectDetail result = objectUploadStream( bucketKey, objectKey, fis, srcFileSize, tracker );
+		ViewerObject objects[] = result.getObjects();
+		
+		if( result.isError() ) return result;
+			
+		if( objects == null || objects.length == 0 )
+		{
+			result.setError( Result.API_ERR_NO_OBJECT );
+        	return result;
+		}
+		String uploadSha1 = objects[0].getSha1();
+		if( uploadSha1 == null )
+		{
+			ResultObjectDetail rod = objectQueryDetails( bucketKey, objectKey );
+			ViewerObject objs[] = rod.getObjects();
+			if( objs != null && objs.length > 0 )
+			{
+				objects = objs;
+				uploadSha1 = objects[0].getSha1();
+			}
+		}
+		if( uploadSha1 != null && !fileSha1.equalsIgnoreCase( uploadSha1 ))
+		{
+			result.setError( Result.API_ERR_BAD_CHECKSUM );
+		}
+    	return result;
+    }
+	
+	/**
+	 * 
+	 * @return
+	 * @throws GeneralSecurityException 
+	 */
+	public ResultObjectDetail objectUploadStream(
+		String         bucketKey,
+		String         objectKey,
+		InputStream    is,
+		long           srcFileSize,
+		UploadProgress tracker
+	) 
+	    throws URISyntaxException, 
+	           GeneralSecurityException, 
+	           IOException
+    {
 		String scope[] = { SCOPE_DATA_CREATE, SCOPE_DATA_WRITE };
 		String params[] = new String[2];
 		params[0] = bucketKey.toLowerCase();
 		
-		params[1] = objectKey.toLowerCase();
+		params[1] = objectKey;
 		
 		String frag = makeURN( API_OSS, PATT_OBJECT_UPLOAD_RESUMABLE, params );
 		URI uri = new URI( _protocol, null, lookupHostname(), _port, frag, null, null );
@@ -1129,22 +1259,9 @@ public abstract class DataRESTAPI
 		long sessionId = System.currentTimeMillis();
 		
 		ResultObjectDetail result = null;
-		FileInputStream  fis = null;
 		byte buf[] = new byte[ _uploadChunkSize ];
 		try
 		{
-			File srcFile     = new File( fileName );
-			long srcFileSize = srcFile.length();
-			String fileSha1;
-			try
-			{
-				fileSha1 = createSha1( srcFile );
-		        fis = new FileInputStream( srcFile );
-			}
-			catch( FileNotFoundException fnf )
-			{
-				return new ResultObjectDetail( fnf );
-			}
 
 	        long bytesRead = 0;
 			long offset = 0;
@@ -1157,7 +1274,21 @@ public abstract class DataRESTAPI
 			while( bytesRead >= 0 && offset + 1 < srcFileSize )
 			{
 				result = null;
-				bytesRead = fis.read( buf );
+				
+				int startLoc = 0;
+				int bytesRemaining = buf.length;
+				do
+				{
+					bytesRead = is.read( buf, startLoc, bytesRemaining );
+					if( bytesRead > 0 )
+					{
+						bytesRemaining -= bytesRead;
+						startLoc += bytesRead;
+					}
+				}
+				while( bytesRead > 0 && bytesRemaining > 0 && offset + 1 < srcFileSize );
+				bytesRead = startLoc;
+					
 				if( bytesRead > 0 )
 				{
 					int retry = 0;
@@ -1166,11 +1297,11 @@ public abstract class DataRESTAPI
 						ResultAuthentication authResult = authenticate( scope );
 						if( authResult.isError() )
 						{
-							if( fis != null )
+							if( is != null )
 							{
 								try
 								{
-									fis.close();
+									is.close();
 								}
 								catch( Exception e )
 								{ /* ignore */ }
@@ -1241,36 +1372,21 @@ public abstract class DataRESTAPI
 			        }
 				}
 			}
+			if( result == null ) System.out.println( "Null result" );
 			ViewerObject objects[] = result.getObjects();
 			if( objects == null || objects.length == 0 )
 			{
 				result.setError( Result.API_ERR_NO_OBJECT );
 	        	return result;
 			}
-			String uploadSha1 = objects[0].getSha1();
-			if( uploadSha1 == null )
-			{
-				ResultObjectDetail rod = objectQueryDetails( bucketKey, objectKey );
-				ViewerObject objs[] = rod.getObjects();
-				if( objs != null && objs.length > 0 )
-				{
-					objects = objs;
-					uploadSha1 = objects[0].getSha1();
-				}
-			}
-			if( uploadSha1 != null && !fileSha1.equalsIgnoreCase( uploadSha1 ))
-			{
-				result.setError( Result.API_ERR_BAD_CHECKSUM );
-	        	return result;
-			}
 		}
 		finally
 		{
-			if( fis != null )
+			if( is != null )
 			{
 				try
 				{
-					fis.close();
+					is.close();
 				}
 				catch( Exception e )
 				{ /* ignore */ }
@@ -1292,7 +1408,6 @@ public abstract class DataRESTAPI
 			return authResult;
 		}
 
-		viewableURN = viewableURN.toLowerCase();
 		viewableURN = new String( Base64.encodeBase64( viewableURN.getBytes() ) );
 		String params[] = { viewableURN };
 		String frag = makeURN( API_VIEWING, PATT_VIEW_DEREGISTER, params );
@@ -1360,6 +1475,9 @@ public abstract class DataRESTAPI
 		URI uri = new URI( _protocol, null, lookupHostname(), _port, frag, null, null );
 		
 		URL url = new URL( uri.toASCIIString() );
+		System.out.println( url );
+		
+		System.out.println( url );
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 	
 		connection.setRequestMethod( "GET" );
@@ -1383,7 +1501,6 @@ public abstract class DataRESTAPI
 			return new ResultViewerService( authResult );
 		}
 		
-		viewableURN = viewableURN.toLowerCase();
 		viewableURN = new String( Base64.encodeBase64( viewableURN.getBytes() ) );
 
 		String params[] = { viewableURN };
@@ -1427,7 +1544,6 @@ public abstract class DataRESTAPI
 			return new ResultViewableMetadata( authResult );
 		}
 		
-		viewableURN = viewableURN.toLowerCase();
 		viewableURN = new String( Base64.encodeBase64( viewableURN.getBytes() ) );
 
 		String params[] = { viewableURN };

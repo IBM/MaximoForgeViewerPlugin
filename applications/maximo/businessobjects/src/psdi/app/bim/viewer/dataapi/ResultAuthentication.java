@@ -64,6 +64,20 @@ public class ResultAuthentication
 	}
 	
 	/**
+	 * Failed authenticate because the specified scope is not allowed
+	 * @param scope
+	 */
+	ResultAuthentication(
+	    String scope 
+    ) {
+		super();
+		setError( Result.API_ERR_SCOPE_REJECTED );
+		setErrorMessage( scope );
+		setHttpStatus( 403 );
+		_rawError = "{ \"ErrorCode\" : " + Result.API_ERR_SCOPE_REJECTED + ", \"ErrorType\" : \"access\", \"ErrorMessage\" : \"" + scope + "\" }";
+	}
+	
+	/**
 	 * {"token_type":"Bearer","expires_in":7200,"access_token":"Qdl8N6KPoyfAX3Lumtgia6leqacd"}
 	 * @return 
 	 */
@@ -141,6 +155,7 @@ public class ResultAuthentication
 		HttpURLConnection connection
 	) {
         connection.setRequestProperty( "Authorization", _token_type + " " + _access_token );
+		connection.setRequestProperty( "cache-control", "no-cache" );
 	}
 
    @Override

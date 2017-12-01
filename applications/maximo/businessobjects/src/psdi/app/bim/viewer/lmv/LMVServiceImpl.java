@@ -36,12 +36,6 @@ public class LMVServiceImpl
 	}
 
 	@Override
-	public String lookupVersion(  int api  )
-	{
-		return _server.getProperty( LMVService.LMV_VERSION );
-	}
-
-	@Override
 	public String lookupHostname()
 	{
 		return _server.getProperty( LMVService.LMV_HOST );
@@ -59,4 +53,10 @@ public class LMVServiceImpl
 		return _server.getProperty( LMVService.LMV_SECRET );
 	}
 
+	@Override
+	public boolean  requestRights( 
+		String scope 
+	) {
+		return true;
+	}
 }

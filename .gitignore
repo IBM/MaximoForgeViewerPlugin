@@ -52,3 +52,4 @@ lmv.properties
 
 # Don't include 3rd party jars
 *.jar
+/bin/

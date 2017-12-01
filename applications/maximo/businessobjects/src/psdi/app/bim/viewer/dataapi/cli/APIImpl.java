@@ -97,20 +97,6 @@ public APIImpl()
 	}
 
 	@Override
-	public String lookupVersion(
-		int api
-	) {
-		switch( api )
-		{
-		case DataRESTAPI.API_AUTH:
-			return "v1";
-		case DataRESTAPI.API_OSS:
-			return "v1";
-		}
-		return "v1";
-	}
-
-	@Override
 	public String lookupHostname()
 	{
 		return _host;
@@ -127,5 +113,11 @@ public APIImpl()
 	{
 		return _secret;
 	}
-
+	
+	@Override
+	public boolean  requestRights( 
+		String scope 
+	) {
+		return true;
+	}
 }

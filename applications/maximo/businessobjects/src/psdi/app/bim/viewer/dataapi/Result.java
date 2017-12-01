@@ -56,6 +56,7 @@ public class Result
     public static final int API_ERR_BAD_CHECKSUM   = -1;
     public static final int API_ERR_NO_OBJECT      = -2;
     public static final int API_ERR_FILE_NOT_FOUND = -3;
+    public static final int API_ERR_SCOPE_REJECTED = -4;
 
     protected ERROR_TYPE _errorType        = ERROR_TYPE.NONE;
     private int          _httpStatus       = -1;
