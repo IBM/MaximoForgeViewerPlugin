@@ -1,0 +1,577 @@
+<!-- 
+* Copyright Wipro 2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+ -->
+<link rel="import" href="../polymer/polymer-element.html">
+
+<link rel="import" href="../iron-icons/iron-icons.html">
+
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-input/paper-textarea.html">
+
+<link rel="import" href="../triblock-popup/triblock-popup.html">
+
+<link rel="import" href="forge-pager.html">
+<link rel="import" href="forge-scroll-pane.html">
+<link rel="import" href="forge-thumbnail.html">
+
+<dom-module id="forge-tri-views">
+  	<template>
+		<style>
+		    paper-icon-button {
+		    	width            : 48px;
+		    	height           : 48px;
+		    }
+			paper-button {
+				background-color : #204080;
+				color            : white;
+			}		
+			triblock-popup {
+				padding : 0; 
+				height  : calc(100% - 50px); 
+				width   : calc(100% - 50px);
+			}
+			.header {
+				background-color : #60a0ff;
+				font-family      : arial; 
+		      	color            : black;
+		      	width            : 100%;
+		      	display          : inline-flex;
+			}
+			.card-body {
+				display          : inline-block;
+				width            : 400px;
+				height           : 280px;
+				background-color : white;
+				padding-bottom   : 0px;
+				overflow-x       : auto;
+				overflow-y       : hidden;
+				box-sizing       : border-box;
+				margin           : 12px;
+				padding          : 12px;
+				padding-bottom   : 0;
+				box-shadow       : 10px 10px 5px #abc;
+			}
+			.card-title {
+				width            : 100%;
+				padding-top		 : 0px;
+				white-space      : nowrap;
+				display          : inline-flex;
+			}
+			.list {
+				height   : calc(100% - 72px); 
+				overflow : auto;
+			}
+		</style>
+
+		<triblock-popup id="popup" manual-close="true" title="[[__dictionary__title]]" >
+			<div class="header">
+				<span style="text-align: center; width:100%;"><h1>Manage Forge Views</h1></span>
+				<paper-input floatingLabel label="Building Name" value="{{filter}}" on-keypress="_onSearchKey"></paper-input>
+				<paper-icon-button id="search" icon="search" on-click="getList"></paper-icon-button>
+			</div>
+			<div class="list" >
+				<div>
+					<template id="repeat" is="dom-repeat" items="[[viewlist]]">
+				        <div class="card-body" >
+				    		<div class="card-title">
+					    		<h3>[[item.description]]</h3>
+				    		</div>
+				    		<table style="width:100%;">
+				    			<tr>
+				    				<td rowspan="4">
+									    <forge-thumbnail url="[[item.thumbnail]]" on-select="_onDisplayModel"
+									    				 style="margin-right:10px;">
+									    </forge-thumbnail>
+				    				</td>
+				    				<td>
+				    					User:
+				    				</td>
+				    				<td>
+				    					[[item.user]]
+				    				</td>
+				    				<td>
+										<paper-icon-button id="drawerToggle" icon="chevron-right" on-click="_displayDetails" 
+										                   alt=[[__dictionary__details]] 
+										                   style="float:right; height:64px; width:64px">
+					                   </paper-icon-button> 
+				    				</td>
+				    			</tr>
+				    				<td colspan="3">
+									  	<paper-checkbox checked="{{item.shared}}" disabled="disabled">Public ?</paper-checkbox>
+				    				</td>
+				    			<tr>
+				    			</tr>
+				    			<tr>
+				    				<td colspan="3" style="height:100%; width:100%;">
+							          	<paper-icon-button icon="delete-forever" on-click="_onDelete" alt="Delete View" 
+							          	                   style="float:right;"></paper-icon-button>
+				    				</td>
+				    			</tr>
+				    		</table>
+						</div>
+					</template>
+					<forge-pager id="pager" start="{{fetchStart}}" pagesize="{{fetchSize}}" count="[[viewlist.length]]"
+					             on-page="_onPage" ></forge-pager>
+				</div>
+			</div>
+		</triblock-popup>
+
+		<paper-dialog id="viewDetailsDlg" >
+			<h2>View Details</h2>
+			<paper-dialog-scrollable>
+				<paper-textarea id="viewDetailsDlgDetails" floatingLabel label="Details" rows="4"></paper-textarea>
+			  	<paper-checkbox id="viewDetailsDlgShared">Public ?</paper-checkbox>
+			</paper-dialog-scrollable>
+			<div class="buttons" >
+				<paper-button dialog-confirm on-click="_onUpdateView" raised>OK</paper-button>
+				<paper-button dialog-dismiss autofocus raised>Cancel</paper-button>
+			</div>
+		</paper-dialog>
+
+		<forge-bubble-storage id="bubbles"  restpath="[[restpath]]"
+		                      on-bubble-detail ="_onBubbleDetail">
+		</forge-bubble-storage>
+  	</template>
+	
+	<script>
+		var __dictionary__details         = "Display details";
+		var __dictionary__viewlist        = "Forge Views List";
+		var __dictionary__viewDelete      = "Forge Views Delete";
+		var __dictionary__viewGetState    = "Forge Views Delete State";
+		var __dictionary__viewDeleteState = "Forge Views Delete State";
+		var __dictionary__title           = "Manage Forge Views";
+
+		const _viewPath       = "/p/webapi/rest/v2/triBIMViewer/-1/forgeViews?query=true"
+		const _getDataPath    = "/p/webdata";
+		const _deleteDataPath = "/p/webdata";
+		const _deleteViewPath = "/p/webapi/rest/v2/triBIMViewer/-1/forgeViews?actionGroup=actions&action=delete";
+		const _updateViewPath = "/p/webapi/rest/v2/triBIMViewer/-1/forgeViews?actionGroup=actions&action=update";
+
+ 		class ForgeTriViews extends Polymer.Element 
+		{
+			static get is() { return 'forge-tri-views' }
+			
+			static get properties() {
+				return {
+					contextroot : {
+						type     : String,
+					},
+					fetchSize : {
+						type     : Number,
+						value    : 30,
+					},
+					fetchStart : {
+						type     : Number,
+						value    : 0,
+					},
+					restpath : {
+						type     : String,
+					},
+					viewlist : {
+						type     : Array,
+       				},
+				}
+			};
+
+  		    constructor()
+  		    {
+  		    	super();
+  		    	this.filter     = "";
+   		    };
+  		    
+	 		openPopup() 
+	 		{
+	 			this.getList();
+				this.$.popup.openPopup();
+			};
+
+  			//============================================================================
+  			// View List
+  			//============================================================================
+
+			getList(
+				from, size
+			) {
+				this.set( "viewlist", [] );
+				var url = this.contextroot + _viewPath;
+				var query = {};
+				
+				if( this.filter && this.filter.length > 0 )
+				{
+					query = {
+						"page":	{"from":0,"size":50},
+		  				"filters":[
+							{
+								name     : "description",
+							 	operator : "contains",
+							 	value    : this.filter,
+							 },
+						],
+					}
+				}
+
+				if( this.fetchSize > 0 )
+				{
+					query.page = {
+						"from": this.fetchStart,
+						"size": this.fetchSize
+					}
+				}
+
+				query.sorts = [
+					{
+						name : "urn",
+						desc : false
+					}
+				]
+
+				fetch( url, 
+					   { 
+							method: "POST",
+							headers: {
+							    'content-type': 'application/json',
+							    'Accept': 'application/json',
+							},
+					   		credentials: 'same-origin', 
+					   		body : JSON.stringify( query )
+					   } 
+					).then(
+						( request ) => { this._onList( request ); },
+						( err ) => { this._onError( err ); } );
+			};
+			
+			_onList(
+				response 
+			) {
+				if( response.redirected )
+				{
+					location.href = response.url;
+				}
+				if( !response.ok )
+				{
+					this.dispatchEvent( new CustomEvent('forge-http-error', { bubbles: true, composed: true,
+					                                                          detail: { response : response, 
+					                                                                    source : __dictionary__viewlist  }} ));
+					this.set( "viewlist", [] );
+					return;
+				}
+				response.json().then(
+					( json ) => {  
+						var models = {};
+
+						var data = json.data;
+						for( var i = 0; i < data.length; i++ )
+						{
+							data[i].thumbnail      = "";
+							data[i].hasThumbnail   = false;
+
+							if( !data[i].urn ) continue;   // Bad data should never happen
+							var objectId = data[i].urn.substring( 4 );
+							objectId = window.atob( objectId );
+
+							models[ data[i].urn ] = objectId;
+						}
+
+						this.set( "viewlist", json.data );
+
+						for( var urn in models )
+						{
+							this.$.bubbles.details( models[ urn ], urn );
+						}
+					},
+					( err ) => { this._onError( err ); }
+				);
+			};
+
+			_onSearchKey(
+				event
+			) {
+				if( event.keyCode == 13 ) 
+				{
+					this.getList();
+				}
+			};
+
+			_onPage(
+				event
+			) { 
+				this.fetchStart = event.detail.start;
+				this.fetchSize  = event.detail.pagesize;
+				this.getList();
+			};
+
+
+  			//============================================================================
+  			// Update View
+  			//============================================================================
+
+			_updateView(
+				view
+			) {
+				var body = {
+						data :{}
+					};
+				body.data = view;
+				
+				var url = this.contextroot + _updateViewPath;
+
+				fetch( url, 
+					   { 
+							method: "PUT",
+							headers: {
+							    'content-type': 'application/json',
+							    'Accept': 'application/json',
+							},
+					   		credentials: 'same-origin', 
+					   		body : JSON.stringify( body )
+					   } 
+					).then(
+						( response ) => {
+							if( response.status == 404 )
+							{
+								return;		// Just ignore. Nothing can be done to fix this
+							}
+							if( !response.ok )
+							{
+								this.dispatchEvent( new CustomEvent('forge-http-error', { bubbles: true, composed: true,
+								                                                          detail: { response : response, 
+								                                                                    source : __dictionary__viewDelete  }} ));
+								return;
+							}
+							response.json().then(
+								( json ) => {  
+									for( var i in this.viewlist )
+									{
+										if( view._id == this.viewlist[i]._id )
+										{
+											this.set( "viewlist." + i + ".detail", view.detail );
+											this.set( "viewlist." + i + ".shared", view.shared );
+											break;
+										}
+									}
+								},
+								( err ) => { this._onError( err ); }
+							);
+						},
+						( err ) => { this._onError( err ); } );
+			}
+
+  			//============================================================================
+  			// Delete View
+  			//============================================================================
+
+			_onDelete(
+				event
+			) {
+		    	var view = event.model.item;
+				var contentID = view.viewerState.contentID;
+				for( var i in this.viewlist )
+				{
+					if( view.urn === this.viewlist[i].urn )
+					{
+						this.splice( "viewlist", i, 1 );
+						break;
+					}
+				}
+
+				this._deleteViewerState( contentID );
+				this._deleteView( view._id );
+			}
+
+			_deleteView(
+				id
+			) {
+				var body = {
+						data :{
+							"_id" : id,
+						}
+					};
+
+				var url = this.contextroot + _deleteViewPath;
+
+				fetch( url, 
+					   { 
+							method: "PUT",
+							headers: {
+							    'content-type': 'application/json',
+							    'Accept': 'application/json',
+							},
+					   		credentials: 'same-origin', 
+					   		body : JSON.stringify( body )
+					   } 
+					).then(
+						( response ) => {
+							if( response.status == 404 )
+							{
+								return;		// Just ignore. Nothing can be done to fix this
+							}
+							if( !response.ok )
+							{
+								this.dispatchEvent( new CustomEvent('forge-http-error', { bubbles: true, composed: true,
+								                                                          detail: { response : response, 
+								                                                                    source : __dictionary__viewDelete  }} ));
+								return;
+							}
+						},
+						( err ) => { this._onError( err ); } );
+			}
+
+  			//============================================================================
+  			// Get Viewer State
+  			//============================================================================
+
+			_getViewerState(
+				contentID, urn
+			) {
+				var url = this.contextroot + _getDataPath + "/" + contentID;
+
+				fetch( url, 
+					   { 
+							method: "GET",
+							headers: {
+							    'content-type': 'application/json',
+							    'Accept': 'application/json',
+							},
+					   		credentials: 'same-origin', 
+					   } 
+					).then(
+						( response ) => {
+							if( response.status == 404 )
+							{
+								return;		// Just ignore. Nothing can be done to fix this
+							}
+							if( !response.ok )
+							{
+								this.dispatchEvent( new CustomEvent('forge-http-error', { bubbles: true, composed: true,
+								                                                          detail: { response : response, 
+								                                                                    source : __dictionary__viewGetState  }} ));
+								return;
+							}
+							response.text().then(
+								( data ) => { 
+									this.dispatchEvent( new CustomEvent('display-model', { bubbles: true, composed: true, 
+																						   detail: { urn : urn, state : data  } } ));
+								},
+								( err ) => { this._onError( err ); }
+							);
+						},
+						( err ) => { this._onError( err ); } );
+			}
+
+  			//============================================================================
+  			// Delete Viewer State
+  			//============================================================================
+
+			_deleteViewerState(
+				contentID
+			) {
+				var url = this.contextroot + _deleteDataPath + "/" + contentID;
+
+				fetch( url, 
+					   { 
+							method: "DELETE",
+							headers: {
+							    'content-type': 'application/json',
+							    'Accept': 'application/json',
+							},
+					   		credentials: 'same-origin', 
+					   } 
+					).then(
+						( response ) => {
+							if( response.status == 404 )
+							{
+								return;		// Just ignore. Nothing can be done to fix this
+							}
+							if( !response.ok )
+							{
+								this.dispatchEvent( new CustomEvent('forge-http-error', { bubbles: true, composed: true,
+								                                                          detail: { response : response, 
+								                                                                    source : __dictionary__viewDeleteState  }} ));
+								return;
+							}
+						},
+						( err ) => { this._onError( err ); } );
+			}
+
+  			//============================================================================
+  			// Bubble Details
+  			//============================================================================
+
+			_onBubbleDetail(
+				event
+			) {
+				var bubble = event.detail.bubble;
+				var urn = event.detail.data;
+				for( var i = 0; i < this.viewlist.length; i++ )
+				{
+					// May be many views for this URN
+					if( urn == this.viewlist[i].urn )
+					{
+						var thumbnail = this.$.bubbles.getThumbnail( bubble );
+						this.set( "viewlist." + i + ".thumbnail", thumbnail );
+						this.set( "viewlist." + i + ".hasThumbnail", thumbnail != null );
+					}
+				}
+			}
+
+  			//============================================================================
+  			// Utilities
+  			//============================================================================
+
+  			_displayDetails(
+  				event
+  			) {
+		    	var item = event.model.item;
+		    	this.$.viewDetailsDlgDetails.item   = item;
+		    	this.$.viewDetailsDlgDetails.value  = item.detail;
+		    	this.$.viewDetailsDlgShared.checked = item.shared;
+  				this.$.viewDetailsDlg.open();
+  			}
+
+  			_onUpdateView(
+  				event
+			) {
+		    	var item   = this.$.viewDetailsDlgDetails.item;
+		    	var detail = this.$.viewDetailsDlgDetails.value;
+		    	var shared = this.$.viewDetailsDlgShared.checked;
+		    	var view = {
+	    			_id    : item._id,
+	    			detail : detail,
+	    			shared : shared
+		    	};
+				this._updateView( view );
+  			}
+
+		    _onDisplayModel(
+		    	event
+		    ) {
+		    	var item = event.model.item;
+		    	this._getViewerState( item.viewerState.contentID, item.urn )
+		    }
+		    
+		    _onError( err )
+		    {
+		    	console.error( err );
+		    }
+		}
+		
+		customElements.define( ForgeTriViews.is, ForgeTriViews );
+	</script>
+</dom-module>

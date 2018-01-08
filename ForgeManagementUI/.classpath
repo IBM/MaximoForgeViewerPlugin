@@ -8,11 +8,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JDK8x64">
-		<attributes>
-			<attribute name="owner.project.facets" value="java"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/com.ibm.ws.st.core.runtimeClasspathProvider/WebSphere Application Server Liberty">
 		<attributes>
 			<attribute name="owner.project.facets" value="jst.web"/>
@@ -21,5 +16,7 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.json-1.0.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/json4j.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/IBM-Forge-1.0.jar" sourcepath="B:/git/MaximoForgeViewerPlugin/applications/maximo/businessobjects/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

@@ -1,0 +1,373 @@
+<!-- 
+* Copyright Wipro 2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+ -->
+<link rel="import" href="../../polymer/polymer.html">
+
+<dom-module id="forge-viewer">
+  	<template>
+		<style>
+		    html, body {
+				margin   : 0;
+				padding  : 0;
+				height   : 100%;
+				width    : 100%;
+				overflow : none;
+		    }
+		</style>
+  	
+	  <iframe id="viewer" frameborder="0" 
+      		  allowFullScreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" 
+	          height="100%" width="100%" 
+	          marginwidth="0" marginheight="0" scrolling="no"
+              on-load="_onViewerFrameLoad">
+	  </iframe>
+  	</template>
+	
+	<script>
+		var __dictionary__RESTError = "REST Error";
+		var __dictionary__Error     = "Error";
+		var __dictionary__Viewer    = "Forge Viewer";
+		var __dictionary__NotFound  = "Target not found";
+
+		var __dictionary__AccessDenied     = "Access Denied";
+		var __dictionary__AccessDenied_1   = "The operation requires {scope} access";
+
+		var _modelMgr      = null;
+		var _viewerWrapper = null;
+		var _selectionMgr  = null;
+		
+		Polymer(
+		{ 
+			is: 'forge-viewer', 
+			
+			properties : {
+               /**
+				 * Overrid for the REST URL used to authenicate with the Autodesk Forge service 
+				 */
+				authurl : {
+					type     : String,
+				},
+            
+               /**
+				 * Controls auto zoom on select behavior 
+				 */
+				autozoom : {
+					type     : Boolean,
+					value    : false,
+					observer : '_zoomChanged'
+				},
+
+				contextroot : {
+					type     : String,
+				},
+				
+				/**
+				  * A list of features to enable or disable.  supported values are:
+				  * - markup : Loads the markup extensions and displayes markup tools on the toolbar
+				  * - multiselect : displayes the single select/multi select tool on the toolbar.
+				  * - view : Displayes the save and restore view tools on the toolbar
+				  * If the object has a property matching the feature name, the feature is enabled
+				  */
+				features : {
+					type     : Object,
+					value    : { views : true, markup : true }
+				},
+
+               /**
+				 * Override for the URL for the src value of the viewer iFrame.  It should be the 
+				 * path to ForgeViewer.html
+				 */
+				frameurl : {
+					type     : String,
+					observer : '_frameChanged'
+				},
+
+               /**
+				 * For non Revit models: The name of the model poperty that contains the unique ID used to bind
+				 * applcation data to model elements 
+				 */
+				mapping : {
+					type     : String,
+				},
+
+				/**
+				 * The _id of the owning record such as a work order or service request
+				 */
+				owningrecordid : {
+					type : String
+				},
+				
+               /**
+				 * URN of model to load
+				 */
+				urn : {
+					type     : String,
+					observer : '_urnChanged'
+				},
+				
+               /**
+				 * The GUID of the currently selected item in the model 
+				 */
+				value : {
+					type     : String,
+					observer : '_valueChanged'
+				},
+
+               /**
+				 * Name of the viewer implementation to use to display a specific model 
+				 * Ex: "Forge" for the Autodesk Forge viewer
+				 */
+				viewer : {
+					type     : String,
+					value    : "Forge"
+				},
+			},
+			
+	    	_viewerInit : false,
+
+	    	ready : function()
+	    	{
+	    		if( !this.frameurl || this.frameurl == "" )
+	    		{
+	    			if( this.importPath )
+	    			{
+		    			this.set( "frameurl", this.importPath + "ForgeViewer.html" );
+	    			}
+	    		}
+	    	},
+
+			displayView : function(
+				view
+			) {
+		  		if( this.$.viewer.contentWindow.ViewerWrapper )
+		  		{
+			  		_viewerWrapper.displayView( view );
+		  		}
+			},
+
+	    	select : function(
+	    		value, zoomMode
+	    	) {
+	    		if( !zoomMode ) zoomMode = this.autozoom;
+		  		if( this.$.viewer.contentWindow.ViewerWrapper )
+		  		{
+		  			this._initializeViewer();
+			  		_viewerWrapper.selectValue( value, zoomMode );
+		  		}
+	    	},
+
+	    	// Called when iFrame source is loaded
+	    	_onViewerFrameLoad : function()
+	    	{
+		  		if(    !this.$.viewer.contentWindow 
+		  		    || !this.$.viewer.contentWindow.loadWrapper) 
+	  		    {
+		  		    return;  
+	  		    }
+
+		  		this.$.viewer.contentWindow.loadWrapper(
+		  			this.viewer,
+		  			()=> { this._initializeViewer(); }
+		  		);
+	    	},
+
+  			_initializeViewer : function()
+  			{
+  				if( this._viewerInit ) return;
+		  		if( !this.$.viewer.contentWindow ) return; 
+		  		if( !this.$.viewer.contentWindow.ViewerWrapper ) return;
+
+  				_modelMgr = this.$.viewer.contentWindow.initModelManager(
+			  				( ctrl,	selectionList, selection, count, index ) => { 
+								this._selectionChanged( ctrl,	selectionList, selection, count, index ); 
+							},
+							( modelMgr ) => { this._onViewerInit( modelMgr ); },
+							this.contextroot,
+							this.features
+							);
+				this._viewerInit = true;
+  			},
+  			
+  			_onViewerInit : function(
+  				modelMgr
+  			) {
+  				_modelMgr = modelMgr;
+  				_viewerWrapper = _modelMgr.viewer;
+ 				_viewerWrapper.setErrorHandlers( 
+ 					( msg ) => { this._displayError( msg ) }, 
+ 					( status, source, responseText, component ) => { this._RESTError( status, source, responseText, component ) } 
+				);
+				_viewerWrapper.setAutoZoom( this.autozoom );
+				if( this.authurl )
+				{
+					 _viewerWrapper.setRestURL( this.contextroot, this.authurl + "/auth/token" );
+				}
+				if( this.url && this.url != "" )
+				{
+			  		_viewerWrapper.loadFile( this.url, this.mapping );
+				}
+  			},
+  			
+			_displayError : function( 
+				msg, title, source 
+			) {
+				if( !msg || msg.length == 0 ) return;
+				
+				if( !title ) title = __dictionary__Error;
+				
+				var message = {
+					"title"        : title,
+					"messages"     : [
+						__dictionary__Viewer 
+					]
+				};
+				
+				this._makeMessage( message, msg, source );
+  			},
+  			
+  			_RESTError : function(
+				status, 			// HTTP Status
+				source, 			// Text identifying operation that generated the error
+				responseText,		// HTTP Error text
+				component			// Component or dialog generating the error
+			) {
+				var message = {
+					"title"        : __dictionary__RESTError,
+					"label"        : status,
+					"messages"     : [
+						__dictionary__Viewer 
+					]
+				};
+
+				var json;
+				try
+				{
+					json = JSON.parse( responseText );
+				} 
+				catch( e ) {}
+
+				if( status == 404 )
+				{
+					message.messages.push( __dictionary__NotFound );
+				}
+				else if( status == 403 && json && json.ErrorCode == -4 )
+				{
+					message.title = __dictionary__AccessDenied;
+					message.messages.push( __dictionary__AccessDenied_1.replace( "{scope}", json.ErrorMessage ) );
+					responseText = null;
+				}
+				
+				this._makeMessage( message, responseText, component );
+  			},
+  			
+  			_makeMessage : function(
+  				message, body, source
+  			) {
+				if( source && source != "" )
+				{
+					message.messages.push( source );
+				}
+
+				if( body )
+				{
+					var msg = body.toUpperCase();
+					if(    msg.startsWith( "<HTML") 
+					    || msg.startsWith( "<H1>") 
+					    || msg.startsWith( "<!DOCTYPE" ) )
+					{
+						message.body = body;
+					}
+					else
+					{
+						message.messages.push( body );
+					}
+				}
+
+				this.dispatchEvent( 
+					new CustomEvent('forge-message',{ bubbles: true, composed: true, detail : message })
+				);
+  			},
+  			
+  			_selectionChanged : function( 
+				ctrl,
+				selectionList,
+				selection,
+				count,
+				index 
+			) {
+				this.dispatchEvent( new CustomEvent('select', { bubbles: true, composed: true, 
+				                                     detail: { selection : selection }} ) );
+			},
+
+  			//============================================================================
+  			// Observers
+  			//============================================================================
+			_frameChanged : function(
+				value
+			) {
+				this.$.viewer.src = value;
+			},
+			
+			_urnChanged : function(
+			  	urn
+		  	) {
+		  		if(    this.$.viewer.contentWindow 
+		  		    && this.$.viewer.contentWindow.ViewerWrapper )
+		  		{
+		  			this._initializeViewer();
+		  			if( !urn || urn == "" )
+		  			{
+		  				_viewerWrapper.setCurrentModel( null );
+		  			}
+	               /**
+	                 * model {
+					 * 		modelId;
+					 * 		location;
+					 * 		binding;
+					 * 		title;
+					 * 		selectionMode;
+					 * }
+					 */
+					var model = {
+						binding : this.mapping,
+						mboKey  : this.owningrecordid,
+						urn     : urn
+					};
+	  				_viewerWrapper.setCurrentModel( model );
+			  		_viewerWrapper.loadFile( urn, this.mapping );
+		  		}
+			},
+
+			_valueChanged : function(
+			  	value
+		  	) {
+		  		this.select( value, this.autozoom );
+			},
+
+			_zoomChanged : function(
+				value
+			) {
+		  		if(    this.$.viewer.contentWindow 
+		  		    && this.$.viewer.contentWindow.ViewerWrapper )
+		  		{
+		  			this._initializeViewer();
+					_viewerWrapper.setAutoZoom( value );
+		  		}
+			}
+		})
+	</script>
+</dom-module>

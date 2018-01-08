@@ -1,0 +1,451 @@
+@charset "utf-8";
+/**
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+**/
+/* CSS Document */
+ 
+::-webkit-scrollbar {
+    width: 12px;
+	height: 12px;
+}
+
+::-webkit-scrollbar-track  {
+	background-color     : rgba(196, 196, 196, 0.4); 
+    -webkit-box-shadow: inset 0 0 6px rgba( 32, 48, 128,0.5);
+}
+
+::-webkit-scrollbar-thumb  {
+    background: rgba(102, 140, 165,0.7 );
+    -webkit-box-shadow: inset 0 0 6px rgba( 32, 48, 128,0.5);
+}
+
+::-webkit-scrollbar-corner {
+    background: rgba(102, 140, 165,0.3 );
+}
+
+::-webkit-scrollbar-button {
+    background: rgba(102, 140, 165,0.3 );
+    -webkit-box-shadow: inset 0 0 6px rgba( 32, 48, 128,0.5);
+}
+
+.dockingPanelScroll::-webkit-scrollbar-track 
+{
+	background-color     : rgba(196, 196, 196, 0.4); 
+}
+
+.dockingPanelScroll::-webkit-scrollbar-thumb
+{
+    background: rgba(102, 140, 165,0.7 );
+}
+
+.modelStructurePanel:hover{
+    background: rgba(102, 140, 165,0.1 );
+}
+
+.touch .modelStructurePanel
+{
+    background: rgba(102, 140, 165,0.03 );
+}
+
+.adsk-control-group
+{
+	background-color     : rgba(102, 140, 165, 0.4); 
+}
+
+.toolbar-settings-sub-menu
+{
+	background-color     : rgba(102, 140, 165, 0.4); 
+}
+
+.explode-submenu
+{
+	background-color     : rgba(102, 140, 165, 0.4); 
+}
+
+.adsk-control-tooltip
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.dockingPanel
+{
+	background-color     : rgba(102, 140, 165, 0.4); 
+}
+
+.dockingPanelTitle
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.dockingPanel:hover
+{
+	background-color     : rgba(102, 140, 165, 0.7); 
+}
+
+.modelStructurePanel .dockingPanelTitle
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.modelStructurePanel .treeview header
+{
+	background-color     : rgba(102, 140, 165, 0.4); 
+}
+
+input.toolbar-search-box
+{
+	background-color     : rgba(102, 140, 165, 0.4); 
+}
+
+.menu
+{
+	background-color     : rgba(102, 140, 165, 0.7);
+	visibility           : visible;
+}
+
+.menuItem:hover
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.toolbar-settings-sub-menu
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.explode-submenu
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.geometry label
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.focallength table
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.collabPanel{
+	background-color     : rgba(102, 140, 165, 0.7); 
+}
+
+.textEntry
+{
+	background-color     : rgba(102, 140, 165, 0.4); 
+}
+
+.collabBox
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.hud
+{
+	background-color     : rgba(102, 140, 165, 0.7); 
+}
+
+.tftable tr:hover
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.treeview header:hover
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.progressbg
+{
+	position:absolute;
+	z-index:2;
+	left:4px;
+	bottom:2px;
+	height:6px;
+	width:100%;
+	border-width:1px;
+	border-color:#2C2C2C;
+	background:rgba(0,0,0,1)
+}
+.progressfg
+{
+	height:6px;
+	background:linear-gradient(to right,#189e1c,#22e328);
+	width:100%;
+	border-radius:2px
+}
+.adsk-button-arrow > .adsk-button-icon:before {
+    content: '▴';
+    padding: 0 5px;
+}
+
+
+
+
+
+
+
+
+
+div.A360toolBar {
+	background-color     : rgba(102, 140, 165, 0.4); 
+	scrollbar-width      : 15px;
+	scrollbar-base-color : rgba(192,192,255,0.3);
+	overflow             : auto;
+	position             : absolute; 
+	width                : 100%; 
+	left                 : 0px;
+	z-index              : 1005;
+	borderWidth          : 2px;
+	margin               : 2px;
+	padding              : 2px;
+	vertical-align       : middle;
+}
+
+table.A360toolBar {
+	background-color     : transparent; 
+	width                : 100%
+	margin               : 2px;
+	border               : 2px;
+	vertical-align       : middle;
+	border-collapse      : separate;
+	border-spacing       : 2px;
+}
+
+tr.A360toolBar {
+}
+
+td.A360toolBar {
+	font-family          : Helvetica, Arial, sans-serif;
+	font                 : Helvetica Neue;
+	font-size            : 10.0pt;
+	color                : white;
+	background-color     : rgba(102, 140, 165, 0.7); 
+	border-color         : transparent; 
+	border               : 4px;
+	border-bottom-width  : 0px;
+	vertical-align       : middle;
+}
+
+input.A360toolBar {
+	font-family          : Helvetica, Arial, sans-serif;
+	font                 : Helvetica Neue;
+	font-size            : 10.0pt;
+	background-color     : white; 
+	color                : black;
+	margin               : 1px;
+	border               : thin; 
+	border-width         : 1px;
+	cursor               : pointer;
+}
+
+div.maxlmv_DlgScroll
+{
+	color                : rgba(255,255,255,.4);
+    overflow-x           : hidden;
+    overflow-y           : auto;
+    width                : 100%;
+    height               : 100%;
+    resize               : none;
+    position             : relative;
+}
+
+div.maxlmv_DlgScroll:hover
+{
+	color                : white;
+}
+
+
+td.maxlmv_DlgHeading
+{
+	font-size            : 12.0pt;
+	color                : white;
+    margin               : 10px 20px 15px;
+    padding              : 6px 10px;
+    border-style         : solid;
+    border-width         : 0px;
+    border-color         : rgba(255,255,255,.2);
+	border-bottom-color  : white;
+    border-bottom-width  : 2px;
+	padding-bottom       : 1px;
+}
+
+div.maxlmv_messageBox
+{
+	background-color     : rgb( 102, 140, 165 ); 
+	color                : white;
+    overflow-x           : hidden;
+    overflow-y           : auto;
+    width                : 100%;
+    height               : 100%;
+	padding-left         : 10px;
+	padding-right        : 10px;
+	padding-bottom       : 20px;
+	padding-top          : 20px;
+}
+
+table.maxlmv_Dlg 
+{
+	color                : white;
+	font-family          : Helvetica, Arial, sans-serif;
+	font                 : Helvetica Neue;
+	font-size            : 10.0pt;
+	width                : 100%;
+}
+
+table.maxlmv_DlgTable {
+	color                : rgba(255,255,255,.4);
+	font-family          : Helvetica, Arial, sans-serif;
+	font                 : Helvetica Neue;
+	font-size            : 10.0pt;
+	width                : 100%;
+}
+
+table.maxlmv_DlgTable:hover {
+	color                : white;
+}
+
+tr.maxlmv_selectable {
+	height               : 40px;
+	background-color     : rgba(102, 140, 165, 0.7); 
+	cursor               : pointer;
+}
+
+tr.maxlmv_selected {
+	height               : 40px;
+	background-color     : rgba(000, 53, 104, 0.7); 
+	cursor               : pointer;
+}
+
+td.maxlmv_DlgText {
+	padding              : 4px;
+	text-align           : left;
+}
+
+.maxlmv_DlgBoxButton
+{
+	color                : white;
+	background-color     : rgba(000, 53, 104, 0.7); 
+    margin               : 10px 20px 15px;
+    padding              : 6px 10px;
+    cursor               : pointer;
+    text-align           : center;
+    border-style         : solid;
+    border-width         : 1px;
+    border-color         : rgba(255,255,255,.2);
+    border-radius        : 3px;
+	right                : right;
+}
+
+div.maxlmv_propertyTitle
+{
+    color                 : #fff;
+    font-size             : 14px;
+    font-weight           : 700;
+    line-height           : 14px;
+    background-color      : rgba(000, 53, 104, 0.7);
+    border-bottom         : 1px solid rgba(200,200,200,.8);
+    padding               : 10px;
+	padding-left          : 32px;
+	padding-right         : 56px;
+    resize                : none;
+    text-overflow         : ellipsis;
+}
+
+div.maxlmv_propertyTitle:hover {
+    cursor: move;
+}
+
+div.maxlmv_propertyButtonPrev
+{
+	position              : absolute;
+    top                   : 0;
+    left                  : 0;
+	height                : 40px;
+	width                 : 40px;
+    padding               : 0;
+    cursor                : pointer;
+}
+
+div.maxlmv_propertyButtonAttach
+{
+	position              : absolute;
+    top                   : 0;
+    left                  : calc(100% - 56px );
+	height                : 24px;
+	width                 : 24px;
+    padding               : 0;
+    cursor                : pointer;
+}
+
+div.maxlmv_propertyButtonMarkup
+{
+	position              : absolute;
+    top                   : 0;
+    right                 : 56px;
+	height                : 24px;
+	width                 : 24px;
+    padding               : 0;
+    cursor                : pointer;
+}
+
+img.maxlmv_propertyButton
+{
+	height                : 32px;
+	width                 : 32px;
+    opacity               : 1;
+}
+
+img.maxlmv_propertyButton_disabled
+{
+	height                : 32px;
+	width                 : 32px;
+    opacity               : 0.4;
+}
+
+img.maxlmv_propertyButton_hidden
+{
+	height                : 32px;
+	width                 : 32px;
+    opacity               : 0;
+}
+
+img.maxlmv_clickableImage
+{
+	height               : 40px;
+	width                : 40px;
+    opacity              : 0.4;
+    cursor               : pointer;
+} 
+
+img.maxlmv_clickableImage:hover
+{
+     opacity              : 1;
+} 
+
+div.maxlmv_CancelMarkup_Tool
+{
+    z-index               : 1;
+	top                   : 10px;
+    left                  : calc(100% - 34px );
+    position              : absolute;
+}
+
+
+

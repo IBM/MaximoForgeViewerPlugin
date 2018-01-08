@@ -331,11 +331,11 @@ public class   ForgeRS
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("model/{bucketKey}/{objectKey}")
+    @Path("model/{bucketKey}/object")
     public Response modeDetails(
      	@Context HttpServletRequest request,
     	@PathParam("bucketKey") String bucketKey,
-    	@PathParam("objectKey") String objectKey
+    	@QueryParam("objectKey") String objectKey
 	) 
 		throws IOException, 
 		       URISyntaxException 
@@ -351,11 +351,11 @@ public class   ForgeRS
     
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("model/{bucketKey}/{objectKey}")
+    @Path("model/{bucketKey}/object")
     public Response modelUpload(
      	@Context HttpServletRequest request,
     	@PathParam("bucketKey") String bucketKey,
-    	@PathParam("objectKey") String objectKey,
+    	@QueryParam("objectKey") String objectKey,
     	@Context HttpHeaders headers,
      	InputStream is
 	) 

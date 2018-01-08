@@ -104,7 +104,7 @@ function ViewerWrapper(
 
 		<%if( appType ==  BIMViewer.TYPE_WORKORDER )
 		{%> 
-			this.markupMgr = new IBM.LMV.Markup.MarkupMgr();
+			this.markupMgr = new IBM.LMV.Markup.MarkupMgr( _forgeViewer );
 		<%}%>
 		
 		this.topToolBar = new MaximoToolBar( this, _forgeViewer );

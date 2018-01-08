@@ -56,3 +56,6 @@
 <script type = "text/javascript" 
     src  = "<%=servletBase%>/javascript/LMV_Markup.js">
 </script>
+<script type = "text/javascript" 
+    src  = "<%=servletBase%>/javascript/MaimoForgeMarkup.js">
+</script>

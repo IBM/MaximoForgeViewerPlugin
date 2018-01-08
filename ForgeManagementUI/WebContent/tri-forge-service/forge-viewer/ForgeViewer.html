@@ -1,0 +1,119 @@
+<!-- 
+* Copyright Wipro 2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+ -->
+ <!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Forge Viewer</title>
+
+<script type = "text/javascript" src="bimviewer.js" ></script>
+
+<style>
+    html, body {
+		margin  : 0;
+		padding : 0;
+		height  : 100%;
+		width   : 100%;
+    }
+</style>
+
+<script type = "text/javascript">
+	var _modelMgr      = null;
+	var _selMgr        = null;
+	var _wrapper       = null;
+	var _ctrlId        = "viewer_container";
+	var _onSelect      = null;
+	var _onInit        = null;
+	var _onWrapperLoad = null;
+	var _scriptLoaded  = false;
+
+	var _features      = {};
+	var _contextRoot   = "/";
+	var _autoZoom      = false;
+
+	function loadWrapper(
+		viewer,     // Name of viewer to use  
+		onWrapperLoad
+	) {
+		var jsLibrary    = document.createElement('SCRIPT' );
+		jsLibrary.type   = "text/javascript";
+		jsLibrary.onload = onScriptLoad;
+		jsLibrary.src    = viewer + "ViewerWrapper.js";
+		var headers      = document.getElementsByTagName('head');
+		var head         = headers[0];
+		head.appendChild( jsLibrary );
+		_onWrapperLoad = onWrapperLoad;
+	}
+
+	function createWrapper() 
+	{
+		if( !_onInit || !_scriptLoaded ) return;
+		
+		var ctrl   = document.getElementById( _ctrlId );
+
+		var newViewer = false;
+		if( _wrapper == null )
+		{
+			_wrapper = new ViewerWrapper( ctrl, _features );
+			newViewer = true;
+		}
+
+		if( _modelMgr == null )
+		{
+			if( ctrl == null ) return null;
+			_modelMgr = new ModelManager( _ctrlId, null, _wrapper );
+		}
+
+		if( _selMgr == null )
+		{
+			_selMgr = new SelectionManager( _ctrlId, _wrapper, _onSelect );
+		}
+		
+		if( newViewer )
+		{
+			_wrapper.initialize( _modelMgr, _selMgr, _contextRoot );
+		}
+		
+		_onInit( _modelMgr );
+	}
+
+	function initModelManager(
+		onSelect, 
+		onInit, 
+		contextRoot,
+		features,  	// Object, if the object has a property matching the feature name, the feature is enabled
+		autoZoom
+	) {
+		_onSelect    = onSelect;
+		_onInit      = onInit;
+		_contextRoot = contextRoot;
+		_features    = features;
+		_autoZoom    = autoZoom;
+		createWrapper();
+	}
+	
+	function onScriptLoad()
+	{
+		_scriptLoaded = true;
+		createWrapper();
+	}
+</script>
+
+</head>
+<body id="viewer_container"></body>
+</html>

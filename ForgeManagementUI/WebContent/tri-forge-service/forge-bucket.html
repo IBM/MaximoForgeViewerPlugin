@@ -1,0 +1,511 @@
+<!-- 
+* Copyright Wipro 2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+ -->
+<link rel="import" href="../polymer/polymer-element.html">
+
+<link rel="import" href="../app-layout/app-layout.html">
+
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-fab/paper-fab.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+
+<link rel="import" href="forge-bucket-storage.html">
+<link rel="import" href="forge-scroll-pane.html">
+<link rel="import" href="forge-card.html">
+
+<dom-module id="forge-bucket">
+	<template>
+		<style>
+	    html, body {
+			margin  : 0;
+			padding : 0;
+			height  : 100%; 
+	    }
+		app-header-layout {
+			height: 100%; 
+		}
+		app-toolbar {
+			background-color : #60a0ff;
+			padding : 0;
+			margin  : 0;
+		}
+		h1 {
+			font-family   : arial; 
+		}
+		h2 {
+			margin-top    : 4px;
+			margin-bottom : 4px;
+		}
+		.buttons {
+			float            : right;
+		}
+		paper-button {
+			background-color : #204080;
+			color            : white;
+		}		
+	    paper-icon-button {
+	    	width    : 48px;
+	    	height   : 48px;
+	    }
+		paper-fab {
+			background-color : #e0a30b;
+			position         : absolute !important;
+			bottom           : 1em;
+			right            : 1em;
+			z-index          : 10;
+		}
+		tr.bucket-list {
+			background-color : white;
+			color            : black;
+			padding          : 1em;
+			margin           : 1em;
+			cursor           : pointer;
+		}
+		.card-body {
+			width            : 512px;
+			background-color : white;
+			margin           : 12px;
+			padding          : 4px;
+			padding-top      : 0px;
+			overflow         : auto;
+			box-shadow       : 10px 10px 5px #abc;
+		}
+		
+		.card-title {
+			width            : 100%;
+			padding-top		 : 10px;
+			display          : inline;
+		}
+		.header {
+			text-align       : center; 
+  			-webkit-flex: 1; /* Safari 6.1+ */
+    		-ms-flex: 1; /* IE 10 */ 
+    		flex: 1;
+    	}
+		.icons {
+			height           : 24px;
+			width            : 24px;
+			padding          : 0;
+		}
+		.icons-hidden {
+			display          : none;
+		}
+		
+		</style>		
+		
+		<paper-fab icon="icons:add" on-click="newBucket"></paper-fab>
+		<app-header reveals>
+		<forge-scroll-pane id="scrollPane" style="--forge-scroll-pane-overflow:auto;">
+			<app-toolbar >
+				<span class="header"><h1>Buckets</h1></span>
+				<div style="float:right; display:inline-flex">
+					<paper-dropdown-menu label="Region"  >
+						<paper-listbox id="newBucketRegion" slot="dropdown-content" attr-for-selected="value" 
+						               selected="{{region}}" >
+							<paper-item value="US" on-click="_onRegionSelect">US</paper-item>
+							<paper-item value="EMEA" on-click="_onRegionSelect">EMEA</paper-item>
+						</paper-listbox>
+					</paper-dropdown-menu>
+		          	<paper-icon-button id="search" icon="search" on-click="getBucketList" alt="Search"></paper-icon-button>
+				</div>
+			</app-toolbar>
+
+		    <template id="repeat" is="dom-repeat" items="[[buckets]]">
+		    	<div class="card-body">
+			    	<forge-card on-display-details="requestBucket">
+				    	<div slot="title" class="card-title">
+				    		<div style="display:inline;">{{item.bucketName}}</div>
+				    		<div style="float:right;padding-top:10px;">{{item.policyKey}}</div>
+			    		</div>
+				    	<div style="padding-top:0px; padding-left:32px">
+							<div>
+								<div style="display:inline">
+									<span>Bucket Key</span>
+									<span style="float:right;">{{item.bucketKey}}</span>
+								</div>
+							</div>
+							<div>
+								<div style="display:inline">
+									<span>Create Date</span>
+									<span style="float:right;">{{item.createdDate}}</span>
+								</div>
+							</div>
+							<div>
+								<div style="loat:left; padding-right:20px">
+									Permissions
+						          	<paper-icon-button icon="lock-open" on-click="grant" class="icons" alt="Grant rights"></paper-icon-button>
+								</div>
+								<table style="width:100%;">
+								    <template is="dom-repeat" items="[[item.permissions]]">
+								    	<tr>
+								    		<td>{{item.authId}}</td>
+								    		<td style="width:100%; text-align: right;">{{item.access}}</td>
+								    		<td>
+											    <template is="dom-if" if="[[!item.hidden]]">
+										          	<paper-icon-button icon="delete-forever" on-click="revoke" alt="Revoke rights"
+										          	                   class$="icon"></paper-icon-button>
+												</template>
+								    		</td>
+								    	</tr>
+									</template>
+								</table>
+							</div>
+					    	<div >
+							  	<paper-checkbox checked="{{item.appendKey}}" disabled="disabled">Append Key</paper-checkbox>
+					          	<paper-icon-button icon="delete-forever" on-click="deleteBucket" alt="Delete bucket" style="float:right;"></paper-icon-button>
+							</div>
+					    	<div >
+							</div>
+			    		</div>
+			    	</forge-card>
+		    	</div>
+			</template>
+		</app-header>
+		</forge-scroll-pane>
+
+		<paper-dialog id="newBucketDlg" >
+			<h2>Add Bucket</h2>
+			<paper-dialog-scrollable>
+				<paper-input id="newBucketKey" floatingLabel label="Key"  
+				             pattern="[-_.a-z0-9]{3,128}" auto-validate> 
+	            </paper-input>
+	            <p>
+			  	<paper-checkbox id="newBucketAppendKey" checked="true" >Append app key?</paper-checkbox>
+			  	<p>
+				<paper-dropdown-menu label="Policy">
+					<paper-listbox id="newBucketPolicy" slot="dropdown-content" attr-for-selected="value" selected="persistent" >
+						<paper-item value="transient">Transient</paper-item>
+						<paper-item value="temporary">Temporary</paper-item>
+						<paper-item value="persistent">Persistent</paper-item>
+					</paper-listbox>
+				</paper-dropdown-menu>
+				<paper-input id="newBucketRegion" floatingLabel label="Region" readonly="true" value="{{region}}" ></paper-input>
+			</paper-dialog-scrollable>
+			<div class="buttons" style="">
+				<paper-button dialog-confirm on-click="addBucket" raised>OK</paper-button>
+				<paper-button dialog-dismiss autofocus raised>Cancel</paper-button>
+			</div>
+		</paper-dialog>
+
+		<paper-dialog id="confirmBucketDeleteDlg" modal >
+			<h2>Delete Bucket?</h2>
+			<div>
+				<paper-input id="confirmDeleteBucketKey" floatingLabel label="Bucket Key" readonly="true" ></paper-input>
+			  	<paper-checkbox id="confirmDeleteModels" checked="false" >Permanently delete all models?</paper-checkbox>
+			</div>
+			<div>
+			  	<paper-checkbox id="confirmDeleteBubbles" checked="false" >Permanently delete all bubbles?</paper-checkbox>
+			</div>
+			<div class="buttons">
+				<paper-button dialog-confirm on-click="deleteBucketConfirm" raised>OK</paper-button>
+				<paper-button dialog-dismiss autofocus raised>Cancel</paper-button>
+			</div>
+		</paper-dialog>
+		
+		<paper-dialog id="grantAccesDlg" >
+			<h2>Grant Bucket Access</h2>
+			<div>
+				<paper-input id="grantAccesDlgBucketKey" floatingLabel label="Bucket Key" readonly="true" ></paper-input>
+				<paper-input id="grantAccesDlgServiceId" floatingLabel label="Service Id" autofocus> 
+	            </paper-input>
+				<paper-dropdown-menu label="Access">
+					<paper-listbox id="grantAccesDlgAccess" slot="dropdown-content" attr-for-selected="value" selected="read" >
+						<paper-item value="read">Read</paper-item>
+						<paper-item value="write">Write</paper-item>
+						<paper-item value="full">Full</paper-item>
+					</paper-listbox>
+				</paper-dropdown-menu>
+			</div>
+			<div class="buttons">
+				<paper-button dialog-confirm on-click="grantAccess" raised>OK</paper-button>
+				<paper-button dialog-dismiss raised>Cancel</paper-button>
+			</div>
+		</paper-dialog>
+
+		<forge-bucket-storage id="storage" appkey="{{appKey}}" restpath="[[restpath]]"
+		                      on-bucket-list   = "_onBucketList" 
+		                      on-bucket-add    = "_onBucketAdd"
+		                      on-bucket-delete = "_onBucketDelete"
+		                      on-bucket-detail = "_onBucketDetail"
+		                      on-bucket-grant  = "_onGrant"
+		                      on-bucket-revoke = "_onRevoke">
+		</forge-bucket-storage>
+		
+	</template>
+	<script>
+		// Extend Polymer.Element base class
+		class ForgeBucket extends Polymer.Element 
+		{
+			static get is() { return 'forge-bucket' };
+			
+			static get properties() {
+				return {
+					appkey : {
+						type     : String,
+						observer : 'appKeyChanged'
+					},
+					bucketList : {
+						type     : Array
+					},
+					restpath : {
+						type     : String,
+					}
+				}
+			}
+			
+			constructor()
+			{
+				super();
+				
+				this.region = "US";
+				this.buckets = [];
+			}
+			
+  		    ready() 
+  		    {
+ 				super.ready();
+ 
+  		    	this._url = "";
+   		    	var path = location.pathname;
+  		    	var idx = path.lastIndexOf( "/" );
+  		    	if( idx > 0 )
+ 		    	{
+					this._url = path.substring( 0, idx );  		    		
+ 		    	}
+
+ 		    	// Hack for Edge
+ 		    	this.$.scrollPane.setOverflow( "auto" );
+  			}
+
+			// Open a bucket from a different app key.
+			// Typically a bucket you have rights to from an app you don't
+  			openBucket(
+  				key
+			) {
+				var bucket = {
+					bucketKey  : key,
+					appendKey  : false
+				}
+
+				this.$.storage.addBucket( bucket );
+				this.$.storage.details( key );
+			}
+  			
+			_onRegionSelect(
+				event
+			) {
+				this.$.storage.clear();
+			}
+  			
+  			//============================================================================
+  			// Bucket List
+  			//============================================================================
+			getBucketList()
+			{
+				this.$.search.disabled = "true";
+				this.$.storage.getList( this.region );
+			};
+			
+			_onBucketList( event )
+			{
+				this.set( "buckets", event.detail );
+				this.$.search.disabled = false; 
+			}
+			
+  			//============================================================================
+  			// Bucket Detail
+  			//============================================================================
+			requestBucket(
+				event
+			) {
+				this.$.storage.details( event.model.item.bucketKey );
+			}
+			
+			_onBucketDetail(
+				event
+			) {
+				var bucket = event.detail;
+				this.setRevokeVisibility( bucket.permissions );
+				for( var i in this.buckets )
+				{
+					if( bucket.bucketKey === this.buckets[i].bucketKey )
+					{
+						this.splice( "buckets", i, 1, bucket );
+						break;
+					}
+				}
+			}
+  			
+  			//============================================================================
+  			// Bucket Create
+  			//============================================================================
+  			newBucket()
+  			{
+				this.$.newBucketKey.value = "";
+				this.$.newBucketRegion.selected = this.region;
+  				this.$.newBucketDlg.open();
+  			}
+  			
+  			addBucket()
+  			{
+  				var key       = this.$.newBucketKey.value;
+  				var region    = this.$.newBucketRegion.selected;
+  				var policy    = this.$.newBucketPolicy.selected;
+  				var appendKey = this.$.newBucketAppendKey.checked;
+  				
+  				if( appendKey )
+  				{
+  					key = key + this.appKey.toLowerCase();
+  				}
+  				
+  				this.$.storage.add( key, region, policy );
+  			}
+  			
+  			_onBucketAdd(
+  				event
+  			) {
+  				this.$.repeat.render();
+  			}
+  			
+  			//============================================================================
+  			// Bucket Delete
+  			//============================================================================
+  			deleteBucket( event )
+  			{
+  				this.$.confirmDeleteBucketKey.value = event.model.item.bucketName;
+  				this.$.confirmBucketDeleteDlg.model = event.model;
+  				this.$.confirmDeleteModels.checked = false;
+  				this.$.confirmDeleteBubbles.checked = false;
+  				this.$.confirmBucketDeleteDlg.open();
+  			}
+  			
+  			deleteBucketConfirm( event )
+  			{
+  				if(    !this.$.confirmDeleteModels.checked
+  				    || !this.$.confirmDeleteBubbles.checked )
+			    {
+					this.dispatchEvent( new CustomEvent('forge-message', { bubbles: true, composed: true, detail: { key : "CONFIRM_DELETE"}} ));
+			    	return;
+			    }
+  				var model = this.$.confirmBucketDeleteDlg.model;
+  				this.$.storage.delete( model.item.bucketKey, model );
+  			}
+  			
+  			_onBucketDelete(
+				event
+  			) {
+  				this.$.repeat.render();
+  				var bucketKey = event.detail.bucketKey;
+  				var model     = event.detail.data;
+
+				var card = model.children[1].children[0];
+				card.close();
+  			}
+
+		    onError( err )
+		    {
+				this.$.search.disabled = "";
+		    	console.err( err );
+		    }
+		    
+  			//============================================================================
+  			// Bucket Access Control
+  			//============================================================================
+		    grant(
+		    	event
+		    ) {
+				this.$.grantAccesDlg.model = event.model;
+				this.$.grantAccesDlgBucketKey.value = event.model.item.bucketName;
+				this.$.grantAccesDlgServiceId.value = null;
+				this.$.grantAccesDlg.open();
+		    }
+		    
+		    grantAccess(
+		    	event
+		    ) {
+		    	var model = this.$.grantAccesDlg.model;
+		    	this.$.storage.grant(
+					model.item.bucketKey,
+					this.$.grantAccesDlgServiceId.value,  
+					this.$.grantAccesDlgAccess.selected,
+					model
+		    	);
+		    }
+		    
+		    revoke(
+		    	event
+		    ) {
+		    	var model = event.model;
+		    	var parentModel = model.parentModel;
+		    	var bucketKey = parentModel.item.bucketKey;
+		    	var serviceId = model.item.authId;
+		    	this.$.storage.revoke( bucketKey, serviceId );
+		    }
+		    
+		    _onGrant(
+		    	event
+		    ) {
+		    	var model       = event.detail.data; 
+  				var bucketKey   = event.detail.bucketKey;
+  				var permissions = event.detail.permissions;
+				this.setRevokeVisibility( permissions );
+  				model.set( "item.permissions", permissions );
+		    }
+		    
+		    _onRevoke(
+		    	event
+		    ) {
+   				this.$.storage.details( event.detail.bucketKey );
+		    }
+		    
+		    setRevokeVisibility(
+		    	permissions
+		    ) {
+		    	for( var j in permissions )
+				{
+					if( permissions[j].authId == this.appKey )
+					{
+						permissions[j].hidden = true;
+					}
+					else
+					{
+						permissions[j].hidden = false;
+					}
+				}
+		    }
+
+  			//============================================================================
+  			// Observers
+  			//============================================================================
+			appKeyChanged(
+			  	newValue, oldValue
+		  	) {
+				this.appKey     = newValue;
+				this.buckets = [];
+			}
+		}
+		
+		customElements.define(ForgeBucket.is, ForgeBucket );
+	</script>
+</dom-module>

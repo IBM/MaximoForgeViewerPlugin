@@ -1,0 +1,950 @@
+<!--
+* Copyright IBM Corporation 2009-2017
+*
+* Licensed under the Eclipse Public License - v 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* https://www.eclipse.org/legal/epl-v10.html
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* @Author Doug Wood
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Select Color</title>
+	<style>
+		table.maxlmv_Dlg 
+		{
+			color                : black;
+			font-family          : Helvetica, Arial, sans-serif;
+			font                 : Helvetica Neue;
+			font-size            : 10.0pt;
+			width                : 100%;
+		}
+    </style>
+    
+   	<script type = "text/javascript" > 
+		"use strict";
+		var disableEvents = false;
+		var colorChangeListeners = [];
+		var isTextStyle = false;
+
+	    function addModeChangeListerner(
+			listener
+		) {
+			this.colorChangeListeners.push( listener );
+		};
+	
+		function fireColorChangeEvent(
+			color
+		) {
+			if( disableEvents ) return;
+			
+			for( var i = 0; i < colorChangeListeners.length; i++ )
+			{
+				try
+				{
+					colorChangeListeners[i]( color );
+				}
+				catch( e )
+				{
+					console.error( e );
+				}
+			}
+		};
+		
+		function getColor()
+		{
+			if( isNaN( parseInt( redInput.value ) ) )
+			{
+				redInput.value = 0;
+			}
+			if( isNaN( parseInt( greenInput.value ) ) )
+			{
+				greenInput.value = 0;
+			}
+			if( isNaN( parseInt( blueInput.value ) ) )
+			{
+				blueInput.value = 0;
+			}
+			var newColor = "#" + toHex( parseInt( redInput.value ) );
+			newColor = newColor + toHex( parseInt( greenInput.value ) );
+			newColor = newColor + toHex( parseInt( blueInput.value ) );
+			return newColor;
+		};
+		
+		function setColor( red, green, blue ) 
+		{ 
+			redInput.value   = red;
+			greenInput.value = green;
+			blueInput.value  = blue;
+			var newColor = "#" + toHex( red );
+			newColor = newColor + toHex( green );
+			newColor = newColor + toHex( blue );
+			colorSploch.style.backgroundColor = newColor;
+			applyStyle();
+		};
+		
+		function setHexColor(
+			hexColor
+		) {
+			var red   = parseInt( hexColor.slice( 1,3 ), 16 );
+			var green = parseInt( hexColor.slice( 3,5 ), 16 );
+			var blue  = parseInt( hexColor.slice( 5,7 ), 16 );
+			if( red   != "NaN" ) redInput.value   = red;
+			if( green != "NaN" ) greenInput.value = green;
+			if( blue  != "NaN" ) blueInput.value  = blue;
+			colorSploch.style.backgroundColor = hexColor;
+			applyStyle();
+		}
+		
+		function toHex( color )
+		{
+			var hexColor = color.toString( 16 );
+			while( hexColor.length < 2 )
+			{
+				hexColor = "0" + hexColor;
+			}
+			return hexColor;
+		};
+		
+		function applyStyle()
+		{
+			if( disableEvents ) return;
+			
+			var color       = getColor();
+			var lineWidth   = lineWidthInput.value;
+			var fontSize    = fontSizeInput.value;
+			var fillOpacity = fillSlider.value / 100;
+			var fontFace    = "Arial";
+			var fontFace    = fontFaceSel.options[ fontFaceSel.selectedIndex ].value;
+			var isBold      = "";
+			var isItalic    = "";
+			
+			colorSploch.style.fillOpacity = fillOpacity;
+			
+			// Line sample
+			lineWidthSample.style.backgroundColor = color;
+			lineWidthSample.style.height          = "" + lineWidth + "px";
+		
+			// Font combo box as sample
+			fontFaceSel.style.color       = color;
+			fontFaceSel.style.fontSize    = fontSize + "px";
+			fontFaceSel.style.fontFamily  = fontFace;
+
+			if( boldCheckbox.checked )
+			{
+				isBold = "bold";
+			}
+			if( italicCheckbox.checked )
+			{
+				isItalic= "italic";
+			}
+			fontFaceSel.style.fontWeight = isBold;
+			fontFaceSel.style.fontStyle  = isItalic;
+
+			if( isTextStyle )
+			{
+				fillOpacity = 0;
+			}
+
+			var style = [];
+			style[ 'stroke-color' ] = color;
+			style[ 'fill-color' ]   = color;
+			style[ 'fill-opacity' ] = fillOpacity;
+			style[ 'font-family' ]  = fontFace;
+			style[ 'font-style' ]   = isItalic;
+			style[ 'font-weight' ]  = isBold;
+			style['stroke-width']   = lineWidth;
+			style['font-size']      = fontSizeInput.value;
+			
+			fireColorChangeEvent( style );
+		}
+		
+		function setup(
+			wheelImage, red, green, blue, lineWeight, fill, fontSize, italics, bold 
+		) {
+			wheelImg.src = wheelImage;
+			if( blue )           blueLable.innerHTML      = blue;
+			if( green )          greenLable.innerHTML     = green;
+			if( red )            redLable.innerHTML       = red;
+			if( lineWidthLable ) lineWidthLable.innerHTML = lineWeight;
+			if( fillLable )      fillLable.innerHTML      = fill;
+			if( fontSizeLable )  fontSizeLable.innerHTML  = fontSize;
+			if( italicLable )    italicLable.innerHTML    = italics;
+			if( boldLable )      boldLable.innerHTML      = bold;
+		}
+		
+		function setValue(
+			style,
+			isText
+		) {
+			disableEvents = true;
+			isTextStyle = isText;
+			try
+			{
+				if( isText )
+				{
+					shapeTable.style.display = "none";
+					fontTable.style.display = "";
+				}
+				else
+				{
+					shapeTable.style.display = "";
+					fontTable.style.display = "none";
+				}
+
+				var color = style[ 'stroke-color' ];
+				if( color )
+				{
+					setHexColor( color );
+					lineWidthSample.style.backgroundColor = color;
+					fontFaceSel.style.color               = color;
+				}
+
+				var strokeWidth = style['stroke-width'];
+				var fontSize    = style['font-size'];
+	
+				if( strokeWidth )
+				{
+					strokeWidth = Math.round( strokeWidth );
+					lineWidthInput.value = strokeWidth;
+					lineWidthSample.style.height = strokeWidth + "px";
+				}
+				if( fontSize )
+				{
+					fontSize = Math.round( fontSize );
+					fontSizeInput.value        = fontSize;
+					fontFaceSel.style.fontSize = fontSize + "px";
+				}
+
+				var fontFace = style[ "font-family" ];
+				if( fontFace )
+				{
+					for( var i = 0; i < fontFaceSel.options.length; i++ )
+					{
+						var opt = fontFaceSel.options[i];
+						if( fontFace == opt.value || fontFace == opt.innerHTML )
+						{
+							fontFaceSel.selectedIndex = i;
+							break;
+						}
+					}
+				}
+				if( style[ "font-weight" ] == "bold" )
+				{
+					boldCheckbox.checked   = true;
+				}
+				else
+				{
+					boldCheckbox.checked   = false;
+				}
+				if( style[ "font-style" ] == "italic" )
+				{
+					italicCheckbox.checked   = true;
+				}
+				else
+				{
+					italicCheckbox.checked   = false;
+				}
+				fillSlider.value = style[ 'fill-opacity' ] * 100;
+			}
+			catch( e )
+			{
+				console.error( e );
+			}
+	
+			disableEvents = false;
+		}
+    </script>
+
+</head>
+
+<body overflow="hidden" >
+<div align="center" style"width:100%;" >
+	<img id="wheelImg"  width="256" height="279" usemap="#ColorMap" style="float:center;">
+    <map name="ColorMap">
+       <area shape="circle" coords="75,21,11" 
+            onclick="setColor( 0,51,102 );"
+            alt="0,51,102" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="93,21,11" 
+            onclick="setColor( 51,102,153 );"
+            alt="51,102,153" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="112,21,11" 
+            onclick="setColor( 51,102,204 );"
+            alt="51,102,204" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="131,21,11" 
+            onclick="setColor( 0,51,153 );"
+            alt="0,51,153" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="150,21,11" 
+            onclick="setColor( 0,0,153 );"
+            alt="0,0,153" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="168,21,11" 
+            onclick="setColor( 0,0,204 );"
+            alt="0,0,204" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="187,21,11" 
+            onclick="setColor( 0,0,102 );"
+            alt="0,0,102" href="javascript:void(null);"  >
+        </area>
+        
+       <area shape="circle" coords="64,38,11" 
+            onclick="setColor( 0,102,102 );"
+            alt="0,102,102" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="83,38,11" 
+            onclick="setColor( 0,102,153 );"
+            alt="0,102,153" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="102,38,11" 
+            onclick="setColor( 0,153,204 );"
+            alt="0,153,204" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="121,38,11" 
+            onclick="setColor( 0,102,204 );"
+            alt="0,102,204" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="140,38,11" 
+            onclick="setColor( 0,51,204 );"
+            alt="0,51,204" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="159,38,11" 
+            onclick="setColor( 0,0,255 );"
+            alt="0,0,255" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="178,38,11" 
+            onclick="setColor( 51,51,255 );"
+            alt="51,51,255" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="197,38,11" 
+            onclick="setColor( 51,51,153 );"
+            alt="51,51,153" href="javascript:void(null);"  >
+        </area>
+
+       <area shape="circle" coords="56,54,11" 
+            onclick="setColor( 0,128,128 );"
+            alt="0,128,128" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="75,54,11" 
+            onclick="setColor( 0,153,153 );"
+            alt="0,153,153" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="93,54,11" 
+            onclick="setColor( 51,204,204 );"
+            alt="51,204,204" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="112,54,11" 
+            onclick="setColor( 0,204, 155 );"
+            alt="0,204, 155" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="131,54,11" 
+            onclick="setColor(0,153,255 );"
+            alt="0,153,255" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="150,54,11" 
+            onclick="setColor( 0,102,255 );"
+            alt="0,102,255" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="168,54,11" 
+            onclick="setColor( 51,102,255 );"
+            alt="51,102,255" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="187,54,11" 
+            onclick="setColor( 51,51,204 );"
+            alt="51,51,204" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="206,54,11" 
+            onclick="setColor( 102,102,153 );"
+            alt="102,102,153" href="javascript:void(null);"  >
+        </area>
+        
+       <area shape="circle" coords="45,70,11" 
+            onclick="setColor( 51,153,102 );"
+            alt="51,153,102" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="64,70,11" 
+            onclick="setColor( 0,204,153 );"
+            alt="0,204,153" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="83,70,11" 
+            onclick="setColor( 0,255,204 );"
+            alt="0,255,204" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="102,70,11" 
+            onclick="setColor( 0,255,255 );"
+            alt="0,255,255" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="121,70,11" 
+            onclick="setColor( 51,204,255 );"
+            alt="51,204,255" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="140,70,11" 
+            onclick="setColor( 51,153,255 );"
+            alt="51,153,255" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="159,70,11" 
+            onclick="setColor( 102,153,255 );"
+            alt="102,153,255" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="178,70,11" 
+            onclick="setColor( 102,102,255 );"
+            alt="102,102,255" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="197,70,11" 
+            onclick="setColor( 102,0,255 );"
+            alt="102,0,255" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="216,70,11" 
+            onclick="setColor( 102,0,204 );"
+            alt="102,0,204" href="javascript:void(null);"  >
+        </area>
+        
+        <area shape="circle" coords="37,86,11" 
+            onclick="setColor( 51,153,51 );"
+            alt="51,153,51" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="56,86,11" 
+            onclick="setColor( 0,204,102 );"
+            alt="0,204,102" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="74,86,11" 
+            onclick="setColor( 0,255,153 );"
+            alt="0,255,153" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="93,86,11" 
+            onclick="setColor( 102,155,204 );"
+            alt="102,155,204" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="112,86,11" 
+            onclick="setColor( 102,255,255 );"
+            alt="102,255,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="131,86,11" 
+            onclick="setColor( 102,204,255 );"
+            alt="102,204,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="150,86,11" 
+            onclick="setColor( 153,204,255 );"
+            alt="153,204,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="168,86,11" 
+            onclick="setColor( 153,153,255 );"
+            alt="153,153,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="187,86,11" 
+            onclick="setColor( 153,102,255 );"
+            alt="153,102,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="206,86,11" 
+            onclick="setColor( 153,51,255 );"
+            alt="153,51,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="225,86,11" 
+            onclick="setColor( 153,0,255 );"
+            alt="153,0,255" href="javascript:void(null);"  >
+        </area>
+
+        <area shape="circle" coords="28,102,11" 
+            onclick="setColor( 0,102,0 );"
+            alt="0,102,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="47,102,11" 
+            onclick="setColor( 0,204,0 );"
+            alt="0,204,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="66,102,11" 
+            onclick="setColor( 0,255,0 );"
+            alt="0,255,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="85,102,11" 
+            onclick="setColor( 102,255,153 );"
+            alt="102,255,153" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="102,102,11" 
+            onclick="setColor( 153,255,204 );"
+            alt="153,255,204" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="122,102,11" 
+            onclick="setColor( 204,255,255 );"
+            alt="204,255,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="141,102,11" 
+            onclick="setColor( 204,236,255 );"
+            alt="204,236,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="160,102,11" 
+            onclick="setColor( 204,204,255 );"
+            alt="204,204,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="178,102,11" 
+            onclick="setColor( 204,153,255 );"
+            alt="204,153,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="197,102,11" 
+            onclick="setColor( 204,102,255 );"
+            alt="204,102,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="216,102,11" 
+            onclick="setColor( 204,0,255 );"
+            alt="204,0,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="234,102,11" 
+            onclick="setColor( 153,0,204 );"
+            alt="153,0,204" href="javascript:void(null);"  >
+        </area>
+
+        <area shape="circle" coords="18,119,11" 
+            onclick="setColor( 0,51,0 );"
+            alt="0,51,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="37,119,11" 
+            onclick="setColor( 0,128,0 );"
+            alt="0,128,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="56,119,11" 
+            onclick="setColor( 0,204,0 );"
+            alt="0,204,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="74,119,11" 
+            onclick="setColor( 102,255,102 );"
+            alt="102,255,102" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="93,119,11" 
+            onclick="setColor( 153,255,153 );"
+            alt="153,255,153" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="112,119,11" 
+            onclick="setColor( 204,255,204 );"
+            alt="204,255,204" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="131,118,11" 
+            onclick="setColor( 255,255,255 );"
+            alt="255,255,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="150,119,11" 
+            onclick="setColor( 255,204,255 );"
+            alt="255,204,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="168,119,11" 
+            onclick="setColor( 255,153,255 );"
+            alt="255,153,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="187,119,11" 
+            onclick="setColor( 255,102,155 );"
+            alt="255,102,155" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="206,119,11" 
+            onclick="setColor( 255,0,255 );"
+            alt="255,0,255" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="225,119,11" 
+            onclick="setColor( 204,0,204 );"
+            alt="204,0,204" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="244,119,11" 
+            onclick="setColor( 102,0,102 );"
+            alt="102,0,102" href="javascript:void(null);"  >
+        </area>
+
+        <area shape="circle" coords="28,136,11" 
+            onclick="setColor( 51,102,0 );"
+            alt="51,102,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="47,136,11" 
+            onclick="setColor( 0,153,0 );"
+            alt="0,153,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="66,136,11" 
+            onclick="setColor( 102,255,51 );"
+            alt="102,255,51" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="85,136,11" 
+            onclick="setColor( 153,255,102 );"
+            alt="153,255,102" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="103,136,11" 
+            onclick="setColor(204,255,153 );"
+            alt="204,255,153" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="122,136,11" 
+            onclick="setColor( 255,255,204 );"
+            alt="255,255,204" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="141,136,11" 
+            onclick="setColor( 255,204,204 );"
+            alt="255,204,204" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="160,136,11" 
+            onclick="setColor( 255,153,204 );"
+            alt="255,153,204" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="178,136,11" 
+            onclick="setColor( 255,102,204 );"
+            alt="255,102,204" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="197,136,11" 
+            onclick="setColor( 255,51,204 );"
+            alt="255,51,204" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="216,136,11" 
+            onclick="setColor( 204,0,153 );"
+            alt="204,0,153" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="234,136,11" 
+            onclick="setColor( 128,0,128 );"
+            alt="128,0,128" href="javascript:void(null);"  >
+        </area>
+
+        <area shape="circle" coords="37,152,11" 
+            onclick="setColor( 51,51,0 );"
+            alt="51,51,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="56,152,11" 
+            onclick="setColor( 102,153,0 );"
+            alt="102,153,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="75,152,11" 
+            onclick="setColor( 153,255,51 );"
+            alt="153,255,51" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="92,152,11" 
+            onclick="setColor( 204,255,102 );"
+            alt="204,255,102" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="112,152,11" 
+            onclick="setColor( 255,255,153 );"
+            alt="255,255,153" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="131,152,11" 
+            onclick="setColor( 255,204,253 );"
+            alt="255,204,253" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="150,152,11" 
+            onclick="setColor( 255,153,153 );"
+            alt="255,153,153" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="168,152,11" 
+            onclick="setColor( 255,102,153 );"
+            alt="255,102,153" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="187,152,11" 
+            onclick="setColor( 255,51,152 );"
+            alt="255,51,152" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="206,152,11" 
+            onclick="setColor( 204,51,153 );"
+            alt="204,51,153" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="225,152,11" 
+            onclick="setColor( 153,0,153 );"
+            alt="153,0,153" href="javascript:void(null);"  >
+        </area>
+
+        <area shape="circle" coords="45,168,11" 
+            onclick="setColor( 102,102,51 );"
+            alt="102,102,51" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="64,168,11" 
+            onclick="setColor( 153,204,0 );"
+            alt="153,204,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="84,168,11" 
+            onclick="setColor( 204,255,51 );"
+            alt="204,255,51" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="103,168,11" 
+            onclick="setColor( 255,255,102 );"
+            alt="255,255,102" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="123,168,11" 
+            onclick="setColor( 255,204,102 );"
+            alt="255,204,102" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="140,168,11" 
+            onclick="setColor( 255,153,102 );"
+            alt="255,153,102" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="159,168,11" 
+            onclick="setColor( 255,128,128 );"
+            alt="255,128,128" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="178,168,11" 
+            onclick="setColor( 255,0,102 );"
+            alt="255,0,102" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="198,168,11" 
+            onclick="setColor( 214,0,147 );"
+            alt="214,0,147" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="216,168,11" 
+            onclick="setColor( 153,51,102 );"
+            alt="153,51,102" href="javascript:void(null);"  >
+        </area>
+
+        <area shape="circle" coords="56,184,11" 
+            onclick="setColor( 128,128,0 );"
+            alt="128,128,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="75,184,11" 
+            onclick="setColor( 204,204,0 );"
+            alt="204,204,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="93,184,11" 
+            onclick="setColor( 255,255,0 );"
+            alt="255,255,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="112,184,11" 
+            onclick="setColor( 255,204,0 );"
+            alt="255,204,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="131,184,11" 
+            onclick="setColor( 255,153,51 );"
+            alt="255,153,51" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="150,184,11" 
+            onclick="setColor( 255,102,0 );"
+            alt="255,102,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="168,184,11" 
+            onclick="setColor( 255,80,80 );"
+            alt="255,80,80" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="187,184,11" 
+            onclick="setColor( 204,0,102 );"
+            alt="204,0,102" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="206,184,11" 
+            onclick="setColor( 102,0,51 );"
+            alt="102,0,51" href="javascript:void(null);"  >
+        </area>
+
+        <area shape="circle" coords="64,200,11" 
+            onclick="setColor( 153,102,51 );"
+            alt="153,102,51" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="83,200,11" 
+            onclick="setColor( 204,153,0 );"
+            alt="204,153,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="102,200,11" 
+            onclick="setColor( 255,153,0 );"
+            alt="255,153,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="122,200,11" 
+            onclick="setColor( 204,102,0 );"
+            alt="204,102,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="141,200,11" 
+            onclick="setColor( 255,51,0 );"
+            alt="255,51,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="160,201,11" 
+            onclick="setColor( 255,0,0 );"
+            alt="255,0,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="178,200,11" 
+            onclick="setColor( 204,0,0 );"
+            alt="204,0,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="197,200,11" 
+            onclick="setColor( 153,0,51 );"
+            alt="153,0,51" href="javascript:void(null);"  >
+        </area>
+
+        <area shape="circle" coords="75,216,11" 
+            onclick="setColor( 102,51,0 );"
+            alt="102,51,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="94,216,11" 
+            onclick="setColor( 153,102,0 );"
+            alt="153,102,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="112,216,11" 
+            onclick="setColor( 204,51,0 );"
+            alt="204,51,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="131,216,11" 
+            onclick="setColor( 153,51,0 );"
+            alt="153,51,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="150,216,11" 
+            onclick="setColor( 153,0,0 );"
+            alt="153,0,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="168,216,11" 
+            onclick="setColor( 128,0,0 );"
+            alt="128,0,0" href="javascript:void(null);"  >
+        </area>
+        <area shape="circle" coords="187,216,11" 
+            onclick="setColor( 165,0,33 );"
+            alt="165,0,33" href="javascript:void(null);"  >
+        </area>
+
+       <area shape="circle" coords="64,245,11" 
+            onclick="setColor( 248,248,248 );"
+            alt="248,248,248" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="84,245,11" 
+            onclick="setColor( 221,221,221 );"
+            alt="221,221,221" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="104,245,11" 
+            onclick="setColor( 178,178,178 );"
+            alt="178,178,178" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="123,245,11" 
+            onclick="setColor( 128,128,128 );"
+            alt="128,128,128" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="143,245,11" 
+            onclick="setColor( 95,95,95 );"
+            alt="95,95,95" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="162,245,11" 
+            onclick="setColor( 51,51,51 );"
+            alt="51,51,51" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="181,245,11" 
+            onclick="setColor( 28,28,28 );"
+            alt="28,28,28" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="200,245,11" 
+            onclick="setColor( 0,0,0 );"
+            alt="0,0,0" href="javascript:void(null);"  >
+        </area>
+        
+       <area shape="circle" coords="74,263,11" 
+            onclick="setColor( 234,234,234 );"
+            alt="234,234,234" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="93,263,11" 
+            onclick="setColor( 192,192,192 );"
+            alt="192,192,192" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="112,263,11" 
+            onclick="setColor( 150,150,150 );"
+            alt="150,150,150" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="132,263,11" 
+            onclick="setColor( 119,119,119 );"
+            alt="119,119,119" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="151,263,11" 
+            onclick="setColor( 77,77,77 );"
+            alt="77,77,77" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="171,263,11" 
+            onclick="setColor( 41,41,41 );"
+            alt="41,41,41" href="javascript:void(null);"  >
+        </area>
+       <area shape="circle" coords="190,263,11" 
+            onclick="setColor( 17,17,17 );"
+            alt="17,17,17" href="javascript:void(null);"  >
+        </area>
+	</map>
+</div>
+    
+    <table border="0" cellspacing="4" cellpadding="0" width="256" class="maxlmv_Dlg">
+      <tr>
+        <td id="redLable" class="maxlmv_DlgText" >Red</td>
+        <td>
+       	  <input id="redInput", name="Red" type="number" 
+          		 min="0" max="255" step="1"
+                 style="width:40px;"
+            	 onChange="applyStyle();" maxlength="3">		
+        </td>
+        <td id="greenLable" class="maxlmv_DlgText">Green</td>
+        <td>
+       	  <input id="greenInput", name="Red" type="number" 
+          		 min="0" max="255" step="1"
+                 style="width:40px;"
+            	 onChange="applyStyle();" maxlength="3">		
+        </td>
+        <td id="blueLable" class="maxlmv_DlgText">Blue</td>
+        <td>
+       	  <input id="blueInput", name="Red" type="number" 
+          		 min="0" max="255" step="1"
+                 style="width:40px;"
+            	 onChange="applyStyle();" maxlength="3">		
+        </td>
+        <td>
+       	  <div id="colorSploch" name="colorSploch" style="height:20px; width:40px; background:rgb( 128, 128, 128)"></div>
+        </td>
+      </tr>
+	</table>
+    
+    <table id="shapeTable" border="0" cellspacing="4" cellpadding="0" width="256" class="maxlmv_Dlg">
+      <tr>
+        <td id="fillLable" class="maxlmv_DlgText" >Fill</td>
+        <td colSpan="2">
+       	  <input id="fillSlider", name="Red" type="range" 
+          		 min="0" max="100" step="1"  maxlength="3"
+                 value = 0; 
+                 style="width:100%;" onChange="applyStyle();" >		
+        </td>
+      </tr>
+      <tr>
+        <td id="lineWidthLable" class="maxlmv_DlgText" nowrap>Line Width</td>
+        <td>
+       	  <input id="lineWidthInput", name="lineWidthInput" type="number" 
+          		 min="0" max="99" step="1"
+                 style="width:40px;"
+            	 onChange="applyStyle();" maxlength="3">		
+        </td>
+        <td>
+       	  <div id="lineWidthSample" name="lineWidthSample" style="height:5px; width:60px; background:rgb( 128, 128, 128)"></div>
+        </td>
+      </tr>
+	</table>
+
+    <table id="fontTable" border="0" cellspacing="4" cellpadding="0" width="256" class="maxlmv_Dlg" style="display:none">
+      <tr>
+        <td id="fontSizeLable" class="maxlmv_DlgText" nowrap >Font Size</td>
+        <td>
+       	  <input id="fontSizeInput", name="fontSize" type="number" 
+          		 min="4" max="40" step="1"
+                 style="width:40px;"
+            	 onChange="applyStyle();" maxlength="3">		
+        </td>
+        <td colSpan="3">
+       	  <select id="fontFaceSel", name="fontFaceSel"  
+                 style="width:100%;"
+            	 onChange="applyStyle();">	
+                     <option value="Arial, Helvetica, sans-serif" style="font-family:Arial" >Arial</option>	
+                     <option value="Arial Black, Gadget, sans-serif" style="font-family:Arial Black">Arial Black</option>	
+                     <option value="Times New Roman, Times, serif" style="font-family:Times New Roman">Times New Roman</option>	
+                     <option value="Courier New, Courier, monospace"  style="font-family:Courier New" >Courier New</option>	
+                     <option value="Lucida Console, Monaco, monospace" style="font-family:Lucida Console" >Lucida Console</option>	
+          </select>	
+        </td>
+      </tr>
+      <tr>
+        <td id="boldLable" class="maxlmv_DlgText" style="text-align: right" nowrap >Bold </td>
+        <td>
+       	  <input id="boldCheckbox", name="boldCheckbox" type="checkbox" 
+            	 onChange="applyStyle();">		
+        </td>
+        <td id="italicLable" class="maxlmv_DlgText" nowrap >Italics</td>
+        <td>
+       	  <input id="italicCheckbox", name="italicCheckbox" type="checkbox" 
+            	 onChange="applyStyle();" >		
+        </td>
+        <td style="width:100%;"></td>
+      </tr>
+	</table>
+
+</body>
+</html>

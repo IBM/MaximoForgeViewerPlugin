@@ -63,7 +63,7 @@ public class ModelList
 		String  keyPrefix = "";
 		if( args.length < 1 || args.length > 3 )
 		{
-			System.out.println( "Usage: querymodel bucketKey objectkey  [appendkey] [keyPrefix]" );
+			System.out.println( "Usage: ListModel bucketKey [appendkey]" );
 			return;
 		}
 		ModelList list = new ModelList();
