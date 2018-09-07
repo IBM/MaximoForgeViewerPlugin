@@ -15,8 +15,16 @@
 * 
 * @Author Doug Wood
  -->
-<link rel="import" href="../../polymer/polymer.html">
 
+<!--
+Polymer wrapper around the BIM viewer plug-in API.  The default viewer is the Autodesk Forge viewer,
+but other viewers may replace the Forge viewer. This component manages an iFrame the encapsulates the actual viewer.
+The iFrame dynamically loads a JavaScript file named {viewer}ViewerWrapper.js. Where viewer is the value of the viewer 
+property and should generally be the name of the viewer implementation. Forge is used for the Autodesk Forge viewer.
+The ViwerWrapper.js file must expose the viewer wrapper interface defined here: 
+https://github.com/IBM/MaximoForgeViewerPlugin/blob/master/Doc/Maximo%20BIM%20-%20Viewer%20Integration%20Framework.pdf   
+All viewer functions are delegated to the viewer wrapper.
+ -->
 <dom-module id="forge-viewer">
   	<template>
 		<style>
@@ -28,10 +36,9 @@
 				overflow : none;
 		    }
 		</style>
-  	
 	  <iframe id="viewer" frameborder="0" 
       		  allowFullScreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" 
-	          height="100%" width="100%" 
+	          height="[[height]]" width="[[width]]" 
 	          marginwidth="0" marginheight="0" scrolling="no"
               on-load="_onViewerFrameLoad">
 	  </iframe>
@@ -45,25 +52,48 @@
 
 		var __dictionary__AccessDenied     = "Access Denied";
 		var __dictionary__AccessDenied_1   = "The operation requires {scope} access";
-
-		var _modelMgr      = null;
-		var _viewerWrapper = null;
-		var _selectionMgr  = null;
 		
 		Polymer(
-		{ 
-			is: 'forge-viewer', 
+		{
+			is: 'forge-viewer',
+
+	    	/*
+			 * Fired when the underlying viewer surfaces a message For the Forge viewer, this is typically a 
+			 * REST communication problem with the Forge service.
+			 *
+			 * @event on-forge-message
+	    	 *
+	    	 * @param {string} Message text, typically errors, from the underlying viewer implementation.  
+	    	 *                 This may or may not be localized or suitable for user display depending on the
+	    	 *                 Underlying viewer implementation. 
+			 */
 			
+			/*
+			 * Fired when the selected element in the viewer changes
+			 *
+			 * @event on-select
+	    	 *
+	    	 * @param {string} Model GUID of the newly selected element or null if no element is selected.  
+			 */
+			
+		    behaviors : [ 
+	      		Polymer.IronResizableBehavior 
+	      	],
+				
+		    listeners : { 
+		       'iron-resize': '_onIronResize' 
+	    	},
+
 			properties : {
                /**
-				 * Overrid for the REST URL used to authenicate with the Autodesk Forge service 
+				 * Override for the REST URL used to authenticate with the Autodesk Forge service. 
 				 */
 				authurl : {
 					type     : String,
 				},
             
                /**
-				 * Controls auto zoom on select behavior 
+				 * Controls auto zoom on select behavior. 
 				 */
 				autozoom : {
 					type     : Boolean,
@@ -71,57 +101,137 @@
 					observer : '_zoomChanged'
 				},
 
+				/**
+				 * Override of the context root used for the Forge service Auth REST call.
+				 */
 				contextroot : {
 					type     : String,
 				},
 				
 				/**
-				  * A list of features to enable or disable.  supported values are:
-				  * - markup : Loads the markup extensions and displayes markup tools on the toolbar
-				  * - multiselect : displayes the single select/multi select tool on the toolbar.
-				  * - view : Displayes the save and restore view tools on the toolbar
-				  * If the object has a property matching the feature name, the feature is enabled
+				  * A list of features expressed as toolbar icons to enable or disable.  Supported values are:
+				  * - camera      : Autodesk camera submenu
+				  *                 Default = true
+				  * - explode     : Autodesk explode tool.
+				  *                 Default = false
+				  * - fullscreen  : Autodesk viewer full screen toggle
+				  *                 Default = true
+				  * - markup      : Loads the markup extensions and displayes markup tools on the toolbar
+				  *                 Default = false
+				  * - measure     : Autodesk measure tool.
+				  *                 Default = false
+				  * - modelTree   : Autodesk Model Tree viewer
+				  *                 Default = true
+				  * - multiselect : TRIRIGA single select/multi select toggle.
+				  *                 Default = false
+				  * - properties  : AUtodesk pproperty viewer
+				  *                 Default = true
+				  * - search      : TRIRIGA search bar
+				  *                 Default = true
+				  * - section     : TRIRIGA selection submenu: Isolate Selectiom, Hide Selection, Auto Zoom, MUlti-select
+				  *                 Default = true
+				  * - selection   : TRIRIGA selection submenu
+				  *                 Default = true
+				  * - settings    : Autodesk viewer settings.
+				  *                 Default = false
+				  * - view        : Displays the save and restore view tools on the toolbar.
+				  *                 Default = false
 				  */
 				features : {
-					type     : Object,
-					value    : { views : true, markup : true }
+					type     : Object
 				},
 
                /**
 				 * Override for the URL for the src value of the viewer iFrame.  It should be the 
-				 * path to ForgeViewer.html
+				 * path to ForgeViewer.html.
 				 */
 				frameurl : {
 					type     : String,
 					observer : '_frameChanged'
 				},
+				
+				/**
+				  * Viewerheight, default to 100%.
+				  */
+				height : {
+					type     : String,
+					value    : "100%",
+				},
+
+				/**
+				  * One of:
+				  *     Chinese Simplified: zh-cn
+				  *     Chinese Traditional: zh-tw
+				  *     Czech: cs
+				  *     English: en
+				  *     French: fr
+				  *     German: de
+				  *     Italian: it
+				  *     Japanese: ja
+				  *     Korean: ko
+				  *     Polish: pl
+				  *     Portuguese Brazil: pt-br
+				  *     Russian: ru
+				  *     Spanish: es
+				  *     Turkish: tr
+				  * If it is unset, the viewer attempts to determin the locale from thge browser context
+				  */
+				locale : {
+					type     : String,
+				},
 
                /**
-				 * For non Revit models: The name of the model poperty that contains the unique ID used to bind
-				 * applcation data to model elements 
+				 * For non-Revit models: The name of the model property that contains the unique ID used to bind
+				 * application data to model elements. 
 				 */
 				mapping : {
 					type     : String,
 				},
-
+				
 				/**
-				 * The _id of the owning record such as a work order or service request
+				 * The triBIMModelLink BO linking building to model URN and thumbnail. 
+				 *	- binding:       Model specific instructions to the viewer. Used by the Forge viewer and NavisWorks models to specify the NavisWOrks attribute that has the uniqueId.
+				 *	- buildingId:    TRIRIGA building Id 
+				 *	- description
+				 *	- displayOrder:  When linking multiple models ro a single building is supported, it will specify sort order of the list of models
+				 *	- linkType:      The name of the BO linked to this record. Currently only triBuilding is supported.
+				 *	- objectKey:     The Forge service Object key, May be redefined by other viewers
+				 *	- thumbnail:     URN of model thumbnail
+				 *	- title:         Title to use when displaying the model definition to a user.
+				 *	- urn: 		     URN required to launch the BIM viewer with the model associated with the thumbnail 
+				 *	- viewer:        Name of the viewer to used to display the model.  Currently only Forge is supported
+				 *	- _bldgSpec:     TRIRIGA Spec ID (_id) of the associated building
+				 *	- _id:           TRIRIGA ID of this record
 				 */
-				owningrecordid : {
-					type : String
+				model : {
+					type     : String,
+					observer : '_modelChanged'
+				},
+
+	            /**
+	             * Record ID of the business process record that sets the viewer context.  For example, a
+	             * work task record.  This is used for associating markup with the context.  Its value is opaque
+	             * to the viewer.  When markup is created, it is associated with this value.  When it is 
+	             * displayed, only records that match this context are displayed.
+	             */
+				recordkey : {
+					type : String,
+					observer : '_recordKeyChanged'
 				},
 				
-               /**
-				 * URN of model to load
+				/*
+				 * This is an opaque string created by viewer vendor specific tools which instructs the
+				 * underling viewer to load a specific model; For the Forege viewer, this is the Forge
+				 * viewer service URN
 				 */
 				urn : {
 					type     : String,
 					observer : '_urnChanged'
 				},
 				
-               /**
-				 * The GUID of the currently selected item in the model 
-				 */
+	            /*
+	             * The GUID of a model element.  For the Forege viewer, this is the Autodesk Export GUID
+	             */
 				value : {
 					type     : String,
 					observer : '_valueChanged'
@@ -135,91 +245,207 @@
 					type     : String,
 					value    : "Forge"
 				},
+
+				/**
+				  * Viewer width, default to 100%
+				  */
+				  width : {
+					type     : String,
+					value    : "100%",
+				},
+
 			},
 			
-	    	_viewerInit : false,
-
-	    	ready : function()
+		    ready : function()
 	    	{
-	    		if( !this.frameurl || this.frameurl == "" )
+		    	this._viewerInit    = false;
+		    	this._viewerWrapper = null;
+		    	this._activeURN     = "";
+
+				if( !this.frameurl || this.frameurl == "" )
 	    		{
 	    			if( this.importPath )
 	    			{
 		    			this.set( "frameurl", this.importPath + "ForgeViewer.html" );
 	    			}
+	    			else
+    				{
+		   		    	this.frameurl = this.resolveUrl("../forge-viewer/ForgeViewer.html");
+    				}
 	    		}
 	    	},
 
+			attached: function() 
+		    {
+		    	this._forceSizeforIOS();
+	    	},
+
+	    	// This is a HACK! to working around the following iOS issue:
+    		// https://github.com/mrdoob/three.js/issues/9195
+    		// If assumes that th view extends to the bottom and right of the screen
+		    _forceSizeforIOS()
+		    {
+		    	var userAgent = window.navigator.userAgent;
+		    	if( !userAgent.match(/iPad/i) && !userAgent.match(/iPhone/i) ) 
+				{
+					return;
+				}
+
+		    	var node = this.$.viewer;
+		    	var x = 0;
+		    	var y = 0;
+		    	while( node != null )
+	    		{
+    				if( node.offsetTop ) y += node.offsetTop;
+    				if( node.offsetLeft ) x += node.offsetLeft;
+    				if( node.offsetParent != null )
+   					{
+   						node = node.offsetParent;
+   					}
+    				else
+   					{
+   						node = node.parentNode;
+   					}
+	    		}
+		    	var h = window.innerHeight - y;
+		    	var w = window.innerWidth - x;
+		    	var vh = this.$.viewer.height;
+		    	var vw = this.$.viewer.width;
+    			if( this.$.viewer.height == "100%" || this.forceHeight )	
+   				{
+    				this.$.viewer.height = "" + h + "px";
+    				this.forceHeight = true;
+   				}
+    			if( this.$.viewer.width == "100%" || this.forceWidth )	
+   				{
+    				this.$.viewer.width = "" + w + "px";
+    				this.forceWidth = true;
+   				}
+		    },
+		    
+		    _fakeFullScreen(
+	    		mode
+    		) {
+		    	if( mode )
+	    		{
+		    		this.savePosition = this.$.viewer.style.position;
+		    		this.saveTop      = this.$.viewer.style.top;
+		    		this.saveLeft     = this.$.viewer.style.left;
+		    		
+		    		this.$.viewer.style.position = "absolute";
+		    		this.$.viewer.style.top = 0;
+		    		this.$.viewer.style.left = 0;
+		    		this.$.viewer.style.zIndex = 1000;
+	    		}
+		    	else
+	    		{
+		    		this.$.viewer.style.position = this.savePosition;
+		    		this.$.viewer.style.top      = this.saveTop;
+		    		this.$.viewer.style.left     = this.saveLeft;
+	    		}
+		    	this._forceSizeforIOS();
+		    },
+
+			_onIronResize : function( event )
+	    	{
+	    		setTimeout( ( event ) => { this._forceSizeforIOS( event ) }, 100 );
+	    	},
+
+	    	/**
+	    	* Restores a saved view to the AUtodesk Forge vieweru
+	    	*
+		    * @param {object} The Forge viewer state object in JSON format as returned by viewer.getState
+		    *                 It is also stored in the triForgeViews BO by the Save Viewe UI in the viewer.
+	    	*/
 			displayView : function(
 				view
 			) {
 		  		if( this.$.viewer.contentWindow.ViewerWrapper )
 		  		{
-			  		_viewerWrapper.displayView( view );
+			  		this._viewerWrapper.displayView( view );
 		  		}
 			},
 
+    	  /**
+	    	* Selects a model element by GUID or the configured search parameter.
+	    	*
+		    * @param {string} GUID of target model element
+		    * @param {boolean} if true, the view is zoomed and centered to show the selected element
+	    	*/
 	    	select : function(
 	    		value, zoomMode
 	    	) {
+	    		if( this.deferredValue  && !value ) return;
+	    		
 	    		if( !zoomMode ) zoomMode = this.autozoom;
 		  		if( this.$.viewer.contentWindow.ViewerWrapper )
 		  		{
-		  			this._initializeViewer();
-			  		_viewerWrapper.selectValue( value, zoomMode );
+		  			this._loadWrapper();
+			  		this._viewerWrapper.selectValue( value, zoomMode );
 		  		}
+		  		else
+	  			{
+		  			this.deferredValue = value;	  			
+		  			this.deferredZoomMode = zoomMode;
+	  			}
 	    	},
 
 	    	// Called when iFrame source is loaded
 	    	_onViewerFrameLoad : function()
 	    	{
-		  		if(    !this.$.viewer.contentWindow 
-		  		    || !this.$.viewer.contentWindow.loadWrapper) 
-	  		    {
-		  		    return;  
-	  		    }
+		  		this._viewerInit = false;
+	  			setTimeout( ()=>{ this._loadWrapper(); }, 100 );	// Spin until loaded
+	    	},
+	    	
+	    	_loadWrapper : function()
+	    	{
+  				if( this._viewerInit ) return;
+		  		if( !this.$.viewer.contentWindow ) return; 
+		  		if( !this.$.viewer.contentWindow.loadWrapper ) return;
+		  		this._viewerInit = true;
 
 		  		this.$.viewer.contentWindow.loadWrapper(
-		  			this.viewer,
-		  			()=> { this._initializeViewer(); }
-		  		);
+			  			this.viewer,
+			  			()=> { this._initializeViewer(); }
+			  		);
 	    	},
 
   			_initializeViewer : function()
   			{
-  				if( this._viewerInit ) return;
-		  		if( !this.$.viewer.contentWindow ) return; 
-		  		if( !this.$.viewer.contentWindow.ViewerWrapper ) return;
-
-  				_modelMgr = this.$.viewer.contentWindow.initModelManager(
+  				var modelMgr = this.$.viewer.contentWindow.initModelManager(
 			  				( ctrl,	selectionList, selection, count, index ) => { 
 								this._selectionChanged( ctrl,	selectionList, selection, count, index ); 
 							},
-							( modelMgr ) => { this._onViewerInit( modelMgr ); },
-							this.contextroot,
-							this.features
+							this.locale,
+							this.autozoom,
+							this.features,
+							this.contextroot
 							);
-				this._viewerInit = true;
-  			},
-  			
-  			_onViewerInit : function(
-  				modelMgr
-  			) {
-  				_modelMgr = modelMgr;
-  				_viewerWrapper = _modelMgr.viewer;
- 				_viewerWrapper.setErrorHandlers( 
+		  		this._viewerWrapper = modelMgr.viewer;
+ 				this._viewerWrapper.setErrorHandlers( 
  					( msg ) => { this._displayError( msg ) }, 
  					( status, source, responseText, component ) => { this._RESTError( status, source, responseText, component ) } 
 				);
-				_viewerWrapper.setAutoZoom( this.autozoom );
 				if( this.authurl )
 				{
-					 _viewerWrapper.setRestURL( this.contextroot, this.authurl + "/auth/token" );
+					 this._viewerWrapper.setRestURL( this.contextroot, this.authurl + "/auth/token" );
 				}
-				if( this.url && this.url != "" )
+
+				if( this.model && this.model.url && this.model.url != "" )
 				{
-			  		_viewerWrapper.loadFile( this.url, this.mapping );
+			  		this._viewerWrapper.setCurrentModel( this.model );
+			  		this._viewerWrapper.loadFile( this.model.url, this.model.binding );
+			  		if( this.deferredValue )
+		  			{
+				  		this._viewerWrapper.selectValue( this.deferredValue, this.deferredZoomMode );
+						this._viewerWrapper.setAutoZoom( this.deferredZoomMode );
+						this._viewerWrapper.setRecordKey( this.recordkey )
+						this.deferredZoomMode = null;
+			  			this.deferredValue = null;
+		  			}
 				}
+				this._viewerWrapper.setAutoZoom( this.autozoom );
+				this._viewerWrapper.onFakeFullScreen = ( mode )=>{ this._fakeFullScreen( mode ); };
   			},
   			
 			_displayError : function( 
@@ -245,11 +471,15 @@
 				responseText,		// HTTP Error text
 				component			// Component or dialog generating the error
 			) {
+  				if( !component )
+				{
+  					component = __dictionary__Viewer;
+				}
 				var message = {
 					"title"        : __dictionary__RESTError,
 					"label"        : status,
 					"messages"     : [
-						__dictionary__Viewer 
+						component
 					]
 				};
 
@@ -264,13 +494,30 @@
 				{
 					message.messages.push( __dictionary__NotFound );
 				}
-				else if( status == 403 && json && json.ErrorCode == -4 )
+				else if( status == 403  )
 				{
 					message.title = __dictionary__AccessDenied;
-					message.messages.push( __dictionary__AccessDenied_1.replace( "{scope}", json.ErrorMessage ) );
-					responseText = null;
+					if( json )
+					{
+						responseText = null;
+						component = null;
+						if( json.ErrorCode == -4 )
+						{
+							message.messages.push( __dictionary__AccessDenied_1.replace( "{scope}", json.ErrorMessage ) );
+						}
+						else if( json.errorType == "SecurityException" )
+						{
+							message.messages.push( __dictionary__AccessDenied_1.replace( "{scope}", json.action ) );
+						}
+						else
+						{
+							for( msg in json )
+							{
+								message.messages.push( msg + ":" + json[msg] );
+							}
+						}
+					}
 				}
-				
 				this._makeMessage( message, responseText, component );
   			},
   			
@@ -313,43 +560,70 @@
 				                                     detail: { selection : selection }} ) );
 			},
 
-  			//============================================================================
+			//============================================================================
   			// Observers
   			//============================================================================
 			_frameChanged : function(
 				value
 			) {
-				this.$.viewer.src = value;
+				if( this.$.viewer.src != value )
+				{
+					this.$.viewer.src = value;
+				}
 			},
 			
-			_urnChanged : function(
-			  	urn
-		  	) {
+			_modelChanged : function( model ) 
+			{
+				if( model.url == this._activeURN ) return;
+
+				if( !model.mboKey )
+  				{
+	  				model.mboKey = this.recordkey;
+  				}
+	  			
+	  			// See if iFrame is fullly loaded, if not, wait on load event
 		  		if(    this.$.viewer.contentWindow 
-		  		    && this.$.viewer.contentWindow.ViewerWrapper )
+			  		&& this.$.viewer.contentWindow.ViewerWrapper )
 		  		{
-		  			this._initializeViewer();
-		  			if( !urn || urn == "" )
+		  			if( !this._viewerWrapper )
+	  				{
+			  			this._loadWrapper();
+			  			return;
+	  				}
+		  			
+		  			this._activeURN = model.url;
+		  			
+		  			if( !model || !model.url || model.url == "" )
 		  			{
-		  				_viewerWrapper.setCurrentModel( null );
+		  				this._viewerWrapper.setCurrentModel( null );
+				  		this._viewerWrapper.loadFile( "" );
+		  				return;
 		  			}
-	               /**
-	                 * model {
-					 * 		modelId;
-					 * 		location;
-					 * 		binding;
-					 * 		title;
-					 * 		selectionMode;
-					 * }
-					 */
-					var model = {
-						binding : this.mapping,
-						mboKey  : this.owningrecordid,
-						urn     : urn
-					};
-	  				_viewerWrapper.setCurrentModel( model );
-			  		_viewerWrapper.loadFile( urn, this.mapping );
+	  				this._viewerWrapper.setCurrentModel( model );
+			  		this._viewerWrapper.loadFile( model.url, model.binding );
 		  		}
+			},
+			
+			_recordKeyChanged : function( value ) 
+			{
+		  		if(    this.$.viewer.contentWindow 
+			  		&& this.ViewerWrapper )
+		  		{
+		  			this._viewerWrapper.setRecordKey( value );
+		  		}
+			},
+			
+			_urnChanged : function(	urn	) 
+			{
+				if( urn == this._activeURN ) return;
+				
+				this.set( "model", {
+						binding  : this.mapping,
+						mboKey   : this.recordkey,
+						url      : urn,
+						viewer   : this.viewer,
+						autozoom : this.autozoom
+					} );
 			},
 
 			_valueChanged : function(
@@ -364,8 +638,8 @@
 		  		if(    this.$.viewer.contentWindow 
 		  		    && this.$.viewer.contentWindow.ViewerWrapper )
 		  		{
-		  			this._initializeViewer();
-					_viewerWrapper.setAutoZoom( value );
+		  			this._loadWrapper();
+					this._viewerWrapper.setAutoZoom( value );
 		  		}
 			}
 		})

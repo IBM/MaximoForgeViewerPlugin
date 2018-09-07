@@ -43,10 +43,10 @@
 			height  : 100%; 
 	    }
 		app-header-layout {
-			height: 100%; 
+			height: 100%;
 		}
 		app-toolbar {
-			background-color : #60a0ff;
+			background-color : #0696D7;
 			padding : 0;
 			margin  : 0;
 		}
@@ -64,10 +64,6 @@
 			background-color : #204080;
 			color            : white;
 		}		
-	    paper-icon-button {
-	    	width    : 48px;
-	    	height   : 48px;
-	    }
 		paper-fab {
 			background-color : #e0a30b;
 			position         : absolute !important;
@@ -104,13 +100,25 @@
     		flex: 1;
     	}
 		.icons {
-			height           : 24px;
-			width            : 24px;
-			padding          : 0;
+			height           : 48px;
+			width            : 48px;
+			padding          : 8px;
 		}
 		.icons-hidden {
 			display          : none;
 		}
+	    img.logo {
+	   		width         : 240px;
+	   		height        : 48px;
+	   		float         : left;
+	    }
+	    div.search {
+	   		width         : 64px;
+	   		height        : 64px;
+			padding       : 0;
+			float         : right;
+			margin-top    : 16px;
+	    }
 		
 		</style>		
 		
@@ -118,6 +126,7 @@
 		<app-header reveals>
 		<forge-scroll-pane id="scrollPane" style="--forge-scroll-pane-overflow:auto;">
 			<app-toolbar >
+		        <img src="[[importPath]]images/AutodeskForgeLogo.png" class="logo"></img>
 				<span class="header"><h1>Buckets</h1></span>
 				<div style="float:right; display:inline-flex">
 					<paper-dropdown-menu label="Region"  >
@@ -127,7 +136,9 @@
 							<paper-item value="EMEA" on-click="_onRegionSelect">EMEA</paper-item>
 						</paper-listbox>
 					</paper-dropdown-menu>
-		          	<paper-icon-button id="search" icon="search" on-click="getBucketList" alt="Search"></paper-icon-button>
+					<div class="search">
+			          	<paper-icon-button id="search" icon="search" on-click="getBucketList" class="icons" alt="Search"></paper-icon-button>
+					</div>
 				</div>
 			</app-toolbar>
 
@@ -173,7 +184,7 @@
 							</div>
 					    	<div >
 							  	<paper-checkbox checked="{{item.appendKey}}" disabled="disabled">Append Key</paper-checkbox>
-					          	<paper-icon-button icon="delete-forever" on-click="deleteBucket" alt="Delete bucket" style="float:right;"></paper-icon-button>
+					          	<paper-icon-button icon="delete-forever" on-click="deleteBucket" class="icons" alt="Delete bucket" style="float:right;"></paper-icon-button>
 							</div>
 					    	<div >
 							</div>
@@ -503,6 +514,10 @@
 		  	) {
 				this.appKey     = newValue;
 				this.buckets = [];
+				if( this.appKey && this.appKey != "" )
+				{
+					this.getBucketList();
+				}
 			}
 		}
 		

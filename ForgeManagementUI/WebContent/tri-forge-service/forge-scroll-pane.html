@@ -28,7 +28,7 @@
 			}
 		</style>
 
-    	<div id="scrollPane" class="scrollpane" >
+    	<div id="scrollPane" class="scrollpane" on-scroll="_scroll">
 		    <slot></slot>
 	    </div>
   	</template>
@@ -55,7 +55,7 @@
 	    
 	    ready : function()
 	    {
-//	    	this.setOverflow( "auto" );
+	    	this.top = 0;
 	    },
 
 		// This is a hack because the custom style isn't working on Edge	    
@@ -92,6 +92,24 @@
 		_onIronResize : function( event )
     	{
     		setTimeout( ( event ) => { this.resize( event ) }, 100 );
-    	}
+    	},
+		
+		_scroll : function( evt )
+		{
+			var client = evt.srcElement;
+			var top = client.scrollTop;
+			if( top < this.top )
+			{
+				this.top = top;
+				return;
+			}
+
+			this.top = top;
+			if(    client.scrollHeight > client.clientHeight		// Is data larger than window?
+					&& top + client.clientHeight >= client.scrollHeight -50 )
+			{
+				this.dispatchEvent( new CustomEvent( 'next-page', { bubbles: true, composed: true } ));
+			}
+		},
 	})
 </script>

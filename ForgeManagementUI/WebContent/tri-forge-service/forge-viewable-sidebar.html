@@ -17,6 +17,7 @@
  -->
 <link rel="import" href="../polymer/polymer-element.html">
 
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../paper-item/paper-item.html">
 <link rel="import" href="../paper-listbox/paper-listbox.html">
 
@@ -35,6 +36,11 @@
 				cursor           : pointer;
 				padding          : 0;
 			}
+			.icons {
+				height           : 48px;
+				width            : 48px;
+				padding          : 8;
+			}
 			div.displayItem {
 				display          : inline;
 		        width            : 100%;
@@ -42,10 +48,10 @@
 		</style>
 
 		<div style="display:inline-flex">
-			<paper-input floatingLabel label="Object Key" value="{{nameSearch}}" on-keypress="_onSearchKey"></paper-input>
-			<paper-icon-button id="search" icon="search" on-click="_filterModelList"></paper-icon-button>
+			<paper-input floatingLabel label="Model Name" value="{{nameSearch}}" on-keypress="_onSearchKey"></paper-input>
+			<paper-icon-button id="search" icon="search" class="icons" on-click="_filterModelList"></paper-icon-button>
 		</div>
-		<paper-listbox id="list" style="background-color: #B0BEC5; width:100% ">
+		<paper-listbox id="list"  style="background-color: #B0BEC5; width:100%">
 		    <template id="repeat" is="dom-repeat" items="[[list]]" filter="show">
 				<paper-item value="{{item.bubble.urn}}" on-click="onSelect" class="item">
 					{{item.objectKey}}

@@ -31,6 +31,11 @@
 				display          : inline;
 				width            : 100%; 
 			}
+			.icons {
+				height           : 48px;
+				width            : 48px;
+				padding          : 8px;
+			}
 			.title {
 				width            : 100%; 
 			}
@@ -38,7 +43,7 @@
 
     	<div class="body" >
 	    	<div class"header"">
-			   	<paper-icon-button id="toggleButton" icon="expand-more" on-click="_toggleDetails"  alt="Toggle details"></paper-icon-button>
+			   	<paper-icon-button id="toggleButton" icon="expand-more" on-click="_toggleDetails"  class="icons" alt="Toggle details"></paper-icon-button>
 	    		<slot id="titleSlot" name="title" class="title"></slot>
 	    	</div>
 			<iron-collapse id="details">

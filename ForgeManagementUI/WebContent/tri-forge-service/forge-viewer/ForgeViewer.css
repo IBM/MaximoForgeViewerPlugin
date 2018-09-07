@@ -42,6 +42,64 @@
     -webkit-box-shadow: inset 0 0 6px rgba( 32, 48, 128,0.5);
 }
 
+.adsk-viewing-viewer
+{
+	background-color     : rgba(102, 140, 165, 0.4); 
+}
+
+.adsk-viewing-viewer .modelStructurePanel .dockingPanelTitle
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.adsk-viewing-viewer .modelStructurePanel .footer
+{
+	background-color     : rgba(102, 140, 165, 0.4); 
+}
+
+.adsk-viewing-viewer input.toolbar-search-box 
+{
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.adsk-viewing-viewer .modelStructurePanel .treeview.on-demand
+{
+	background-color     : rgba(102, 140, 165, 0.4); 
+}
+
+.adsk-viewing-viewer .modelStructurePanel .treeview .group,
+.adsk-viewing-viewer .modelStructurePanel .treeview .leaf 
+{
+	background-color     : rgba(102, 140, 165, 0.4); 
+}
+
+.adsk-viewing-viewer .modelStructurePanel .treeview .group > lmvheader:hover,
+.adsk-viewing-viewer .modelStructurePanel .treeview .leaf > lmvheader:hover
+{
+    background-color: rgba(102, 140, 165, 0.7) !important;
+}
+
+.adsk-viewing-viewer .modelStructurePanel .treeview .group.selected label,
+.adsk-viewing-viewer .modelStructurePanel .treeview .leaf.selected label 
+{
+    color: #9cf !important;
+}
+
+.adsk-viewing-viewer .modelStructurePanel .treeview .leaf > lmvheader.highlight,
+.adsk-viewing-viewer .modelStructurePanel .treeview .group > lmvheader.highlight 
+{
+    background: #9cf !important;
+}
+
+.adsk-viewing-viewer .modelStructurePanel.dockingPanel {
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+.adsk-viewing-viewer .modelStructurePanel.dockingPanel:hover {
+	background-color     : rgba(000, 53, 104, 0.7); 
+}
+
+
 .dockingPanelScroll::-webkit-scrollbar-track 
 {
 	background-color     : rgba(196, 196, 196, 0.4); 
@@ -56,7 +114,7 @@
     background: rgba(102, 140, 165,0.1 );
 }
 
-.touch .modelStructurePanel
+.modelStructurePanel
 {
     background: rgba(102, 140, 165,0.03 );
 }
@@ -439,6 +497,37 @@ img.maxlmv_clickableImage:hover
      opacity              : 1;
 } 
 
+input.maxlmv_search
+{
+	width                 : 200px;
+	height                : 20px;
+	padding               : 0;
+	margin                : 0;
+	marginLeft            : 8px;
+	marginRight           : 8px;
+	boxShadow             : 0 3px 5px rgba(0,0,0,.5);
+    background-color      : rgba(255, 255, 255, 0.4);
+}
+
+input.maxlmv_search:focus
+{
+    background-color      : white;
+}
+
+img.maxlmv_search
+{
+	height               : 24px;
+	width                : 24px;
+    opacity              : 0.4;
+    cursor               : pointer;
+    vertical-align       : MIDDLE;
+}
+
+img.maxlmv_search
+{
+     opacity              : 1;
+} 
+
 div.maxlmv_CancelMarkup_Tool
 {
     z-index               : 1;
@@ -447,5 +536,65 @@ div.maxlmv_CancelMarkup_Tool
     position              : absolute;
 }
 
+div.maxlmv_hiddenTool
+{
+	display : none;
+	height  : 0;
+	width   : 0; 
+}
 
+@media screen and (min-width: 0px) and (max-width: 800px) {
+  #TRIIRGA_toolbar_button_search { display: none; } 
+}
 
+@media screen and (min-width: 801px) {
+  #TRIIRGA_toolbar_button_search { display: block; }  
+}
+
+@media screen and (min-width: 0px) and (max-width: 350px) {
+  #TRIIRGA_toolbar_submenu_select { display: none; } 
+}
+
+@media screen and (min-width: 351px) {
+  #TRIIRGA_toolbar_submenu_select { display: block; }  
+}
+
+@media screen and (min-width: 0px) and (max-width: 850px) {
+  #toolbar-measurementSubmenuTool { display: none; } 
+}
+
+@media screen and (min-width: 851px) {
+  #toolbar-measurementSubmenuTool { display: block; }  
+}
+
+@media screen and (min-width: 0px) and (max-width: 380px) {
+  #Markup_toolabr_submenu_tool_cloud { display: none; } 
+}
+
+@media screen and (min-width: 381px) {
+  #Markup_toolabr_submenu_tool_cloud { display: block; }  
+}
+
+@media screen and (min-width: 0px) and (max-width: 330px) {
+  #Markup_toolabr_submenu_tool_freehand { display: none; } 
+}
+
+@media screen and (min-width: 331px) {
+  #Markup_toolabr_submenu_tool_freehand { display: block; }  
+}
+
+@media screen and (min-width: 0px) and (max-width: 300px) {
+  #Markup_stylepbar_submenu_style { display: none; } 
+}
+
+@media screen and (min-width: 301px) {
+  #Markup_stylepbar_submenu_style { display: block; }  
+}
+
+@media screen and (min-width: 0px) and (max-width: 280px) {
+  #Markup_toolabr_submenu_tool_line { display: none; } 
+}
+
+@media screen and (min-width: 281px) {
+  #Markup_toolabr_submenu_tool_line { display: block; }  
+}

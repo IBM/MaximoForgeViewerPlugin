@@ -64,10 +64,6 @@
 		    	--paper-item-selected-weight: 400;
 		    	color : black;
 		    }
-		    paper-icon-button {
-		    	width    : 48px;
-		    	height   : 48px;
-		    }
 			paper-button {
 				background-color : #204080;
 				color            : white;
@@ -80,12 +76,11 @@
 		    	z-index  : 100;
 		    	color    : white;
 		    }
-		    img.logo {
-		   		width         : 200px;
-		   		height        : 48px;
-		   		margin-right  : 64px; 
-		   		float         : right;
-		    }
+			.icons {
+				height           : 48px;
+				width            : 48px;
+				padding          : 8;
+			}
 		    .menu {
 				cursor        : pointer;
 		    }
@@ -94,13 +89,12 @@
         <div class="auth-menu">
         <paper-menu-button horizontal-align="right" vertical-align="top">
 			<paper-icon-button icon="menu" slot="dropdown-trigger"  
-			                   horizontal-align="left" vertical-align="top" alt="Menu"></paper-icon-button>
+			                   horizontal-align="left" vertical-align="top" class="icons" alt="Menu"></paper-icon-button>
 			<paper-listbox id="appMenu" slot="dropdown-content" opened="false"
 			               horizontal-align="left" vertical-align="top" 
 			               onSelect="_menuSelect">
 			    <paper-item on-click="_openAuthDlg" role="menuitemradio" class="menu">Set Key: This Session</paper-item>
 			    <paper-item on-click="_openBIMConfig" role="menuitemradio" class="menu">Set Key: System Wide</paper-item>
-			    <paper-item on-click="_doLogout" role="menuitemradio" class="menu">Log out</paper-item>
 			    <paper-item on-click="_doViewModel" role="menuitemradio" class="menu">View Model</paper-item>
 			    <paper-item on-click="_doSelectItem" role="menuitemradio" class="menu">Select Item in Model</paper-item>
 			    <paper-item on-click="_doForgeViews" role="menuitemradio" class="menu">Manage Saved Views</paper-item>
@@ -109,24 +103,25 @@
 		<app-header >
 	    	<app-toolbar >
 				<paper-tabs scrollable selected="{{activeTab}}" style="width:100%">
-					<paper-tab id="bucket">Bunckets</paper-tab>
+					<paper-tab id="bucket">Buckets</paper-tab>
 					<paper-tab id="model">Model Files</paper-tab>
 					<paper-tab id="Building">Buildings</paper-tab>
 					<paper-tab id="viewer">Viewer</paper-tab>
 				</paper-tabs>
-		        <img src="[[importPath]]images/AutodeskForgeLogo.png" class="logo"></img>
 				</paper-menu-button>
 	      	</app-toolbar>
 		</app-header>
 		<iron-pages selected="{{activeTab}}" style="height:100%; width:100%">
 			<forge-bucket id="buckets" appkey="{{appKey}}" restpath="[[restpath]]" ></forge-bucket>
-			<forge-model  appkey="{{appKey}}" restpath="[[restpath]]" modellist="{{models}}"
+			<forge-model  id="models" appkey="{{appKey}}" restpath="[[restpath]]" modellist="{{models}}"
 			              on-model-list="_onModelList"
 			              on-display-model="_onDisplayModel" >
             </forge-model>
-            <forge-tri-bldg contextroot="[[contextroot]]" modellist="[[models]]" >
+            <forge-tri-bldg contextroot="[[contextroot]]" modellist="[[models]]" modelmanager="[[$.models]]"
+                            on-display-model="_onDisplayModel">
             </forge-tri-bldg>
 			<forge-viewable id="viewable" appkey="{{appKey}}"  modellist="[[models]]" restpath="[[restpath]]"
+				            features="[[features]]" locale="[[locale]]"
 				            contextroot="[[contextroot]]">
 			</forge-viewable>
 		</iron-pages>
@@ -182,11 +177,41 @@
  		    	}
   		    	this.restpath = this.contextroot + RESOURCE_PATH;
   		    	this.loadPath = this.importPath;
+				/**
+				  * A list of features expressed as toolbar icons to enable or disable.  Supported values are:
+				  * - camera      : Autodesk camera submenu
+				  *                 Default = true
+				  * - explode     : Autodesk explode tool.
+				  *                 Default = false
+				  * - fullscreen  : Autodesk viewer full screen toggle
+				  *                 Default = true
+				  * - markup      : Loads the markup extensions and displayes markup tools on the toolbar
+				  *                 Default = false
+				  * - measure     : Autodesk measure tool.
+				  *                 Default = false
+				  * - modelTree   : Autodesk Model Tree viewer
+				  *                 Default = true
+				  * - multiselect : TRIRIGA single select/multi select toggle.
+				  *                 Default = false
+				  * - properties  : AUtodesk pproperty viewer
+				  *                 Default = true
+				  * - search      : TRIRIGA search bar
+				  *                 Default = true
+				  * - section     : TRIRIGA selection submenu: Isolate Selectiom, Hide Selection, Auto Zoom, MUlti-select
+				  *                 Default = true
+				  * - settings    : Autodesk viewer settings.
+				  *                 Default = false
+				  * - view        : Displays the save and restore view tools on the toolbar.
+				  *                 Default = false
+				  */
+  		    	this.features = { explode : true, measure : true, settings : true, views : true };
   		    }
   		    
   		    ready() 
   		    {
  				super.ready();
+ 				this._getUser();
+
   			}
   			
   			_menuSelect(
@@ -284,6 +309,42 @@
   			{
   				this.models = event.detail;
   			}
+  			
+			_getUser()
+			{
+				var url = this.contextroot + "/p/webapi/rest/v2/triBIMViewer/-1/user?query=true";
+
+				fetch( url, 
+					   { 
+							method: "GET",
+							headers: {
+							    'content-type': 'application/json',
+							    'Accept': 'application/json',
+							},
+					   		credentials: 'same-origin', 
+					   } 
+					).then(
+						( request ) => { this._onUser( request ); },
+						( err ) => { this._onError( err ); } );
+			};
+			
+			_onUser(
+				response 
+			) {
+				if( !response.ok )
+				{
+					this.dispatchEvent( new CustomEvent('forge-http-error', { bubbles: true, composed: true,
+					                                                          detail: { response : response }} ));
+					return;
+				}
+				response.json().then(
+					( json ) => {  
+						this.locale = json.data._Locale;
+					},
+					( err ) => { this._onError( err ); }
+				);
+			};
+
 		}
 		
 		customElements.define( TriForge.is, TriForge );

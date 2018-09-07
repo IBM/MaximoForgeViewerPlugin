@@ -65,15 +65,20 @@
  				super.ready();
  
 				this.set( "modellist", [] );
+				window.addEventListener( "forge-model-next-page", ( evt ) => { this.getNextPage(); } );
   			}
   			
   			//============================================================================
   			// Model List
   			//============================================================================
 			getList(
-				filter, start, pagesize
+				filter, pagesize
 			) {
 				this.modellist = [];
+				this.filter    = filter;
+				this.start     = null;
+				this.pagesize  = pagesize;
+				
 				if( !this.bucketkey )
 				{
 					this.dispatchEvent( new CustomEvent('forge-message', { bubbles: true, composed: true, 
@@ -82,22 +87,28 @@
 					return;
 				}
 
+				this._getList();
+  			}
+  			
+  			_getList()
+  			{
+
 				var seprator = "?";
 				var url = this.restpath + "/model/" +  this.bucketkey;
-				if( pagesize )	
+				if( this.pagesize )	
 				{
-					url += seprator + "pagesize=" + pagesize;
+					url += seprator + "pagesize=" + this.pagesize;
 					seprator = "&";
 				}
-				if( start )    
+				if( this.start )    
 				{
-					url +=  seprator + "start=" + start;
+					url +=  seprator + "start=" + this.start;
 					seprator = "&";
 				}
 
-				if( filter && filter.length > 0 )
+				if( this.filter && this.filter.length > 0 )
 				{
-					url = url + seprator + "name=" +  filter;
+					url = url + seprator + "name=" +  this.filter;
 				}
 				
 				fetch( url, 
@@ -129,12 +140,45 @@
 				}
 				response.json().then(
 					( json ) => {  
-						this.modellist = json.items;
-						this.dispatchEvent( new CustomEvent('model-list', { bubbles: true, composed: true, detail: json.items } ));
+						var ml = this.modellist;
+						for( var i in json.items )
+						{
+							ml.push( json.items[i] );
+						}
+						this.set( "modellist", ml );
+
+						this.dispatchEvent( new CustomEvent('model-list', { bubbles: true, composed: true, detail: ml } ));
+						var next;
+						if( json.next )
+						{
+							next = json.next;
+							var idx = next.indexOf( "startAt=" );
+							if( idx >= 0 )
+							{
+								next = next.substring( idx + 8 );
+								idx = next.indexOf( "&" );
+								if( idx != 0 )
+								{
+									next = next.substring( 0, idx );
+								}
+							} 
+						}
+						this.start = next;
+						ml = this.modellist;
 					},
 					( err ) => { this._onError( err ); }
 				);
 			};
+			
+			getNextPage()
+			{
+				if( !this.start || this.start == "" ) return;
+				
+				this._getList();
+				
+				// Prevent more data from being fetched until this fetch finishes.
+				this.start = null;
+			}
 			
   			//============================================================================
   			// Model Detail
@@ -225,6 +269,7 @@
 				};
 				if( !match )
 				{
+					model.isNew = true;
 					if( this.modellist.length > 0 )
 					{
 						this.unshift( "modellist", model );
@@ -337,6 +382,7 @@
 				this.appKey  = newValue;
 				this.modellist = [];
 			}
+  			
 			bucketKeyChanged(
 			  	newValue, oldValue
 		  	) {

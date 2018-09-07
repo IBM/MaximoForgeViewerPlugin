@@ -28,7 +28,7 @@
 <link rel="import" href="forge-viewable-sidebar.html">
 <link rel="import" href="forge-tri-bldg-storage.html">
 <link rel="import" href="forge-tri-bldg-model-lookup.html">
-
+ 
 <dom-module id="forge-tri-bldg">
   	<template>
 		<style>
@@ -54,12 +54,6 @@
 			paper-input {
 				margin-left   : 12px;
 			}
-			paper-icon-button {
-		    	width            : 48px;
-		    	height           : 48px;
-				margin-top       : 10px;
-				float            : right;
-			}
 			paper-button {
 				background-color : #204080;
 				color            : white;
@@ -68,10 +62,15 @@
 				display: block;
 				float            : right;
 			}
+			.icons {
+				height           : 48px;
+				width            : 48px;
+				padding          : 8px;
+			}
 			.card-body {
 				display          : inline-block;
 				width            : 500px;
-				height           : 280px;
+				height           : 300x;
 				background-color : white;
 				padding-bottom   : 0px;
 				overflow-x       : auto;
@@ -98,9 +97,16 @@
 				right            : -210px;
 				bottom           : -150px;
 			}
+		    div.search {
+		   		width         : 48px;
+		   		height        : 64px;
+				padding       : 0;
+				float         : right;
+				margin-top    : 16px;
+		    }
 		</style>
 
-		<forge-tri-bldg-model-lookup id="lookup" list="[[modellist]]"
+		<forge-tri-bldg-model-lookup id="lookup" list="[[modellist]]" modelmanager="[[modelmanager]]"
 		                             on-accept="_onModelSelect">
 		</forge-tri-bldg-model-lookup>
 
@@ -108,32 +114,37 @@
 			<app-toolbar >
 				<span style="text-align: center; width:100%;"><h1>Buildings</h1></span>
 				<paper-input floatingLabel label="Building Name" value="{{buildingSearch}}" on-keypress="_onSearchKey"></paper-input>
-				<paper-icon-button id="search" icon="search" on-click="getBuildinglList"></paper-icon-button>
+				<div class="search">
+					<paper-icon-button id="search" icon="search" on-click="getBuildinglList" class="icons"></paper-icon-button>
+				</div>
 			</app-toolbar>
 		</app-header>
 
-		<forge-scroll-pane id="scrollPane" style="--forge-scroll-pane-overflow:auto;">
+		<forge-scroll-pane id="scrollPane" style="--forge-scroll-pane-overflow:auto;"
+		                   on-next-page="_getNextPage">
 			<template id="repeat" is="dom-repeat" items="[[buildinglist]]">
 		         <div class="card-body" >
 		    		<div class="card-title">
 			    		<h3>[[item.building]]</h3>
 			    		<div style="width:100%; display: inline-flex;">
-							<paper-input floatingLabel label="Building Model" 
+							<paper-input floatingLabel label="Building Model" style="width:100%;"
 							             value="[[item.objectKey]]" readonly></paper-input>
-							<paper-icon-button id="search" icon="search" on-click="_lookupModel"></paper-icon-button>
 			    		</div>
+						<div class="search">
+							<paper-icon-button id="search" icon="search" on-click="_lookupModel" class="icons"/>
+						</div>
 		    		</div>
 					<table style="width:480px;">
 				    	<tr>
-				    		<td colspan="2">[[item.address]]</td>
+				    		<td colspan="2" style="width:100%; display:">[[item.address]]</td>
 				    		<td rowspan="5" >
 								<div class="thumbnail">
-								    <forge-thumbnail url="[[item.thumbnail]]" on-select="_onModelDetail">
+								    <forge-thumbnail url="[[item.thumbnail]]" on-select="_onDisplayModel"/>
 								</div>
+				    		</td>
+				    		<td>
 							    <template is="dom-if" if="[[item.isLinked]]">
-						          	<paper-icon-button icon="delete-forever" on-click="_onModelDelete" alt="Unlink model"
-						          	                   class="unlink">
-						          	</paper-icon-button>
+						          	<paper-icon-button src="[[importPath]]images/information.png" on-click="_onModelDetail" class="icons"/>
 								</template>
 				    		</td>
 				    	</tr><tr>
@@ -145,14 +156,17 @@
 			    			<td colspan="2">[[item.country]]</td>
 			    		</tr>
 			    		</tr><tr>
-			    			<td colspan="2" style="height:100%;"></td>
+			    			<td colspan="2" style="height:100%"></td>
+			    			<td style="vertical-align: bottom;">
+							    <template is="dom-if" if="[[item.isLinked]]">
+						          	<paper-icon-button icon="delete-forever" on-click="_onModelDelete" class="icons"/>
+								</template>
+			    			</td>
 			    		</tr>
 					</table>
 				</div>
 
 			</template>
-			<forge-pager id="pager" start="{{fetchStart}}" pagesize="{{fetchSize}}" count="[[buildinglist.length]]"
-			             on-page="_onPage" ></forge-pager>
 		</forge-scroll-pane>
 		
 		<paper-dialog id="modelLinkDetalDlg" >
@@ -201,8 +215,15 @@
 					contextroot : {
 						type     : String,
 					},
+					fetchSize : {
+						type               : Number,
+						value              : 50
+					},
 					modellist : {
 						type     : Array,
+					},
+					modelmanager : {
+						type     : Object,
 					}
 				}
 			};
@@ -212,8 +233,6 @@
   		    	super();
 
   		    	this.buildingSearch = "";
-  		    	this.fetchStart     = 0;
-  		    	this.fetchSize      = 30;
   		    };
   		    
   		    ready() 
@@ -224,6 +243,7 @@
  		    	
  		    	// Hack for Edge
  		    	this.$.scrollPane.setOverflow( "auto" );
+				this.getBuildinglList();
   			}
   			
   			//============================================================================
@@ -232,7 +252,7 @@
 			getBuildinglList()
 			{
 				this.$.search.disabled = "true";
-				this.$.storage.getList( this.buildingSearch, this.fetchStart, this.fetchSize );
+				this.$.storage.getList( this.buildingSearch, this.fetchSize );
 			};
 			 
 			_onSearchKey(
@@ -244,13 +264,10 @@
 				}
 			};
 
-			_onPage(
-				event
-			) { 
-				this.fetchStart = event.detail.start;
-				this.fetchSize  = event.detail.pagesize;
-				this.getBuildinglList();
-			};
+			_getNextPage()
+			{
+				this.$.storage.getNextPage();
+			}
 
 			_onBuildingList( 
 				event 
@@ -258,8 +275,8 @@
 				this.$.search.disabled = false;
 				if( !event.detail )		// Fetch error
 				{
+					this.$.repeat.render();
 					this.set( "buildinglist", [] );
-					this.$.pager.count = 0;
 					return;
 				}
 
@@ -267,15 +284,15 @@
 				{
 					event.detail[i].objectKey      = "";
 					event.detail[i].urn            = "";
-					event.detail[i].thumbnail      = "";
+					event.detail[i].thumbnail      = ""; 
 					event.detail[i].hasThumbnail   = false;
 					event.detail[i].isLinked       = false;
 					
-					this.$.storage.getLink( event.detail[i]._id );
+					this.$.storage.getLink( event.detail[i].buildingId );
 				} 
 
+				this.$.repeat.render();
 				this.set( "buildinglist", event.detail );
-				this.$.pager.setCount( this.buildinglist.length );
 				
 				if( event.detail.length == 0 )
 				{
@@ -302,11 +319,11 @@
 			_onLink(
 				event
 			) {
-				var _bldgSpec = event.detail._bldgSpec;
-				var link      = event.detail.link;
+				var buildingId = event.detail.buildingId;
+				var link       = event.detail.link;
 				for( var i in this.buildinglist )
 				{
-					if( this.buildinglist[i]._id == _bldgSpec )
+					if( this.buildinglist[i].buildingId == buildingId )
 					{
 						this.set( "buildinglist." + i + ".objectKey",    link.objectKey );
 						this.set( "buildinglist." + i + ".urn",          link.urn );
@@ -368,6 +385,14 @@
 				this.set( path + ".binding",      link.binding );
 			}
 			
+		    _onDisplayModel(
+		    	event
+		    ) {
+		    	var urn = event.model.item.urn;
+				this.dispatchEvent( new CustomEvent('display-model', { bubbles: true, composed: true, 
+																	   detail: { urn : urn  } } ));
+		    }
+			    
 			_onModelDelete(
 				event
 			) {

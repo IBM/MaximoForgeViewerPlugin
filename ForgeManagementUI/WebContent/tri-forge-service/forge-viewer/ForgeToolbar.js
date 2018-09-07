@@ -31,6 +31,7 @@ IBM.LMV.Strings[ "TOOLBAR_ISOLATE_SELECTION" ]= "Isolate Selection";
 IBM.LMV.Strings[ "TOOLBAR_SEARCH" ]           = "Search";
 IBM.LMV.Strings[ "TOOLBAR_SELECTION_MODE" ]   = "Set selection mode";
 IBM.LMV.Strings[ "TOOLBAR_ZOOM_MODEL" ]       = "Zoom to model";
+IBM.LMV.Strings[ "TOOLBAR_FULLSCREEN" ]       = "Full Screen";
 
 IBM.LMV.Strings[ "DLG_TITLE_SAVE_VIEW" ]      = "Save Current View";
 IBM.LMV.Strings[ "DLG_LABEL_LOCATION" ]       = "Building";
@@ -86,7 +87,7 @@ IBM.LMV.toolBarExtension = function(
 ) {
 	const _forgeViewer      = forgeViewer;
 	const _wrapper          = wrapper;
-	this.markupMgr          = wrapper.markupMgr;
+	this.markupMgr          = null;
 		
 	this.ctrl               = null;
 	this.ctrlSearch         = null;
@@ -105,21 +106,40 @@ IBM.LMV.toolBarExtension = function(
 	{
 		var features = _wrapper.features;
 		if( !features ) features = {};
-
+		
+		if( wrapper.markupMgr )
+		{
+			this.markupMgr = wrapper.markupMgr		
+		}
+		
 		var _self = this;
 		
 		_forgeViewer.viewer.addEventListener( Autodesk.Viewing.FULLSCREEN_MODE_EVENT, 
 								              function( evt ) { _self.onScreenModeChange( evt ) } );
 		
-		var mainToolbar = _forgeViewer.viewer.getToolbar(true);     // get the main toolbar from the viewer
+		var mainToolbar  = _forgeViewer.viewer.getToolbar(true);     // get the main toolbar from the viewer
 		console.assert(mainToolbar != null);
 		
+		// Toolbar is not fully created at this point
+		window.setTimeout( ()=>{
+			this.ConfigureToolbar( mainToolbar, features );
+		}, 100 );
+		
+    	var userAgent = window.navigator.userAgent;
+    	if( userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) ) 
+		{
+			if( features.fullscreen !== false && features.fullscreen !== "false" )
+			{
+	    		this.setupSimulateFullscreen( mainToolbar );
+			}
+		}
+
 		var maximoSubToolbar = new Autodesk.Viewing.UI.ControlGroup( IBM.LMV.ToolBar.ID_TOOLBAR_GROUP );
 		// Get the "Tools" Tool bar section which has the "Camera" sub-menu
-		var toolsSubMenu     = mainToolbar.getControl( "navTools" );
 		
 		// Find Existing Camera Submenu
-		var cameraSubMenu       = toolsSubMenu.getControl("toolbar-cameraSubmenuTool");
+		var navSubMenu    = mainToolbar.getControl( "navTools" );
+		var cameraSubMenu = navSubMenu.getControl("toolbar-cameraSubmenuTool");
 	
 		// Add Fit-To-View to existing menu
 		var buttonFitModel = new Autodesk.Viewing.UI.Button("TRIIRGA_toolbar_button_fit_model");
@@ -133,46 +153,52 @@ IBM.LMV.toolBarExtension = function(
 		var buttonFitToView = cameraSubMenu.subMenu.getControl( "toolbar-fitToViewTool" );
 		buttonFitToView.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "tb_zoomToSelected.png" + ")";
 	
-		// Add seach entry to the TRIIRGA toolbar	
-		maximoSubToolbar.addControl( this.makeSeachControl() );
-	
-		// Add a sub-menu to the TRIIRGA toolbar to manage selection related options
-		var submenuMaximoSelect = new Autodesk.Viewing.UI.ComboButton( IBM.LMV.ToolBar.ID_TOOLBAR_SELECT );
-		submenuMaximoSelect.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "360_select.png" + ")";
-		submenuMaximoSelect.setToolTip( IBM.LMV.Strings.SELECT );
-		maximoSubToolbar.addControl( submenuMaximoSelect );
-		
-		if( features.multiselect )
+		// Add search entry to the TRIIRGA toolbar	
+		if( features.search == null || features.search == true )
 		{
-			// Button to toggle between single and multi-select modes
-			this.buttonSelect = new Autodesk.Viewing.UI.Button("TRIIRGA_toolbar_button_single_selection");
-			this.buttonSelect.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "tb_selectSingle.png" + ")";
-			this.buttonSelect.setToolTip( IBM.LMV.Strings.TOOLBAR_SELECTION_MODE );
-			this.buttonSelect.onClick = function( evt ) { _self.setSelectMode( evt );};
+			maximoSubToolbar.addControl( this.makeSeachControl() );
 		}
-		
-		// Add Hidel Selection button
-		var buttonHideSelection = new Autodesk.Viewing.UI.Button("TRIIRGA_toolbar_button_hide_selection");
-		buttonHideSelection.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "hide_selection.png" + ")";
-		buttonHideSelection.setToolTip( IBM.LMV.Strings.TOOLBAR_HIDE_SELECTION );
-		buttonHideSelection.onClick = function() { _self.doHideSelection();};
-		
-		var buttonIsolateSelection = new Autodesk.Viewing.UI.Button("TRIIRGA_toolbar_button_isolate_selection");
-		buttonIsolateSelection.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "tb_isolateSelected.png" + ")";
-		buttonIsolateSelection.setToolTip( IBM.LMV.Strings.TOOLBAR_ISOLATE_SELECTION );
-		buttonIsolateSelection.onClick = function() { _self.doIsolateSelection();};
 	
-		this.buttonAutoZoom = new Autodesk.Viewing.UI.Button("TRIIRGA_toolbar_button_autozoomn");;
-		this.buttonAutoZoom.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "tb_autoZoomToSelected.png" + ")";
-		this.buttonAutoZoom.onClick = function() { _self.setAutoZoomMode(); };
-		this.setAutoZoomMode( this.isAutoZoom );
-	
-		submenuMaximoSelect.addControl( this.buttonAutoZoom );
-		submenuMaximoSelect.addControl( buttonHideSelection );
-		submenuMaximoSelect.addControl( buttonIsolateSelection );
-		if( this.buttonSelect )
+		if( !(features.selection === false || features.selection === "false"  ) )
 		{
-			submenuMaximoSelect.addControl( this.buttonSelect );
+			// Add a sub-menu to the TRIIRGA toolbar to manage selection related options
+			var submenuMaximoSelect = new Autodesk.Viewing.UI.ComboButton( IBM.LMV.ToolBar.ID_TOOLBAR_SELECT );
+			submenuMaximoSelect.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "360_select.png" + ")";
+			submenuMaximoSelect.setToolTip( IBM.LMV.Strings.SELECT );
+			maximoSubToolbar.addControl( submenuMaximoSelect );
+			
+			if( features.multiselect )
+			{
+				// Button to toggle between single and multi-select modes
+				this.buttonSelect = new Autodesk.Viewing.UI.Button("TRIIRGA_toolbar_button_single_selection");
+				this.buttonSelect.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "tb_selectSingle.png" + ")";
+				this.buttonSelect.setToolTip( IBM.LMV.Strings.TOOLBAR_SELECTION_MODE );
+				this.buttonSelect.onClick = function( evt ) { _self.setSelectMode( evt );};
+			}
+			
+			// Add Hide Selection button
+			var buttonHideSelection = new Autodesk.Viewing.UI.Button("TRIIRGA_toolbar_button_hide_selection");
+			buttonHideSelection.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "hide_selection.png" + ")";
+			buttonHideSelection.setToolTip( IBM.LMV.Strings.TOOLBAR_HIDE_SELECTION );
+			buttonHideSelection.onClick = function() { _self.doHideSelection();};
+			
+			var buttonIsolateSelection = new Autodesk.Viewing.UI.Button("TRIIRGA_toolbar_button_isolate_selection");
+			buttonIsolateSelection.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "tb_isolateSelected.png" + ")";
+			buttonIsolateSelection.setToolTip( IBM.LMV.Strings.TOOLBAR_ISOLATE_SELECTION );
+			buttonIsolateSelection.onClick = function() { _self.doIsolateSelection();};
+		
+			this.buttonAutoZoom = new Autodesk.Viewing.UI.Button("TRIIRGA_toolbar_button_autozoomn");;
+			this.buttonAutoZoom.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "tb_autoZoomToSelected.png" + ")";
+			this.buttonAutoZoom.onClick = function() { _self.setAutoZoomMode(); };
+			this.setAutoZoomMode( this.isAutoZoom );
+		
+			submenuMaximoSelect.addControl( this.buttonAutoZoom );
+			submenuMaximoSelect.addControl( buttonHideSelection );
+			submenuMaximoSelect.addControl( buttonIsolateSelection );
+			if( this.buttonSelect )
+			{
+				submenuMaximoSelect.addControl( this.buttonSelect );
+			}
 		}
 		
 		// Sub-menu for launching TRIRIGA functions
@@ -243,6 +269,197 @@ IBM.LMV.toolBarExtension = function(
 		
 	};
 	
+	this.ConfigureToolbar = function(
+		mainToolbar, features
+	) {
+		// The viewer actively manages the toolbar based on viewer width.  This is essentially a set of
+		// media queries implemented in code. Because of this, setting display=none only works until
+		// the viewer is resized.  The viewer also actively removes and inserts tools based on the 
+		// active tool.  the measure tools is an example of this.  So removing tools causes exceptions
+		// when the viewer tries to reinsert a tool before a removed tool.  What seems to work is setting
+		// the tool div to zero height and width and setting the inner icon div to display="none"
+		var modelSubMenu    = mainToolbar.getControl( "modelTools" );
+		var navSubMenu      = mainToolbar.getControl( "navTools" );
+		var settingsSubMenu = mainToolbar.getControl( "settingsTools" );
+		
+		// iOS/safari dosen't support full screen
+    	var userAgent = window.navigator.userAgent;
+    	if( userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) ) 
+		{
+    		features.fullscreen = false;
+		}
+		
+		try
+		{
+	    	// Measure dynamically adds and removes its icon using an addBefor the explode tool so this
+	    	// can only be hidden not removed or measure fails
+			if( !features.explode && modelSubMenu )
+			{
+				var tool = modelSubMenu.getControl( "toolbar-explodeTool" );
+				if( tool )
+				{
+					tool.icon.style.display = "none";
+					tool.container.className = "maxlmv_hiddenTool";
+				}
+			}
+		}
+		catch( e )
+		{
+			console.error( e );
+		}
+			
+		try
+		{
+			if( !features.measure  && modelSubMenu )
+			{
+				var tool = modelSubMenu.getControl( "toolbar-measurementSubmenuTool" );
+				if( tool )
+				{
+					tool.icon.style.display = "none";
+					tool.container.className = "maxlmv_hiddenTool";
+				}
+			}
+		}
+		catch( e )
+		{
+			console.error( e );
+		}
+
+		try
+		{
+			if( ( features.section === false || features.section === "false" )  && modelSubMenu  )
+			{
+				var tool = modelSubMenu.getControl( "toolbar-sectionTool" );
+				if( tool )
+				{
+					tool.icon.style.display = "none";
+					tool.arrowButton.container.style.display = "none";
+					tool.container.className = "maxlmv_hiddenTool";
+				}
+			}
+		}
+		catch( e )
+		{
+			console.error( e );
+		}
+			
+		try
+		{
+			if( ( features.camera === false || features.camera === "false" ) && navSubMenu )
+			{
+				var tool = navSubMenu.getControl( "toolbar-cameraSubmenuTool" );
+				if( tool )
+				{
+					tool.icon.style.display = "none";
+					tool.arrowButton.container.style.display = "none";
+					tool.container.className = "maxlmv_hiddenTool";
+				}
+			}
+		}
+		catch( e )
+		{
+			console.error( e );
+		}
+
+		try
+		{
+			if( !features.settings && settingsSubMenu )
+			{
+				var tool = settingsSubMenu.getControl( "toolbar-settingsTool" );
+				if( tool )
+				{
+					tool.icon.style.display = "none";
+					tool.container.className = "maxlmv_hiddenTool";
+				}
+			}
+		}
+		catch( e )
+		{
+			console.error( e );
+		}
+
+		try
+		{
+			if( ( features.modelTree === false || features.modelTree === "false" ) && settingsSubMenu )
+			{
+				var tool = settingsSubMenu.getControl( "toolbar-modelStructureTool" );
+				if( tool )
+				{
+					tool.icon.style.display = "none";
+					tool.container.className = "maxlmv_hiddenTool";
+				}
+			}
+		}
+		catch( e )
+		{
+			console.error( e );
+		}
+
+		try
+		{
+			if( ( features.properties === false || features.properties === "false" ) && settingsSubMenu )
+			{
+				var tool = settingsSubMenu.getControl( "toolbar-propertiesTool" );
+				if( tool )
+				{
+					tool.container.style.display = "none";
+				}
+			}
+		}
+		catch( e )
+		{
+			console.error( e );
+		}
+
+		try
+		{
+			if( ( features.fullscreen === false || features.fullscreen === "false" ) && settingsSubMenu )
+			{
+				var tool = settingsSubMenu.getControl( "toolbar-fullscreenTool" );
+				if( tool )
+				{
+					tool.container.style.display = "none";
+				}
+			}
+		}
+		catch( e )
+		{
+			console.error( e );
+		}
+	}
+	
+	this.setupSimulateFullscreen = function(
+		mainToolbar
+	) {
+		var _self = this;
+		this.isFakeFullscreen = false;
+		
+		var subToolbar = mainToolbar.getControl( "settingsTools" );
+
+		this.fakeFullscreenButton = new Autodesk.Viewing.UI.Button('TRIRIGA-fake-fullscreenTool', {collapsible: false});
+		this.fakeFullscreenButton.setToolTip( IBM.LMV.Strings.TOOLBAR_FULLSCREEN );
+		this.fakeFullscreenButton.setIcon("adsk-icon-fullscreen");
+		this.fakeFullscreenButton.onClick = function ( e ) { 
+        	_self.toggleFakeFullscrren();
+        };
+		subToolbar.addControl( this.fakeFullscreenButton );
+	}
+	
+	this.toggleFakeFullscrren = function()
+	{
+		if( this.isFakeFullscreen )
+		{
+			this.isFakeFullscreen = false;
+			this.fakeFullscreenButton.setIcon("adsk-icon-fullscreen");
+		}
+		else
+		{
+			this.isFakeFullscreen = true;
+			this.fakeFullscreenButton.setIcon("adsk-icon-fullscreen-exit");
+		}
+		_wrapper.onFakeFullScreen( this.isFakeFullscreen );
+	}
+	
 	this.makeSeachControl = function()
 	{
 		var _self = this;
@@ -251,16 +468,19 @@ IBM.LMV.toolBarExtension = function(
 		buttonSearch.setToolTip( IBM.LMV.Strings.TOOLBAR_SEARCH );
 		buttonSearch.onClick = function( e ) { _self.doSearch( e );};
 		var ctrl = buttonSearch.container;
-		ctrl.style.width = "168px";
-		ctrl = ctrl.childNodes[0];
-		ctrl.style.backgroundPosition = "95%";
-		ctrl.style.paddingRight = "20px";
+		ctrl.style.width        = "160px";
+		ctrl.style.display      = "inline-flex";
+		ctrl.style.marginRight  = "4px";
+		ctrl.style.marginTop    = "6px"
+		ctrl.style.marginBottom = "0"
 	
 		this.ctrlSearch     = document.createElement("INPUT");
-		this.ctrlSearch.style.width = "140px";
-		this.ctrlSearch.onkeypress = function( evt ) { _self.searchKeyPress( evt ); };
+		this.ctrlSearch.className  = "maxlmv_search";
+		this.ctrlSearch.style.width = "132px";
 		this.ctrlSearch.style.boxShadow = "0 3px 5px rgba(0,0,0,.5)";
-		ctrl.appendChild( this.ctrlSearch );
+		this.ctrlSearch.onkeypress = function( evt ) { _self.searchKeyPress( evt ); };
+		ctrl.addEventListener("touchstart", function( evt ) { _self.onTouch( evt ); }, false); 
+		ctrl.insertBefore( this.ctrlSearch, buttonSearch.icon );
 		
 		return buttonSearch;
 	};
@@ -310,6 +530,8 @@ IBM.LMV.toolBarExtension = function(
 	// Called from ToolBar Button
 	this.displayShowMarkupDlg = function()
 	{
+		if( !_wrapper.model || !_wrapper.model.mboKey ) return;
+		
 		var loadWorkViewDlg = new IBM.LMV.Markup.ShowDlg( this.markupMgr, _forgeViewer.viewer, IBM.LMV.PATH_IMAGES,
 		                                                  _wrapper.model.mboKey );
 		loadWorkViewDlg.setVisible( true );
@@ -318,8 +540,9 @@ IBM.LMV.toolBarExtension = function(
 	// Called from ToolBar Button
 	this.createMarkup = function()
 	{
-//		this.markupMgr.createMarkup( _forgeViewer.viewer, _wrapper.model.mboKey );
-		this.markupMgr.createMarkup( _forgeViewer.viewer, "" );
+		if( !_wrapper.model || !_wrapper.model.mboKey ) return;
+
+		this.markupMgr.createMarkup( _forgeViewer.viewer, _wrapper.model.mboKey );
 	}
 
 	// Called from ToolBar Button
@@ -339,8 +562,11 @@ IBM.LMV.toolBarExtension = function(
 		_forgeViewer.viewer.isolate( _forgeViewer.getSelectionList() );
 	};
 	
-	this.doSearch = function()
-	{
+	this.doSearch = function(
+		evt
+	) {
+		if( evt && evt.target == this.ctrlSearch ) return;
+		
 		var _self = this;
 		var value = this.ctrlSearch.value;
 		if( value == null || value == "" )
@@ -370,24 +596,12 @@ IBM.LMV.toolBarExtension = function(
 		switch( e.mode )
 		{
 			case 0:
-				var height = IBM.LMV.ctrlViewer.clientHeight;
-				var width  = IBM.LMV.ctrlViewer.clientWidth;
-				if( this.height != null && this.width != null )
-				{
-					_forgeViewer.viewer.container.style.height = "" + this.height + "px";
-					_forgeViewer.viewer.container.style.width  = "" + this.width + "px";
-				}
 				this.fireModeChangeCallback( e.mode );
 				break;
 			case 1:
 				this.fireModeChangeCallback( e.mode );
 				break;
 			case 2:
-				this.height = IBM.LMV.ctrlViewer.clientHeight;
-				this.width  = IBM.LMV.ctrlViewer.clientWidth;
-				_forgeViewer.viewer.container.style.height = "" + screen.height + "px";
-				_forgeViewer.viewer.container.style.width  = "" + screen.width + "px";
-				_forgeViewer.viewer.resize();
 				setTimeout( function() { _self.fireModeChangeCallback( mode ); }, 300 );
 				break;
 		}
@@ -462,6 +676,13 @@ IBM.LMV.toolBarExtension = function(
 			this.doSearch();;
 		}
 		return false;
+	};
+
+	this.onTouch = function(
+		evt
+	) {
+		if( evt && evt.target != this.ctrlSearch ) return;
+		this.ctrlSearch.focus();
 	};
 };
 
@@ -709,6 +930,12 @@ IBM.LMV.SaveViewDlg = function (
 			return; 
 		}
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+	                           IBM.LMV.Strings.DLG_TITLE_SAVE_VIEW );
+			return;
+		}
 		if( request.status != 200 )
 		{
 			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
@@ -727,6 +954,12 @@ IBM.LMV.SaveViewDlg = function (
 			return; 
 		}
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+	                           IBM.LMV.Strings.DLG_TITLE_SAVE_VIEW );
+			return;
+		}
 		if( request.status != 200 )
 		{
 			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
@@ -892,6 +1125,8 @@ IBM.LMV.LoadViewDlg = function (
 	{
 		var that = this;
 		
+		this.makeTable()
+
 		var query = {
 				"page":	{"from":0,"size":20},
   				"filters":[
@@ -922,7 +1157,17 @@ IBM.LMV.LoadViewDlg = function (
 					}
 				]
 			}
-
+		
+		if( this.filter && this.filter.length > 0 )
+		{
+			query.filters.push( {operator: "and"} );
+			query.filters.push( {
+				name     : "description",
+			 	operator : "contains",
+			 	value    : this.filter
+			 } );
+		}
+			
 		var url = this.forgeViewer.contextRoot + IBM.LMV._viewLookupURL;
 		var xmlReq = new XMLHttpRequest();
 		xmlReq.onreadystatechange = function() { that.onViews( this ); };
@@ -933,6 +1178,27 @@ IBM.LMV.LoadViewDlg = function (
 
 		xmlReq.send( JSON.stringify( query ) );
 	};
+	
+	this.makeTable = function()
+	{
+		if( this.viewTable && this.viewTable.parentNode )
+		{
+			this.viewTable.parentNode.removeChild( this.viewTable );
+		}
+		
+		// Setup header row. Labels are filled async when they are downloaded
+		this.viewTable           = document.createElement("TABLE");
+		this.viewTable.className = "maxlmv_DlgTable";
+		this.viewTable.name      = "TRIIRGA-BIMField-LOADVIEW-Table";
+		var thead                = this.viewTable.createTHead();
+		this.header              = thead.insertRow( 0 );
+		var cell                 = this.header.insertCell( 0 );
+		cell                     = this.header.insertCell( 1 );
+		cell                     = this.header.insertCell( 2 );
+		cell                     = this.header.insertCell( 3 );
+
+		this.scrollContainer.appendChild( this.viewTable );
+	}
 	
 	this.onApplyRow = function( row )
 	{
@@ -956,6 +1222,12 @@ IBM.LMV.LoadViewDlg = function (
 
 		this.eventsDisabled = false;
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+	                           IBM.LMV.Strings.DLG_TITLE_APPLY_VIEW );
+			return;
+		}
 		if( request.status != 200 && request.status != 404 )
 		{
 			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
@@ -990,6 +1262,12 @@ IBM.LMV.LoadViewDlg = function (
 
 		this.eventsDisabled = false;
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+	                           IBM.LMV.Strings.DLG_TITLE_APPLY_VIEW );
+			return;
+		}
 		if( request.status != 200 )
 		{
 			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
@@ -1023,6 +1301,52 @@ IBM.LMV.LoadViewDlg = function (
 		detailsDlg.setVisible( true );
 	}
 	
+	this.onSearchButton = function()
+	{
+		var value = this.ctrlSearch.value;
+		if( this.filter == value ) return;
+		this.filter = value;
+		this.lookupSavedViews();
+	};
+	
+	this.onTouch = function(
+	) {
+		this.ctrlSearch.focus();
+	};
+	
+	/**********************************************************************/
+	// Catch ENTER key in search field
+	/**********************************************************************/
+	this.onSearchKeyPress = function( evt )
+	{
+		var _self = this;
+		var keynum   = 0;
+		
+		if( evt != null )
+		{
+			keynum = evt.which;
+		}
+		else if(window.event) // IE
+		{
+			evt = window.event;
+			if( evt.which ) // Netscape/Firefox/Opera
+			{
+				keynum = evt.which;
+			}
+			else
+			{
+				keynum = evt.keyCode;
+			}
+		}
+		evt.stopPropagation();
+		
+		if( keynum == 13 )
+		{
+			this.onSearchButton();;
+		}
+		return false;
+	};
+
 	this.onSelectRow = function( row )
 	{
 		if( this.eventsDisabled )
@@ -1045,6 +1369,12 @@ IBM.LMV.LoadViewDlg = function (
 			return; 
 		}
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+	                           IBM.LMV.Strings.DLG_TITLE_APPLY_VIEW );
+			return;
+		}
 		if( request.status != 200 )
 		{
 			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
@@ -1078,6 +1408,12 @@ IBM.LMV.LoadViewDlg = function (
 
 		this.eventsDisabled = false;
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+	                           IBM.LMV.Strings.DLG_TITLE_APPLY_VIEW );
+			return;
+		}
 		if( request.status != 200 )
 		{
 			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
@@ -1171,10 +1507,10 @@ IBM.LMV.LoadViewDlg = function (
 			this.container.style.left = "" + left + "px";
 		}
 		
-		if( height > parentHeight -50 )
+		if( height > parentHeight -200 )
 		{
 			this.container.style.top = 0;
-			this.scrollContainer.style.height = "" + (parentHeight - 75) + "px";
+			this.scrollContainer.style.height = "" + (parentHeight - 200) + "px";
 		}
 		else
 		{
@@ -1191,6 +1527,27 @@ IBM.LMV.LoadViewDlg.prototype.initialize = function()
 {
 	Autodesk.Viewing.UI.DockingPanel.prototype.initialize.call( this );
 	
+	var _self = this;
+	var searchBar    = document.createElement("DIV");
+	searchBar.className = "maxlmv_propertyTitle";
+	searchBar.innerHTML = IBM.LMV.Strings.TOOLBAR_SEARCH
+	
+	this.ctrlSearch = document.createElement("INPUT");
+	this.ctrlSearch.className  = "maxlmv_search";
+	this.ctrlSearch.onkeypress = function( evt ) { _self.onSearchKeyPress( evt ); };
+	searchBar.appendChild( this.ctrlSearch );
+
+	var ctrl       = document.createElement("IMG");
+	ctrl.src       = IBM.LMV.PATH_IMAGES + "tb_find.png";
+	ctrl.alt       = IBM.LMV.Strings.TOOLBAR_SEARCH;
+	ctrl.title     = IBM.LMV.Strings.TOOLBAR_SEARCH;
+	ctrl.className = "maxlmv_search";
+	ctrl.onclick   = function( evt ) { _self.onSearchButton( this, evt ); };
+	ctrl.ontouch   = function( evt ) { _self.onTouch( this, evt ); };
+	searchBar.appendChild( ctrl );
+	this.container.appendChild( searchBar );
+
+	//	this.makeSearchBar();
 	this.scrollContainer = this.createScrollContainer( {} );
 	this.scrollContainer.className = "maxlmv_DlgScroll";
 	this.container.appendChild( this.scrollContainer );
@@ -1223,19 +1580,6 @@ IBM.LMV.LoadViewDlg.prototype.setVisible = function(
 		this.addEventListener( cell, 'click', function (e) {
 			_self.uninitialize();
 		}, false );
-
-		// Setup header row. Labels are filled async when they are downloaded
-		this.viewTable           = document.createElement("TABLE");
-		this.viewTable.className = "maxlmv_DlgTable";
-		this.viewTable.name      = "TRIIRGA-BIMField-LOADVIEW-Table";
-		var thead                = this.viewTable.createTHead();
-		this.header              = thead.insertRow( 0 );
-		var cell                 = this.header.insertCell( 0 );
-		cell                     = this.header.insertCell( 1 );
-		cell                     = this.header.insertCell( 2 );
-		cell                     = this.header.insertCell( 3 );
-
-		this.scrollContainer.appendChild( this.viewTable );
 
 		this.lookupSavedViews();
 	}
@@ -1314,6 +1658,7 @@ IBM.LMV.DetailsDlg.prototype.setVisible = function(
 		var detailsInput          = document.createElement("TEXTAREA");
 		detailsInput.value        = this.text;
 		detailsInput.id           = "TRIIRGA-Field-Details-Detail";
+		detailsInput.readOnly     = true; 
 		detailsInput.style.width  = "100%";
 		detailsInput.style.height = "calc(100% - 80px)";
 		detailsInput.style.resize = "none";

@@ -92,7 +92,7 @@ IBM.LMV.addModelLoadistener = function(
 	IBM.LMV.modelLoadListeners.push( listener );
 };
 
-IBM.LMV.addMScreenModeChangeistener = function(
+IBM.LMV.addMScreenModeChangeListener = function(
 	listener
 ) {
 	IBM.LMV.screenModeChangeListeners.push( listener );
@@ -120,13 +120,14 @@ IBM.LMV.trace = function(
 
 /**
   *****************************************************************************************************
-  * Top level controler class for the IBM implementation of the AUtodesk Forge Viewer
+  * Top level controller class for the IBM implementation of the AUtodesk Forge Viewer
   *****************************************************************************************************
   */
-IBM.LMV.ForgeViewer = function()
+IBM.LMV.ForgeViewer = function() 
 {
 	var _selectionMgr      = null;
 	var _modelLoaded       = false;
+	var _locale            = null;		// Let the viewer pick by default
 
 	this.viewer     = null;
 	this.ctrlViewer = null;			// DIV that is the container for the viewer
@@ -141,6 +142,29 @@ IBM.LMV.ForgeViewer = function()
 	{
 		var _self = this;
 		window.document.body.onresize = function( e ) { _self.onResize( e ) };
+	}
+	
+	/**
+	  * @param  Locale: One of:
+	  *     Chinese Simplified: zh-cn
+	  *     Chinese Traditional: zh-tw
+	  *     Czech: cs
+	  *     English: en
+	  *     French: fr
+	  *     German: de
+	  *     Italian: it
+	  *     Japanese: ja
+	  *     Korean: ko
+	  *     Polish: pl
+	  *     Portuguese Brazil: pt-br
+	  *     Russian: ru
+	  *     Spanish: es
+	  *     Turkish: tr
+	  */
+    this.setLocale = function(
+		locale
+	) {
+		_locale = locale;
 	}
 	
 	this.createViewer = function(
@@ -247,9 +271,14 @@ IBM.LMV.ForgeViewer = function()
 			IBM.LMV.trace( "initDocument: IBM.LMV.createViewer()"  );
 
 			var opts = {
+				env: 'AutodeskProduction',
 				getAccessToken : function() { return _self.getAuthToken() },
 				refreshToken   : function() { return _self.getAuthToken() }
 			};
+			if( _locale )
+			{
+				opts.language = _locale;
+			}
 			Autodesk.Viewing.Initializer( opts, function( httpProgress ) { _self.onViewerInit( httpProgress ) } );
 		}
 	}; 
@@ -341,6 +370,10 @@ IBM.LMV.ForgeViewer = function()
 		errorMsg
 	) {		
 		IBM.LMV.docLoading = false;
+		if( errorMsg.includes( "401 (Unauthorized)" ) )
+		{
+			this.authToken = null;		
+		}
 		IBM.LMV.displayError( IBM.LMV.Strings.ERR_LOAD + errorMsg);
 	};
 	
@@ -558,6 +591,13 @@ IBM.LMV.ForgeViewer = function()
 		if( _selectionMgr )
 		{
 			_selectionMgr.setAutoZoomMode( enable );
+		}
+		else
+		{
+			if( !this.deferedZoom )
+			{
+				this.deferedZoom = enable;
+			}
 		}
 	},
 
@@ -956,6 +996,10 @@ IBM.LMV.SelectionMgr = function(
 					var zoom   = this.deferedZoom;
 					this.deferedSearch = null;
 					this.deferedZoom   = false;
+					if( zoom == true )
+					{
+						_isAutoZoom = zoom;					
+					}
 					this.selectByGUID( search );
 					if( zoom == "center" )
 					{
@@ -1303,7 +1347,14 @@ IBM.LMV.SelectionMgr = function(
 	) {
 		if( !_initialized || _modelLoading ) 
 		{
+			// The viewer generated an empty select message during initialization - discard it.
+			if( this.deferedSearch && !GUIDs ) return;
+			
 			this.deferedSearch = GUIDs;
+			if( !this.deferedZoom )
+			{
+				this.deferedZoom = _isAutoZoom;
+			}
 			return;
 		}
 

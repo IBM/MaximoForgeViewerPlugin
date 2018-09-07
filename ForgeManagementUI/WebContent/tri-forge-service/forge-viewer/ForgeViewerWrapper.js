@@ -31,6 +31,7 @@ var __dictionary__ERR_LOAD                 = "Load Error: ";
 var __dictionary__ERR_AUTH                 = "Auth request error ";
 var __dictionary__ERR_PROPERTY             = "Property Error: ";
 var __dictionary__ERR_REST                 = "REST Error";  
+var __dictionary__ERR_UNAUTHORIZED         = "Unauthorized";
 var __dictionary__ERR_SEARCH               = "Search Error: ";
 
 var __dictionary__TOOLBAR_HIDE_SELECTION   = "Hide selection";
@@ -38,6 +39,7 @@ var __dictionary__TOOLBAR_ISOLATE_SELECTION= "Isolate Selection";
 var __dictionary__TOOLBAR_SEARCH           = "Search";
 var __dictionary__TOOLBAR_SELECTION_MODE   = "Set selection mode";
 var __dictionary__TOOLBAR_ZOOM_MODEL       = "Zoom to model";
+var __dictionary__TOOLBAR_FULLSCREEN       = "Full Screen";
 
 var __dictionary__KEY_DISABLE_AUTO_ZOOM    = "Disable Auto Zoom";  
 var __dictionary__KEY_ENABLE_AUTO_ZOOM     = "Enable Auto Zoom";  
@@ -91,9 +93,12 @@ var __dictionary__DLG_TITLE_DISPLAY_MARKUP   = "Display Markup";
 var __dictionary__DLG_LABEL_MARKUP_DESC      = "Markup Description";
 var __dictionary__MSG_CONFIRM_DELETE_MAKRUP  = "Delete makrup {0}";
 
+var _isForgeLoad = false;
+var _onForgeLoad = null;
+
 var headers = [
 	{
-		src  : "https://developer.api.autodesk.com/viewingservice/v1/viewers/style.css?v=v2.14",
+		src  : "https://developer.api.autodesk.com/viewingservice/v1/viewers/style.css?v=v3.2.1",
 		type : "CSS",
 	},
 	{
@@ -101,11 +106,11 @@ var headers = [
 		type : "CSS",
 	},
 	{
-		src  : "https://developer.api.autodesk.com/viewingservice/v1/viewers/three.min.js?v=v2.14",
+		src  : "https://developer.api.autodesk.com/viewingservice/v1/viewers/three.min.js?v=v3.2.1",
 		type : "SCRIPT",
 	},
 	{
-		src  : "https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.js?v=v2.14",
+		src  : "https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.js?v=v3.2.1",
 		type : "SCRIPT",
 	},
 	{
@@ -115,11 +120,11 @@ var headers = [
 	{
 		src  : "Forge.js",
 		type : "SCRIPT",
-		onload : function() { onForgeJSLoad() },
 	},
 	{
 		src  : "ForgeToolbar.js",
 		type : "SCRIPT",
+		onload : function() { onForgeJSLoad() },
 	}
 ];
 
@@ -210,6 +215,7 @@ function onForgeJSLoad()
 	IBM.LMV.Strings.ERR_AUTH                 = __dictionary__ERR_AUTH;
 	IBM.LMV.Strings.ERR_PROPERTY             = __dictionary__ERR_PROPERTY;
 	IBM.LMV.Strings.ERR_REST                 = __dictionary__ERR_REST;  
+	IBM.LMV.Strings.ERR_UNAUTHORIZED         = __dictionary__ERR_UNAUTHORIZED;  
 	IBM.LMV.Strings.ERR_SEARCH               = __dictionary__ERR_SEARCH;
 
 	IBM.LMV.Strings.TOOLBAR_HIDE_SELECTION   = __dictionary__TOOLBAR_HIDE_SELECTION;
@@ -217,6 +223,7 @@ function onForgeJSLoad()
 	IBM.LMV.Strings.TOOLBAR_SEARCH           = __dictionary__TOOLBAR_SEARCH;
 	IBM.LMV.Strings.TOOLBAR_SELECTION_MODE   = __dictionary__TOOLBAR_SELECTION_MODE;
 	IBM.LMV.Strings.TOOLBAR_ZOOM_MODEL       = __dictionary__TOOLBAR_ZOOM_MODEL;
+	IBM.LMV.Strings.TOOLBAR_FULLSCREEN       = __dictionary__TOOLBAR_FULLSCREEN;
 
 	IBM.LMV.Strings.KEY_DISABLE_AUTO_ZOOM    = __dictionary__KEY_DISABLE_AUTO_ZOOM;  
 	IBM.LMV.Strings.KEY_ENABLE_AUTO_ZOOM     = __dictionary__KEY_ENABLE_AUTO_ZOOM;  
@@ -268,8 +275,32 @@ function onForgeJSLoad()
 	IBM.LMV.Strings.DLG_TITLE_DISPLAY_MARKUP   = __dictionary__DLG_TITLE_DISPLAY_MARKUP;
 	IBM.LMV.Strings.DLG_LABEL_MARKUP_DESC      = __dictionary__DLG_LABEL_MARKUP_DESC;
 	IBM.LMV.Strings.MSG_CONFIRM_DELETE_MAKRUP  = __dictionary__MSG_CONFIRM_DELETE_MAKRUP;
+	_isForgeLoad = true;
+	if( _onForgeLoad )
+	{
+		_onForgeLoad();
+	}
 }
 
+function LoadForge(
+	onForgeLoad
+) {
+	_onForgeLoad = onForgeLoad;
+	if( _isForgeLoad )
+	{
+		onForgeLoad();
+	}
+}
+
+// Features:
+// A list of features expressed as toolbar icons to enable or disable.  supported values are:
+// - markup      : Loads the markup extensions and displayes markup tools on the toolbar
+// - multiselect : displayes the single select/multi select tool on the toolbar.
+// - view        : Displayes the save and restore view tools on the toolbar
+// - explode     : Autodesk explode tool
+// - measure     : Autodesk measure tool
+// - settings    : Autodesk viewer settings
+// If the object has a property matching the feature name, the feature is enabled
 function ViewerWrapper(
 	ctrl,	  // The control handle
 	features  // Object, if the object has a property matching the feature name, the feature is enabled
@@ -296,10 +327,26 @@ function ViewerWrapper(
     // are called with the exception of setCurrentModel.
     // modelMgr       The ModelManager instance
     // selectionMgr   The SelectionManager instance
+    // Locale is one of:
+    //     Chinese Simplified: zh-cn
+    //     Chinese Traditional: zh-tw
+    //     Czech: cs
+    //     English: en
+    //     French: fr
+    //     German: de
+    //     Italian: it
+    //     Japanese: ja
+    //     Korean: ko
+    //     Polish: pl
+    //     Portuguese Brazil: pt-br
+    //     Russian: ru
+    //     Spanish: es
+    //     Turkish: tr
     // Return:        Nothing
 	this.initialize = function(
 		modelMgr,
 		selectionMgr,
+		locale,
 		contextRoot
 	) {
 		this.modelMgr    = modelMgr;
@@ -310,6 +357,7 @@ function ViewerWrapper(
 
 		_forgeViewer    = new IBM.LMV.ForgeViewer();
 		_forgeViewer.contextRoot = this.contextRoot;
+		if( locale ) _forgeViewer.setLocale( locale );
 
 		if( this.features.markup )
 		{
@@ -385,6 +433,13 @@ function ViewerWrapper(
 			_forgeViewer.viewer.addEventListener( Autodesk.Viewing.TOOLBAR_CREATED_EVENT, 
 											      function() { IBM.LMV.toolBar.onCreate() } );
 			_forgeViewer.loadDocument( urn, binding );		
+
+			if( this.markupMgr )
+			{
+				window.setTimeout( ()=>{
+					this.markupMgr.init( _forgeViewer.viewer );
+				}, 1000 );
+			}
 		}
 	}
 	
@@ -522,6 +577,16 @@ function ViewerWrapper(
 			IBM.LMV.toolBar.setAutoZoomMode( enable );
 		}
 	};
+	
+	// The Record key is used to associate makeup with user or business context
+	// When a markeup record is created, it is stamped with the current record key
+	// When available markup is queried, the record key is part of the filter.
+	// From the viewer's perspective, the record key is opaque
+	this.setRecordKey = function(
+		recordKey
+	) {
+		
+	}
 
 	// Called when the selection changes after the common processing
     // ctrl           HTML id of the viewer control
@@ -552,6 +617,25 @@ function ViewerWrapper(
 		}
 		*/
 	};
+	
+	this.addScreenModeChangeCallback = function(
+		callback
+	) {
+		if( IBM && IBM.LMV  )
+		{
+			IBM.LMV.addMScreenModeChangeListener( callback );					
+		}
+	}
+	
+	// iOS/Safari nad possible others doing support full screen mode for iFrames.
+	// This passes a request for to fake full screen mode up to the hosing element
+	// which alows it to write whatever logic is appropate to give the viewer more
+	// of the screen
+	this.onFakeFullScreen = function(
+		isFullScreen
+	) {
+		
+	}
 
 	this.onSelect = function(
 		selection
@@ -567,9 +651,11 @@ function ViewerWrapper(
 
 	this.onMarkupLoad = function()
 	{
+
 		try
 		{
-			IBM.LMV.toolBar.markupMgr = new IBM.LMV.Markup.MarkupMgr( _forgeViewer );
+			this.markupMgr = new IBM.LMV.Markup.MarkupMgr( _forgeViewer );;
+			IBM.LMV.toolBar.markupMgr = this.markupMgr;
 		}
 		catch( e ) { /* Ignore - Mark-up may not be included */ }
 	}

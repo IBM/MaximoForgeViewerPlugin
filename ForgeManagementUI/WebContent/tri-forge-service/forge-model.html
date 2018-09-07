@@ -43,7 +43,6 @@
 <link rel="import" href="forge-model-storage.html">
 <link rel="import" href="forge-bubble-storage.html">
 <link rel="import" href="forge-model-sidebar.html">
-<link rel="import" href="forge-pager.html">
 <link rel="import" href="forge-thumbnail.html">
 
 
@@ -78,7 +77,7 @@
 		        }
 			}
 			app-toolbar {
-				background-color : #60a0ff;
+				background-color : #0696D7;
 				font-family      : arial; 
 				width            : 100%;
 				padding          : 0;
@@ -110,6 +109,11 @@
 				position      : relative;
 				top           :-120px
 			} 
+		    img.logo {
+		   		width         : 240px;
+		   		height        : 48px;
+		   		float         : left;
+		    }
 			paper-fab {
 				background-color : #e0a30b;
 				position         : absolute !important;
@@ -117,10 +121,6 @@
 				right            : 1em;
 				z-index          : 10;
 			}
-		    paper-icon-button {
-		    	width            : 48px;
-		    	height           : 48px;
-		    }
 			paper-progress {
 				width                   : 100%;
 				--paper-progress-height : 8px;
@@ -177,12 +177,24 @@
 			}
 			.detail {
 				float            : right;
-				margin           : 0;
-				padding          : 0;
-				height           : 200px;
-				width            : 30px;
-				cursor           : pointer;
+				height           : 48px;
+				width            : 48px;
 			}
+			paper-input.search {
+				min-width        : 150px;
+			}
+			.icons {
+				height           : 48px;
+				width            : 48px;
+				padding          : 8px;
+			}
+		    div.search {
+		   		width         : 64px;
+		   		height        : 64px;
+				padding       : 0;
+				float         : right;
+				margin-top    : 16px;
+		    }
 			
 		   @media (max-width: 800px) {
 		      :host {
@@ -212,15 +224,19 @@
 				<app-header id="modelheader" slot="header" reveals="true">
 					<app-toolbar>
 						<div style="padding-left:24px"></div>
-						<paper-icon-button id="drawerToggle" icon="chevron-left" on-click="_toggleDrawer" 
+						<paper-icon-button id="drawerToggle" icon="chevron-left" class="icons" on-click="_toggleDrawer" 
 						                   alt=[[__dictionary__toggelSideBar]]></paper-icon-button> 
+				        <img src="[[importPath]]images/AutodeskForgeLogo.png" class="logo"></img>
 						<span style="text-align: center; width:100%;"><h1>Models</h1></span>
-						<paper-input floatingLabel label="Model Name" value="{{nameSearch}}" on-keypress="_onSearchKey"></paper-input>
-						<paper-icon-button id="search" icon="search" on-click="_onSearch"></paper-icon-button>
+						<paper-input floatingLabel label="Model Name" value="{{filterCriteria}}" on-keypress="_onSearchKey" class="search"></paper-input>
+						<div class="search">
+							<paper-icon-button id="search" icon="search" on-click="_onSearch" class="icons"></paper-icon-button>
+						</div>
 					</app-toolbar>
 				</app-header>
 
-				<forge-scroll-pane id="scrollPane" class="scrollpane">
+				<forge-scroll-pane id="scrollPane" class="scrollpane"
+				                   on-next-page="_getNextPage" >
 					<div style="display:inline" >
 					    <template id="repeat" is="dom-repeat" items="[[modellist]]">
 				            <div class="card-body" >
@@ -259,9 +275,7 @@
 					    				</table>
 					    			</iron-pages>
 									<div style="float:right; display:inline;">
-										<img src="[[importPath]]images/model_detail.png" on-click="_onModelDetail" 
-											 class="detail"
-										     alt="Display Model Detail">
+							          	<paper-icon-button src="[[importPath]]images/information.png" class="detail" on-click="_onModelDetail" class="Icons" alt="Display Model Detail" />
 									</div>
 					    		</div>
 					    		<div style="height:12px;">
@@ -272,8 +286,6 @@
 				            </div>
 			            </template> 
 					</div>
-					<forge-pager id="pager" start="{{fetchStart}}" pagesize="{{fetchSize}}" count="{{modellist.length}}"
-					             maxpagesize="100" on-page="_onPage" ></forge-pager>
  				</forge-scroll-pane>
 			</app-header-layout>
 		</app-drawer-layout> 
@@ -349,19 +361,19 @@
 						type     : String,
 						observer : 'appKeyChanged'
 					},
+					fetchSize : {
+						type               : Number,
+						value              : 30
+					},
+					filterCriteria : {
+						type               : String,
+						notify             : true,
+					},
 					modellist : {
 						type               : Array,
 						readonly           : true,
 						notify             : true,
 						reflectToAttribute : true
-					},
-					fetchSize : {
-						type     : Number,
-						value    : 30,
-					},
-					fetchStart : {
-						type     : Number,
-						value    : 0,
 					},
 					restpath : {
 						type     : String,
@@ -372,10 +384,9 @@
   		    constructor()
   		    {
   		    	super();
-  		    	this.nameSearch   = "";
+  		    	this.filterCriteria   = "";
  				this.activeBucket = null;
-  		    	this.indexTowObjectKey = [];
-				this.reset     = false;		// Stops timers monitoring model translation if key is changed
+				this.reset        = false;		// Stops timers monitoring model translation if key is changed
 
   		    };
   		    
@@ -408,6 +419,7 @@
   				if( this.activeBucket )
   				{
 	  				this.$.storage.bucketkey = this.activeBucket.bucketKey;
+					this.getModelList();
   				}
   				else
   				{
@@ -419,27 +431,31 @@
   			//============================================================================
   			// Model List
   			//============================================================================
-			getModelList()
-			{
+			getModelList(
+				search
+			) {
 				if( this.$.bucketlist.bucketlist.length == 0 )
 				{
 					this.dispatchEvent( new CustomEvent('forge-message', { bubbles: true, composed: true, 
 					                                                       detail: { key : "LIST_BUCKETS"	}  } ));
 					return;
 				}
-				var f = this.fetchStart;
-				var keys = this.indexTowObjectKey;
-				var objectKey = this.indexTowObjectKey[this.fetchStart-1];
 				this.$.search.disabled = "true";
-				this.$.storage.getList( this.nameSearch, objectKey , this.fetchSize );
+				this.lastFetchIdx = 0;
+				if( search == null ) 
+				{
+					search = this.filterCriteria; 
+				}
+				else
+				{
+					this.set( "filterCriteria", search );
+				}
+				this.$.storage.getList( search, this.fetchSize );
 			};
 			
 			_onSearch(
 				event
 			) {
-				this.indexTowObjectKey = [];
-				this.set( "fetchStart", 0 );
-				this.$.pager.start = 0;
 				this.getModelList();
 			}
 
@@ -451,14 +467,11 @@
 					this._onSearch();
 				}
 			}
-
-			_onPage(
-				event
-			) { 
-				this.fetchStart = event.detail.start;
-				this.fetchSize  = event.detail.pagesize;
-				this.getModelList();
-			};
+			
+			_getNextPage()
+			{
+				this.$.storage.getNextPage();
+			}
 
 			_onModelList( 
 				event 
@@ -466,14 +479,16 @@
 				this.$.search.disabled = false;
 				if( !event.detail )		// Fetch error
 				{
-					this.set( "modellist", [] );
-					this.$.pager.count = 0;
+					this.$.repeat.render();
 					return;
 				}
 
 				this.reset     = false;
+				
+				var start = this.lastFetchIdx;
+				this.lastFetchIdx = event.detail.length;
 
-				for( var i = 0; i < event.detail.length; i++ )
+				for( var i = start; i < event.detail.length; i++ )
 				{
 					event.detail[i].activeTab      = 0;
 					event.detail[i].cardImage      = 0;
@@ -483,16 +498,11 @@
 					event.detail[i].hasThumbnail   = false;
 					event.detail[i].hasProject     = false;
 					event.detail[i].uploadProgress = null;
-
-					var idx = this.fetchStart + i;
-					this.indexTowObjectKey[ idx ] = event.detail[i].objectKey;
 				} 
-
-				var f = this.fetchStart;
-				var keys = this.indexTowObjectKey;
-
+				
 				this.set( "modellist", event.detail );
-				this.$.pager.count = this.modellist.length;
+
+				this.$.repeat.render();
 
 				if( event.detail.length == 0 )
 				{
@@ -501,10 +511,10 @@
 					return;
 				}
 				
-				this.listLength = event.detail.length;
+				this.listLength = event.detail.length - start;
 				this.bubbleCount = 0;
 				
-				for( var i in event.detail )
+				for( var i = start; i < event.detail.length; i++ )
 				{
 	  				this.$.storage.details( event.detail[ i ].objectKey, event.detail[ i ] );
 	  				this.$.bubbles.details( event.detail[ i ].objectId, { processingList : true} );
@@ -674,6 +684,7 @@
 				this._setBubbleData( bubble, event.detail.objectId, event.detail.projectInfo );
 				if( data && data.processingList )
 				{
+					var ml = this.modellist;
 					this.bubbleCount++;
 					if( this.bubbleCount == this.listLength )
 					{

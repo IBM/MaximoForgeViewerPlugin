@@ -134,6 +134,7 @@
 				// this.$.secret down't work.  Possible becasue its inside a domif
 				var ell = this.shadowRoot.getElementById( "secret" );
 				this.secret = ell.value;
+				if( this.secret ) this.secret = this.secret.trim();
 				this.$.storage.getToken( this.appkey, this.secret );
 				this.$.updateConfigDlg.open();
 			}
@@ -143,6 +144,11 @@
 				var data = {
 					"key"    : this.appkey,
 					"secret" : this.secret,
+				}
+				
+				if( data.key )
+				{
+					data.key = data.key.trim();
 				}
 				
 				if( this._id && this._id != "" )

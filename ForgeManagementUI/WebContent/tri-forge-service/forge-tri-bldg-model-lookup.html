@@ -52,6 +52,11 @@
 			.buttons {
 				float            : right;
 			}
+			.icons {
+				height           : 48px;
+				width            : 48px;
+				padding          : 8px;
+			}
 			.item {
 				cursor           : pointer;
 				padding          : 0;
@@ -75,21 +80,29 @@
 				margin-left     : 20px;
 				margin-right    : 20px;
 			}
+		    div.search {
+		   		width         : 64px;
+		   		height        : 64px;
+				padding       : 0;
+				float         : right;
+		    }
 		</style>
 
 		<paper-dialog id="lookup">
 			<h2>Model Lookup</h2>
 			<div class="lookup">
-				<paper-input floatingLabel label="Object Key" value="{{nameSearch}}"  on-keypress="_onSearchKey"></paper-input>
-				<paper-icon-button id="search" icon="search" on-click="_filterModelList"></paper-icon-button>
+				<paper-input floatingLabel label="Model Name" value="{{filterCriteria}}"  on-keypress="_onSearchKey"></paper-input>
+				<div class="search">
+					<paper-icon-button id="search" icon="search" on-click="_filterModelList" class="icons"></paper-icon-button>
+				</div>
 			</div>
-			<paper-dialog-scrollable>
-				<div class="list">
-				    <template id="repeat" is="dom-repeat" items="[[list]]" filter="show">
+			<paper-dialog-scrollable id="container">
+				<div class="list" >
+				    <template id="repeat" is="dom-repeat" items="[[list]]" >
 						<paper-item value="{{item.bubble.urn}}" on-click="onSelect" class="item">
 							{{item.objectKey}}
 							<div style="height:200px; width:200px;">
-							    <forge-thumbnail url="[[item.thumbnail]]" ></forge-thumbnail>
+							    <forge-thumbnail url="[[item.thumbnail]]"></forge-thumbnail>
 							</div>
 				    	</paper-item>
 					</template>
@@ -118,6 +131,9 @@
 						type     : Array,
 						notify   : true
 					},
+					modelmanager : {
+						type     : Object,
+					},
 					selected : {
 						type     : Number,
 						readonly : true,
@@ -136,27 +152,36 @@
   		    	super();
   		    	this.selected = -1;
   		    	this.list = [];
-  		    	this.nameSearch = null;
   		    };
   		    
   		    ready() 
   		    {
  				super.ready();
+ 				var s = this.$.container.$.scrollable;
+ 				s.onscroll = ( evt ) => { this._scroll( evt ); };
+				window.addEventListener("model-list",    ( event ) => { this._onList( event ) } ); 
+				window.addEventListener("model-add",     ( event ) => { this._onList( event ) } ); 
+				window.addEventListener("model-delete",  ( event ) => { this._onList( event ) } ); 
 			};
 			
 			_filterModelList(
 				event
 			) {
-				this.$.repeat.render();
+				this.modelmanager.getModelList( this.filterCriteria );
 			}
 			
+			_onList(
+				event
+			) {
+				this.$.repeat.render();				// Force the filter to be updated if the base list hasn't changed
+			}
 			
 			_onSearchKey(
 				event
 			) {
 				if( event.keyCode == 13 ) 
 				{
-					this.$.repeat.render();
+					this.modelmanager.getModelList( this.filterCriteria );
 				}
 			}
 
@@ -165,9 +190,9 @@
   			{
   				if( !item.bubble ) return false;
   				if( item.bubble.status != "success" ) return false;
-  				if( this.nameSearch != null && this.nameSearch != "" )
+  				if( this.filterCriteria != null && this.filterCriteria != "" )
   				{
-  					if( !item.objectKey.includes( this.nameSearch )) return false;
+  					if( !item.objectKey.includes( this.filterCriteria )) return false;
   				}
   				return true;
   			}
@@ -185,10 +210,14 @@
 		  				break;
 					}
 				}
+				this.dispatchEvent( new CustomEvent('accept', { bubbles: false, composed: true, detail: this.value } ));
+				this.$.lookup.close();
   			}
 
 			open()
 			{
+				this.filterCriteria = this.modelmanager.filterCriteria;
+				var f = this.filterCriteria;
 				this.$.repeat.render();
 				this.$.lookup.open();
 			}
@@ -198,6 +227,25 @@
 			) {
 				this.dispatchEvent( new CustomEvent('accept', { bubbles: false, composed: true, detail: this.value } ));
 			}
+
+  			_scroll(
+				evt 
+			) {
+  				var client = evt.srcElement;
+  				var top = client.scrollTop;
+  				if( top < this.top )
+  				{
+  					this.top = top;
+  					return;
+  				}
+
+  				this.top = top;
+  				if(    client.scrollHeight > client.clientHeight		// Is data larger than window?
+  						&& top + client.clientHeight >= client.scrollHeight -50 )
+  				{
+  					this.dispatchEvent( new CustomEvent( 'forge-model-next-page', { bubbles: true, composed: true } ));
+  				}
+  			}
 
   			//============================================================================
   			// Observers

@@ -88,7 +88,10 @@
 			constructor()
 			{
 				super();
-				this.credentials = { key : null, secret : null };
+				if( ! this.credentials )
+				{
+					this.credentials = { key : null, secret : null };
+				}
 			}
 			
   		    ready() 
@@ -119,8 +122,21 @@
 			getToken() 
 			{
 				var ell = this.shadowRoot.getElementById( "secret" );
+				var secret = ell.value;
+				if( secret ) secret = secret.trim();
 				this.set( "secret", ell.value );
+				if( this.appkey ) this.appkey = this.appkey.trim();
 				this.$.storage.getToken( this.appkey, this.secret );
+				if( this.save )
+				{
+					this.set( "this.credentials.key", this.appkey );
+					this.set( "this.credentials.secret", this.secret );
+				}
+				else
+				{
+					this.set( "this.credentials.key", "" );
+					this.set( "this.credentials.secret", "" );
+				}
 			}
 			
 			logout()

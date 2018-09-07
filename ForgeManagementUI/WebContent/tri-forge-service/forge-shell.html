@@ -69,10 +69,6 @@
 		    	--paper-item-selected-weight: 400;
 		    	color : black;
 		    }
-		    paper-icon-button {
-		    	width    : 48px;
-		    	height   : 48px;
-		    }
 		    .auth-menu {
 		    	position : absolute;
 		    	top      : 0;
@@ -87,6 +83,11 @@
 		   		margin-right  : 64px; 
 		   		float         : right;
 		    }
+			.icons {
+				height           : 48px;
+				width            : 48px;
+				padding          : 8;
+			}
 		    .menu {
 				cursor        : pointer;
 		    }
@@ -94,7 +95,7 @@
 
         <div class="auth-menu">
         <paper-menu-button horizontal-align="right" vertical-align="top">
-			<paper-icon-button icon="menu" slot="dropdown-trigger"  
+			<paper-icon-button icon="menu" slot="dropdown-trigger" class="icons" 
 			                   horizontal-align="left" vertical-align="top" alt="Menu"></paper-icon-button>
 			<paper-listbox id="appMenu" slot="dropdown-content" opened="false"
 			               horizontal-align="left" vertical-align="top" 
@@ -111,7 +112,7 @@
 		<app-header >
 	    	<app-toolbar >
 				<paper-tabs scrollable selected="{{activeTab}}" style="width:100%">
-					<paper-tab id="bucket">Bunckets</paper-tab>
+					<paper-tab id="bucket">Buckets</paper-tab>
 					<paper-tab id="model">Model Files</paper-tab>
 					<paper-tab id="viewer">Viewer</paper-tab>
 				</paper-tabs>

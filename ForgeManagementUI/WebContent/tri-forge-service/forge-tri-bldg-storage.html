@@ -66,18 +66,21 @@
   			//============================================================================
 
 			getList(
-				filter, from, size
+				filter, pagesize
 			) {
-				if( !from || from <= 0 ) from = 0;
-				if( !size ) size = 0;
+				this.modellist = [];
+				this.query     = {};
+				this.start     = null;
+
+				if( !pagesize ) pagesize = 50;
+				
+				this.pagesize = pagesize;
 
 				this.buildingList = [];
-				var url = this.contextroot + _listPath;
-				var query = {};
 				
 				if( filter && filter.length > 0 )
 				{
-					query = {
+					this.query = {
 						"page":	{"from":0,"size":50},
 		  				"filters":[
 	  						{
@@ -103,13 +106,17 @@
 					}
 				}
 
-				if( size > 0 )
-				{
-					query.page = {
-						"from": from,
-						"size": size
-					}
+				this._getList( 0 );
+  			}
+				
+			_getList( start )
+			{
+				this.query.page = {
+					"from": start,
+					"size": this.pagesize
 				}
+
+				var url = this.contextroot + _listPath;
 
 				fetch( url, 
 					   { 
@@ -119,7 +126,7 @@
 							    'Accept': 'application/json',
 							},
 					   		credentials: 'same-origin', 
-					   		body : JSON.stringify( query )
+					   		body : JSON.stringify( this.query )
 					   } 
 					).then(
 						( request ) => { this._onList( request ); },
@@ -143,19 +150,34 @@
 				}
 				response.json().then(
 					( json ) => {  
-						this.buildingList = json.items;
-						this.dispatchEvent( new CustomEvent('building-list', { bubbles: true, composed: true, detail: json.data } ));
+						var bl = this.buildingList;
+						this.fetchCount = 0;
+						while( json.data && this.fetchCount < json.data.length )
+						{
+							bl.push( json.data[this.fetchCount++] );
+						}
+						this.set( "buildingList", bl );
+
+						this.dispatchEvent( new CustomEvent('building-list', { bubbles: true, composed: true, detail: bl } ));
 					},
 					( err ) => { this._onError( err ); }
 				);
 			};
   			
-  			//============================================================================
+			getNextPage()
+			{
+				if( !this.buildingList ) return;
+				if( this.fetchCount < this.pagesize ) return;	// We've gotten everything
+				this.fetchCount = 0;							// Prevent anther call until this call has completed
+				this._getList( this.buildingList.length );
+			}
+
+			//============================================================================
   			// Get Link
   			//============================================================================
 
 			getLink(
-				_bldgSpec
+				buildingId
 			) {
 				var url = this.contextroot + _getLinkPath;
 				
@@ -163,9 +185,9 @@
 					"page":	{"from":0,"size":50},
 	  				"filters":[
   						{
-  							"name"         :"_bldgSpec",
+  							"name"         :"buildingId",
   						 	"operator"     :"contains",
-  						 	"value"        : _bldgSpec,
+  						 	"value"        : buildingId,
   						 	"ignoreIfBlank": false,
   						 },{
   						 	"operator":"and"
@@ -189,12 +211,12 @@
 					   		body : JSON.stringify( query )
 					   } 
 					).then(
-						( request ) => { this._onLink( request, _bldgSpec ); },
+						( request ) => { this._onLink( request, buildingId ); },
 						( err ) => { this._onError( err ); } );
 			};
 			
 			_onLink(
-				response, _bldgSpec 
+				response, buildingId 
 			) {
 				if( response.redirected )
 				{
@@ -217,7 +239,7 @@
 							link =  link[0];
 						}
 						this.dispatchEvent( new CustomEvent('model-link', { bubbles: true, composed: true, 
-						                                                   detail: { link : link, _bldgSpec : _bldgSpec }} ));
+						                                                   detail: { link : link, buildingId : buildingId }} ));
 					},
 					( err ) => { this._onError( err ); }
 				);
@@ -233,6 +255,7 @@
 				var body = {
 						data :{
 							"buildingId" : building.buildingId,
+							"linkType"   : "triBuilding",
 							"_bldgSpec"  : building._id,
 							"title"      : building.building,
 							"urn"        : model.bubble.urn,
@@ -294,7 +317,6 @@
 						data :{
 							"_id"         : building.linkId,
 							"_bldgSpec"   : building._id,
-							"urn"         : model.bubble.urn,
 							"thumbnail"   : model.thumbnail,
 							"objectKey"   : model.objectKey,
 							"title"       : model.title,
@@ -303,6 +325,8 @@
 							"viewer"     : "Forge",
 						}
 					};
+				
+				if( model.bubble ) body.data.urn = model.bubble.urn;
 				
 				var url = this.contextroot + _updateLinkPath;
 				

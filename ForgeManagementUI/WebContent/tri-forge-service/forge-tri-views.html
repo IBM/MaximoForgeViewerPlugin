@@ -34,9 +34,15 @@
 <dom-module id="forge-tri-views">
   	<template>
 		<style>
-		    paper-icon-button {
+			paper-icon-button {
+				margin-top       : 10px;
+				float            : right;
+			}
+		    paper-icon-button.search {
 		    	width            : 48px;
 		    	height           : 48px;
+		    	padding          : 0;
+				float            : right;
 		    }
 			paper-button {
 				background-color : #204080;
@@ -48,11 +54,17 @@
 				width   : calc(100% - 50px);
 			}
 			.header {
-				background-color : #60a0ff;
+				background-color : #0696D7;
 				font-family      : arial; 
 		      	color            : black;
 		      	width            : 100%;
+		      	height           : 64px;
 		      	display          : inline-flex;
+			}
+			.icons {
+				height           : 48px;
+				width            : 48px;
+				padding          : 8;
 			}
 			.card-body {
 				display          : inline-block;
@@ -78,15 +90,21 @@
 				height   : calc(100% - 72px); 
 				overflow : auto;
 			}
+		    img.logo {
+		   		width         : 240px;
+		   		height        : 48px;
+		   		float         : left;
+		    }
 		</style>
 
 		<triblock-popup id="popup" manual-close="true" title="[[__dictionary__title]]" >
 			<div class="header">
+		        <img src="[[importPath]]images/AutodeskForgeLogo.png" class="logo"></img>
 				<span style="text-align: center; width:100%;"><h1>Manage Forge Views</h1></span>
 				<paper-input floatingLabel label="Building Name" value="{{filter}}" on-keypress="_onSearchKey"></paper-input>
-				<paper-icon-button id="search" icon="search" on-click="getList"></paper-icon-button>
+				<paper-icon-button id="search" icon="search" on-click="getList" class="icons"></paper-icon-button>
 			</div>
-			<div class="list" >
+			<div id="container" on-scroll="_scroll" class="list" >
 				<div>
 					<template id="repeat" is="dom-repeat" items="[[viewlist]]">
 				        <div class="card-body" >
@@ -107,9 +125,10 @@
 				    					[[item.user]]
 				    				</td>
 				    				<td>
-										<paper-icon-button id="drawerToggle" icon="chevron-right" on-click="_displayDetails" 
+										<paper-icon-button id="drawerToggle" src="[[importPath]]images/information.png" 
+										                   on-click="_displayDetails" 
 										                   alt=[[__dictionary__details]] 
-										                   style="float:right; height:64px; width:64px">
+										                   class="icons" style="float:right; ">
 					                   </paper-icon-button> 
 				    				</td>
 				    			</tr>
@@ -121,14 +140,12 @@
 				    			<tr>
 				    				<td colspan="3" style="height:100%; width:100%;">
 							          	<paper-icon-button icon="delete-forever" on-click="_onDelete" alt="Delete View" 
-							          	                   style="float:right;"></paper-icon-button>
+							          	                   class="icons" style="float:right;"></paper-icon-button>
 				    				</td>
 				    			</tr>
 				    		</table>
 						</div>
 					</template>
-					<forge-pager id="pager" start="{{fetchStart}}" pagesize="{{fetchSize}}" count="[[viewlist.length]]"
-					             on-page="_onPage" ></forge-pager>
 				</div>
 			</div>
 		</triblock-popup>
@@ -173,13 +190,9 @@
 					contextroot : {
 						type     : String,
 					},
-					fetchSize : {
+					pagesize : {
 						type     : Number,
-						value    : 30,
-					},
-					fetchStart : {
-						type     : Number,
-						value    : 0,
+						value    : 10,
 					},
 					restpath : {
 						type     : String,
@@ -195,9 +208,10 @@
   		    	super();
   		    	this.filter     = "";
    		    };
-  		    
+   		    
 	 		openPopup() 
 	 		{
+				if( !this.pagesize ) this.pagesize = 50;
 	 			this.getList();
 				this.$.popup.openPopup();
 			};
@@ -206,16 +220,15 @@
   			// View List
   			//============================================================================
 
-			getList(
-				from, size
-			) {
+			getList() 
+			{
 				this.set( "viewlist", [] );
-				var url = this.contextroot + _viewPath;
-				var query = {};
-				
+				this.query     = {};
+				this.start     = null;
+
 				if( this.filter && this.filter.length > 0 )
 				{
-					query = {
+					this.query = {
 						"page":	{"from":0,"size":50},
 		  				"filters":[
 							{
@@ -226,23 +239,28 @@
 						],
 					}
 				}
-
-				if( this.fetchSize > 0 )
-				{
-					query.page = {
-						"from": this.fetchStart,
-						"size": this.fetchSize
-					}
-				}
-
-				query.sorts = [
+				this.query.sorts = [
 					{
 						name : "urn",
 						desc : false
 					}
 				]
 
-				fetch( url, 
+				this._getList( 0 );
+  			}
+  			
+  			_getList(
+ 				start
+			) {
+				if( this.pagesize > 0 )
+				{
+					this.query.page = {
+						"from": start,
+						"size": this.pagesize
+					}
+				}
+
+				fetch( this.contextroot + _viewPath, 
 					   { 
 							method: "POST",
 							headers: {
@@ -250,7 +268,7 @@
 							    'Accept': 'application/json',
 							},
 					   		credentials: 'same-origin', 
-					   		body : JSON.stringify( query )
+					   		body : JSON.stringify( this.query )
 					   } 
 					).then(
 						( request ) => { this._onList( request ); },
@@ -276,20 +294,28 @@
 					( json ) => {  
 						var models = {};
 
+						var vl = this.viewlist;
+						this.fetchCount = 0;
 						var data = json.data;
-						for( var i = 0; i < data.length; i++ )
+						for( var i = 0; data && i < data.length; i++ )
 						{
 							data[i].thumbnail      = "";
 							data[i].hasThumbnail   = false;
 
-							if( !data[i].urn ) continue;   // Bad data should never happen
+							if( !data[i].urn )	// Bad data should never happen
+							{
+								this.fetchCount++;
+								continue;   
+							}
 							var objectId = data[i].urn.substring( 4 );
 							objectId = window.atob( objectId );
 
+							vl.push( json.data[this.fetchCount++] );
+
 							models[ data[i].urn ] = objectId;
 						}
-
-						this.set( "viewlist", json.data );
+						this.set( "viewlist", vl );
+						this.$.repeat.render();
 
 						for( var urn in models )
 						{
@@ -309,14 +335,14 @@
 				}
 			};
 
-			_onPage(
-				event
-			) { 
-				this.fetchStart = event.detail.start;
-				this.fetchSize  = event.detail.pagesize;
-				this.getList();
-			};
-
+			getNextPage()
+			{
+				if( !this.viewlist ) return;
+				if( this.fetchCount < this.pagesize ) return;	// We've gotten everything
+				this.fetchCount = 0;							// Prevent anther call until this call has completed
+				console.log( "Scroll - Next Page" );
+				this._getList( this.viewlist.length );
+			}
 
   			//============================================================================
   			// Update View
@@ -372,6 +398,30 @@
 						},
 						( err ) => { this._onError( err ); } );
 			}
+
+  			//============================================================================
+  			// Scroll and fetch
+  			//============================================================================
+  			_scroll(
+				evt 
+			) {
+ 				var client = evt.srcElement;
+ 				var top = client.scrollTop;
+ 				if( top < this.top )
+ 				{
+ 					this.top = top;
+ 					return;
+ 				}
+
+ 				this.top = top;
+ 				if(    client.scrollHeight > client.clientHeight		// Is data larger than window?
+ 						&& top + client.clientHeight >= client.scrollHeight -50 )
+ 				{
+ 					this.getNextPage();
+ 					console.log( "scroll" );
+// 					this.dispatchEvent( new CustomEvent( 'forge-model-next-page', { bubbles: true, composed: true } ));
+ 				}
+ 			}
 
   			//============================================================================
   			// Delete View
@@ -564,6 +614,7 @@
 		    ) {
 		    	var item = event.model.item;
 		    	this._getViewerState( item.viewerState.contentID, item.urn )
+		    	this.$.popup.close();
 		    }
 		    
 		    _onError( err )

@@ -182,6 +182,9 @@ IBM.LMV.Markup.ShowDlg = function(
 	this.lookupMarkup = function() 
 	{
 		var _self = this;
+
+		this.makeTable();
+
 		var query = {
 				"page":	{"from":0,"size":20},
   				"filters":[
@@ -205,6 +208,16 @@ IBM.LMV.Markup.ShowDlg = function(
 				]
 			}
 
+		if( this.filter && this.filter.length > 0 )
+		{
+			query.filters.push( {operator: "and"} );
+			query.filters.push( {
+				name     : "description",
+			 	operator : "contains",
+			 	value    : this.filter
+			 } );
+		}
+
 		var url = this.forgeViewer.contextRoot + IBM.LMV.Markup._lookupURL;
 		var xmlReq = new XMLHttpRequest();
 		xmlReq.onreadystatechange = function() { _self.onViews( this ); };
@@ -216,6 +229,27 @@ IBM.LMV.Markup.ShowDlg = function(
 		xmlReq.send( JSON.stringify( query ) );
 	};
 	
+	this.makeTable = function()
+	{
+		if( this.viewTable && this.viewTable.parentNode )
+		{
+			this.viewTable.parentNode.removeChild( this.viewTable );
+		}
+		
+		// Setup header row. Labels are filled async when they are downloaded
+		this.viewTable           = document.createElement("TABLE");
+		this.viewTable.className = "maxlmv_DlgTable";
+		this.viewTable.name      = "TRIRIGA-BIMField-LOADVIEW-Table";
+		var thead                = this.viewTable.createTHead();
+		this.header              = thead.insertRow( 0 );
+		var cell                 = this.header.insertCell( 0 );
+		cell                     = this.header.insertCell( 1 );
+		cell                     = this.header.insertCell( 2 );
+		cell                     = this.header.insertCell( 3 );
+
+		this.scrollContainer.appendChild( this.viewTable );
+	}
+
 	this.onApplyRow = function( row )
 	{
 		if( this.eventsDisabled )
@@ -239,10 +273,16 @@ IBM.LMV.Markup.ShowDlg = function(
 
 		this.eventsDisabled = false;
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+					           IBM.LMV.Strings.DLG_TITLE_DISPLAY_MARKUP );
+			return;
+		}
 		if( request.status != 200 && request.status != 404 )
 		{
 			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
-					           IBM.LMV.Strings.DLG_TITLE_APPLY_VIEW );
+					           IBM.LMV.Strings.DLG_TITLE_DISPLAY_MARKUP );
 			return;
 		}
 	}
@@ -258,10 +298,16 @@ IBM.LMV.Markup.ShowDlg = function(
 
 		this.eventsDisabled = false;
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+					           IBM.LMV.Strings.DLG_TITLE_DISPLAY_MARKUP );
+			return;
+		}
 		if( request.status != 200 && request.status != 404 )
 		{
 			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
-					           IBM.LMV.Strings.DLG_TITLE_APPLY_VIEW );
+					           IBM.LMV.Strings.DLG_TITLE_DISPLAY_MARKUP );
 			return;
 		}
 		
@@ -292,6 +338,12 @@ IBM.LMV.Markup.ShowDlg = function(
 
 		this.eventsDisabled = false;
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+					           IBM.LMV.Strings.DLG_TITLE_DISPLAY_MARKUP );
+			return;
+		}
 		if( request.status != 200 )
 		{
 			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText );
@@ -320,6 +372,47 @@ IBM.LMV.Markup.ShowDlg = function(
 		detailsDlg.setVisible( true );
 	}
 
+	this.onSearchButton = function()
+	{
+		var value = this.ctrlSearch.value;
+		if( this.filter == value ) return;
+		this.filter = value;
+		this.lookupMarkup();
+	};
+	
+	/**********************************************************************/
+	// Catch ENTER key in search field
+	/**********************************************************************/
+	this.onSearchKeyPress = function( evt )
+	{
+		var _self = this;
+		var keynum   = 0;
+		
+		if( evt != null )
+		{
+			keynum = evt.which;
+		}
+		else if(window.event) // IE
+		{
+			evt = window.event;
+			if( evt.which ) // Netscape/Firefox/Opera
+			{
+				keynum = evt.which;
+			}
+			else
+			{
+				keynum = evt.keyCode;
+			}
+		}
+		evt.stopPropagation();
+		
+		if( keynum == 13 )
+		{
+			this.onSearchButton();;
+		}
+		return false;
+	};
+
 	this.onMarkup = function( request )
 	{
 		var _self = this;
@@ -331,10 +424,16 @@ IBM.LMV.Markup.ShowDlg = function(
 
 		this.eventsDisabled = false;
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+					           IBM.LMV.Strings.DLG_TITLE_DISPLAY_MARKUP );
+			return;
+		}
 		if( request.status != 200 )
 		{
 			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
-					           IBM.LMV.Strings.DLG_TITLE_APPLY_VIEW );
+					           IBM.LMV.Strings.DLG_TITLE_DISPLAY_MARKUP );
 			return;
 		}
 
@@ -363,17 +462,34 @@ IBM.LMV.Markup.ShowDlg = function(
 			return; 
 		}
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+					           IBM.LMV.Strings.DLG_TITLE_DISPLAY_MARKUP );
+			return;
+		}
 		if( request.status != 200 )
 		{
-			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText );
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
+					           IBM.LMV.Strings.DLG_TITLE_DISPLAY_MARKUP );
 			this.uninitialize();
 			return;
 		}
 
 		var json = JSON.parse( request.responseText );
-		this.viewList = json.data;
-		
-		this.populateList();
+		if( json.data )
+		{
+			if( !Array.isArray( json.data ) )
+			{
+				this.viewList = [];
+				this.viewList.push( json.data );
+			}
+			else
+			{
+				this.viewList = json.data;
+			}
+			this.populateList();
+		}
 	};
 	
 	this.onViewerState = function( request )
@@ -492,6 +608,25 @@ IBM.LMV.Markup.ShowDlg.prototype.initialize = function()
 {
 	Autodesk.Viewing.UI.DockingPanel.prototype.initialize.call( this );
 	
+	var _self = this;
+	var searchBar    = document.createElement("DIV");
+	searchBar.className = "maxlmv_propertyTitle";
+	searchBar.innerHTML = IBM.LMV.Strings.TOOLBAR_SEARCH
+	
+	this.ctrlSearch = document.createElement("INPUT");
+	this.ctrlSearch.className  = "maxlmv_search";
+	this.ctrlSearch.onkeypress = function( evt ) { _self.onSearchKeyPress( evt ); };
+	searchBar.appendChild( this.ctrlSearch );
+
+	var ctrl       = document.createElement("IMG");
+	ctrl.src       = IBM.LMV.PATH_IMAGES + "tb_find.png";
+	ctrl.alt       = IBM.LMV.Strings.TOOLBAR_SEARCH;
+	ctrl.title     = IBM.LMV.Strings.TOOLBAR_SEARCH;
+	ctrl.className = "maxlmv_search";
+	ctrl.onclick   = function( evt ) { _self.onSearchButton( this, evt ); };
+	searchBar.appendChild( ctrl );
+	this.container.appendChild( searchBar );
+
 	this.scrollContainer = this.createScrollContainer( {} );
 	this.scrollContainer.className = "maxlmv_DlgScroll";
 	this.container.appendChild( this.scrollContainer );
@@ -526,19 +661,6 @@ IBM.LMV.Markup.ShowDlg.prototype.setVisible = function(
 		this.addEventListener( cell, 'click', function (e) {
 			_self.uninitialize();
 		}, false );
-
-		// Setup header row. Labels are filled async when they are downloaded
-		this.viewTable           = document.createElement("TABLE");
-		this.viewTable.className = "maxlmv_DlgTable";
-		this.viewTable.name      = "TRIRIGA-BIMField-LOADVIEW-Table";
-		var thead                = this.viewTable.createTHead();
-		this.header              = thead.insertRow( 0 );
-		var cell                 = this.header.insertCell( 0 );
-		cell                     = this.header.insertCell( 1 );
-		cell                     = this.header.insertCell( 2 );
-		cell                     = this.header.insertCell( 3 );
-
-		this.scrollContainer.appendChild( this.viewTable );
 
 		this.lookupMarkup();
 	}
@@ -766,10 +888,16 @@ IBM.LMV.Markup.SaveDlg = function(
 			return; 
 		}
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+					           IBM.LMV.Strings.DLG_TITLE_SAVE_MARKUP );
+			return;
+		}
 		if( request.status != 200 )
 		{
 			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
-					           IBM.LMV.Strings.DLG_TITLE_SAVE_VIEW );
+					           IBM.LMV.Strings.DLG_TITLE_SAVE_MARKUP );
 			return;
 		}
 
@@ -788,10 +916,16 @@ IBM.LMV.Markup.SaveDlg = function(
 			return; 
 		}
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText,
+					           IBM.LMV.Strings.DLG_TITLE_SAVE_MARKUP );
+			return;
+		}
 		if( request.status != 200 )
 		{
 			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
-					           IBM.LMV.Strings.DLG_TITLE_SAVE_VIEW );
+					           IBM.LMV.Strings.DLG_TITLE_SAVE_MARKUP );
 			return;
 		}
 
@@ -810,9 +944,16 @@ IBM.LMV.Markup.SaveDlg = function(
 			return; 
 		}
 
+		if( request.status == 403 )
+		{
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_UNAUTHORIZED, request.responseText, 
+					           IBM.LMV.Strings.DLG_TITLE_SAVE_MARKUP);
+			return;
+		}
 		if( request.status != 200 )
 		{
-			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText );
+			IBM.LMV.RESTError( request.status, IBM.LMV.Strings.ERR_REST, request.responseText,
+					           IBM.LMV.Strings.DLG_TITLE_SAVE_MARKUP);
 			return;
 		}
 		this.markupMgr.cancelMarkup();

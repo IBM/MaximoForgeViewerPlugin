@@ -69,6 +69,7 @@ IBM.LMV.Markup.MarkupMgr = function(
 		{
 			if( markup != null )
 			{
+				IBM.LMV.markup = markup;
 				this.markup = markup;
 				this.markup.addEventListener( Autodesk.Viewing.Extensions.Markups.Core.EVENT_EDITMODE_ENTER, 
 											  function( evt ) {_self.onEditModeEnter( evt ) } );
@@ -426,7 +427,7 @@ IBM.LMV.Markup.Toolbar = function(
 		var viewerWidth = parent.clientWidth;
 		var tbDiv = document.createElement("DIV");
 		tbDiv.id = "Markup-top_toolbar-div";
-		tbDiv.style.position="absolute";
+		tbDiv.style.position="realitive";
 		tbDiv.style.top = 0;
 		tbDiv.style.width = "100%";
 		tbDiv.style.display = "";
@@ -434,10 +435,9 @@ IBM.LMV.Markup.Toolbar = function(
 		parent.appendChild( tbDiv );
 
 		var tbCont  = markupBar.container;
-		var width = tbDiv.clientWidth;
-		tbCont.style.width = "" + width + "px";
-		tbCont.style.left = "calc( 50% - " + width  / 2 + "px )";
+		tbCont.style.left = "50%";
 		tbCont.style.top = "25px";
+		tbCont.style.height = "50px";
 		this.toolBarDiv = tbDiv;
 
 		tbDiv.style.display = "none";
@@ -451,43 +451,43 @@ IBM.LMV.Markup.Toolbar = function(
 
 		var subToolbar = new Autodesk.Viewing.UI.ControlGroup( "Markup_toolabr_submenu_tools" );
 		
-		this.toolArrow = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu.tool_arrow");
+		this.toolArrow = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu_tool_arrow");
 		this.toolArrow.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "360_redline_arrow.png )";
 		this.toolArrow.setToolTip( IBM.LMV.Strings.MARKUP_ARROW );
 		this.toolArrow.onClick = function() { _self.setMarkupTool( "ARROW" ); };
 		subToolbar.addControl( this.toolArrow );
 
-		this.toolCloud = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu.tool_cloud");
+		this.toolCloud = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu_tool_cloud");
 		this.toolCloud.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "360_redline_cloud.png )";
 		this.toolCloud.setToolTip( IBM.LMV.Strings.MARKUP_CLOUD );
 		this.toolCloud.onClick = function() { _self.setMarkupTool( "CLOUD" ); };
 		subToolbar.addControl( this.toolCloud );
 
-		this.toolFreehand = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu.tool_freehand");
+		this.toolFreehand = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu_tool_freehand");
 		this.toolFreehand.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "360_redline_free.png )";
 		this.toolFreehand.setToolTip( IBM.LMV.Strings.MARKUP_FREEHAND );
 		this.toolFreehand.onClick = function() { _self.setMarkupTool( "FREEHAND" ); };
 		subToolbar.addControl( this.toolFreehand );
 
-		this.toolLine = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu.tool_line");
+		this.toolLine = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu_tool_line");
 		this.toolLine.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "360_redline_line.png )";
 		this.toolLine.setToolTip( IBM.LMV.Strings.MARKUP_LINE );
 		this.toolLine.onClick = function() { _self.setMarkupTool( "LINE" ); };
 		subToolbar.addControl( this.toolLine );
 
-		this.toolOval = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu.tool_oval");
+		this.toolOval = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu_tool_oval");
 		this.toolOval.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "360_redline_oval.png )";
 		this.toolOval.setToolTip( IBM.LMV.Strings.MARKUP_OVAL );
 		this.toolOval.onClick = function() { _self.setMarkupTool( "CIRCLE" ); };
 		subToolbar.addControl( this.toolOval );
 
-		this.toolRectangle = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu.tool_rectangle");
+		this.toolRectangle = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu_tool_rectangle");
 		this.toolRectangle.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "360_redline_rect.png )";
 		this.toolRectangle.setToolTip( IBM.LMV.Strings.MARKUP_RECTANGLE );
 		this.toolRectangle.onClick = function() { _self.setMarkupTool( "RECTANGLE" ); };
 		subToolbar.addControl( this.toolRectangle );
 		
-		this.toolText = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu.toolarrow");
+		this.toolText = new Autodesk.Viewing.UI.Button("Markup_toolabr_submenu_tool_text");
 		this.toolText.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "360_redline_text.png )";
 		this.toolText.setToolTip( IBM.LMV.Strings.MARKUP_TEXT );
 		this.toolText.onClick = function() { _self.setMarkupTool( "TEXT" ); };
@@ -505,7 +505,7 @@ IBM.LMV.Markup.Toolbar = function(
 
 		var subToolbar = new Autodesk.Viewing.UI.ControlGroup( "Markup_stylebar_submenu_style" );
 
-		var button = new Autodesk.Viewing.UI.Button("Markup_stylepbar_submenu.style");
+		var button = new Autodesk.Viewing.UI.Button("Markup_stylepbar_submenu_style");
 		button.icon.style.backgroundImage = "url(" + IBM.LMV.PATH_IMAGES + "360_redline_style.png )";
 		button.setToolTip( IBM.LMV.Strings.MARKUP_STYLE );
 		button.onClick = function() { _self.markupMgr.displayMarkupStyleDlg(); };
@@ -543,24 +543,56 @@ IBM.LMV.Markup.Toolbar = function(
 	this.makeResizeSubToolbar = function(
 		toolBar
 	) {
-		var viewer = this.markupMgr.viewer;
-		
+		var _self = this;
 		var subToolbar = new Autodesk.Viewing.UI.ControlGroup( "Markup_toolabr_submenu_resize" );
 		
-        if (viewer.canChangeScreenMode()) 
+    	var userAgent = window.navigator.userAgent;
+    	if( userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) ) 
 		{
-            var fullscreenButton = new Autodesk.Viewing.UI.Button('markup-fullscreenTool', {collapsible: false});
-            fullscreenButton.setToolTip('Full screen');
-            fullscreenButton.setIcon("adsk-icon-fullscreen");
-            fullscreenButton.onClick = function (e) {
-                viewer.nextScreenMode();
+    		// iOS/safari doesn't support full screen mode
+    		return;
+		}
+        if( this.markupMgr.viewer.canChangeScreenMode() ) 
+		{
+            this.fullscreenButton = new Autodesk.Viewing.UI.Button('markup-fullscreenTool', {collapsible: false});
+            this.fullscreenButton.setToolTip('Full screen');
+            var mode = this.markupMgr.viewer.getScreenMode();
+            if( mode == 2 )
+        	{
+                this.fullscreenButton.setIcon("adsk-icon-fullscreen-exit");
+        	}
+            else
+        	{
+                this.fullscreenButton.setIcon("adsk-icon-fullscreen");
+        	}
+            this.fullscreenButton.onClick = function (e) {
+                _self.setScreenMode();
             };
-			subToolbar.addControl( fullscreenButton );
+			subToolbar.addControl( this.fullscreenButton );
         }
 
 		toolBar.addControl( subToolbar );
 
 		return subToolbar;
+	}
+	
+	this.setScreenMode = function()
+	{
+		var viewer = this.markupMgr.viewer;
+		
+        viewer.nextScreenMode();
+        var mode = viewer.getScreenMode();
+        if( this.fullscreenButton )
+    	{
+            if( mode == 2 )
+        	{
+                this.fullscreenButton.setIcon("adsk-icon-fullscreen");
+        	}
+            else
+        	{
+                this.fullscreenButton.setIcon("adsk-icon-fullscreen-exit");
+        	}
+    	}
 	}
 	
 	this.highlightTool = function(

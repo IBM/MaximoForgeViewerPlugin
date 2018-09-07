@@ -15,6 +15,7 @@
 * 
 * @Author Doug Wood
  -->
+ 
 <link rel="import" href="../polymer/polymer-element.html">
 
 <link rel="import" href="../app-layout/app-layout.html">
@@ -67,6 +68,11 @@
 			    height: 100%;
 			    left: -300px;
 			}
+			.icons {
+				height           : 48px;
+				width            : 48px;
+				padding          : 8px;
+			}
 			.drawer-content 
 			{ 
 				height        : calc( 100% + 56px ); 
@@ -106,7 +112,7 @@
 				<app-toolbar style="top :-120px">
 					<span style="text-align: center; width:100%;"><h2>Models</h2></span>
 				</app-toolbar>
-				<div class="drawer-content"> 
+				<div class="drawer-content" on-scroll="_scroll" > 
 					<forge-viewable-sidebar id="modellist" on-select="_onModelSelect" >
 					</forge-viewable-sidebar>
 				</div> 
@@ -115,9 +121,9 @@
 			<app-header-layout style="height:100%; ">
 				<forge-scroll-pane id="viewerScrollPane" on-set-size="setSize" style="--forge-scroll-pane-overflow:none;">
 				    <div id="selection" class="toast"></div>
-					<paper-icon-button id="drawerToggle" icon="chevron-left" on-click="toggleDrawer" alt="Toggle side bar"></paper-icon-button> 
+					<paper-icon-button id="drawerToggle" icon="chevron-left" on-click="toggleDrawer" class="icons" alt="Toggle side bar"></paper-icon-button> 
 					<forge-viewer id="viewer", urn={{urn}} contextroot="[[contextroot]]" authURL="[[restpath]]" 
-					              features="[[features]]" on-select="onSelect">
+					              features="[[features]]" locale="[[locale]]" on-select="onSelect">
 	              	</forge-viewer>
 				</forge-scroll-pane>
 			</app-header-layout>
@@ -140,16 +146,60 @@
 						type     : String,
 					},
 					/**
-					  * A list of features to enable or disable.  supported values are:
-					  * - markup : Loads the markup extensions and displayes markup tools on the toolbar
-					  * - multiselect : displayes the single select/multi select tool on the toolbar.
-					  * - view : Displayes the save and restore view tools on the toolbar
-					  * If the object has a property matching the feature name, the feature is enabled
+					  * A list of features expressed as toolbar icons to enable or disable.  Supported values are:
+					  * - camera      : Autodesk camera submenu
+					  *                 Default = true
+					  * - explode     : Autodesk explode tool.
+					  *                 Default = false
+					  * - fullscreen  : Autodesk viewer full screen toggle
+					  *                 Default = true
+					  * - markup      : Loads the markup extensions and displayes markup tools on the toolbar
+					  *                 Default = false
+					  * - measure     : Autodesk measure tool.
+					  *                 Default = false
+					  * - modelTree   : Autodesk Model Tree viewer
+					  *                 Default = true
+					  * - multiselect : TRIRIGA single select/multi select toggle.
+					  *                 Default = false
+					  * - properties  : AUtodesk pproperty viewer
+					  *                 Default = true
+					  * - search      : TRIRIGA search bar
+					  *                 Default = true
+					  * - section     : TRIRIGA selection submenu: Isolate Selectiom, Hide Selection, Auto Zoom, MUlti-select
+					  *                 Default = true
+					  * - settings    : Autodesk viewer settings.
+					  *                 Default = false
+					  * - view        : Displays the save and restore view tools on the toolbar.
+					  *                 Default = false
 					  */
 					features : {
 						type     : Object,
-						value    : { views : true, markup : true }
+						value    : { views : true, measure : true }
 					},
+					
+					/**
+					  * One of:
+					  *     Chinese Simplified: zh-cn
+					  *     Chinese Traditional: zh-tw
+					  *     Czech: cs
+					  *     English: en
+					  *     French: fr
+					  *     German: de
+					  *     Italian: it
+					  *     Japanese: ja
+					  *     Korean: ko
+					  *     Polish: pl
+					  *     Portuguese Brazil: pt-br
+					  *     Russian: ru
+					  *     Spanish: es
+					  *     Turkish: tr
+					  * If it is unset, the viewer attempts to determin the locale from thge browser context
+					  * Althoug not list as supported by Autodesk, the Java local constants appear to work
+					  */
+					locale : {
+						type     : String,
+					},
+
 					modellist : {
 						type     : Array,
 						observer : 'modelListChanged',
@@ -249,6 +299,25 @@
 				window.setTimeout( ()=> { this.$.selection.style.display = "none"; }, 10000 );
 
 		    }
+
+  			_scroll(
+				evt 
+			) {
+  				var client = evt.srcElement;
+  				var top = client.scrollTop;
+  				if( top < this.top )
+  				{
+  					this.top = top;
+  					return;
+  				}
+
+  				this.top = top;
+  				if(    client.scrollHeight > client.clientHeight		// Is data larger than window?
+  						&& top + client.clientHeight >= client.scrollHeight -50 )
+  				{
+  					this.dispatchEvent( new CustomEvent( 'forge-model-next-page', { bubbles: true, composed: true } ));
+  				}
+  			}
 
   			//============================================================================
   			// Observers

@@ -36,10 +36,6 @@
 			paper-dialog-scrollable {
 				margin-bottom : 0;
 			}
-		    paper-icon-button {
-		    	width    : 48px;
-		    	height   : 48px;
-		    }
 			paper-tabs {
 		        background-color : #B0BEC5;
 		        width            : 100%;
@@ -61,6 +57,11 @@
 				max-width     : 800px; 
 				min-width     : 400px;
 			}
+			.icons {
+				height           : 48px;
+				width            : 48px;
+				padding          : 8;
+			}
 			.buttons {
 				float            : right;
 			}
@@ -69,7 +70,7 @@
 		<paper-dialog id="dialog" modal >
 			<div  class="title">
 				<h2>[[model.objectKey]]</h2>
-	          	<paper-icon-button icon="close" dialog-dismiss alt="Close" style="float:right"></paper-icon-button>
+	          	<paper-icon-button icon="close" dialog-dismiss class="icons" alt="Close" style="float:right"></paper-icon-button>
 			</div>
 			<paper-dialog-scrollable>
 				<paper-tabs selected="{{model.activeTab}}" scrollable >
@@ -109,7 +110,7 @@
 				    	<div style="display:inline;">
 				    		<span><h4 class="label">Size:</h4></span>
 				    		<span style="padding-left:10px;">{{model.size}}</span>
-				          	<paper-icon-button icon="delete-forever" on-click="_deleteModel" alt="Delete model"
+				          	<paper-icon-button icon="delete-forever" on-click="_deleteModel" class="icons" alt="Delete model"
 				          	                   style="float:right">
 				          	</paper-icon-button>
 				    	</div>
@@ -152,8 +153,8 @@
 								<td><h4  class="label">Fetch time:</h4></td>
 								<td colspan="2">{{model.bubble.fetchTimestamp}}</td>
 								<td colspan="3">
-						          	<paper-icon-button icon="delete-forever" on-click="_deleteBubble" alt="Delete bubble"></paper-icon-button>
-						          	<paper-icon-button icon="refresh" on-click="_refreshBubble" alt="Refresh bubble details"></paper-icon-button>
+						          	<paper-icon-button icon="delete-forever" on-click="_deleteBubble" class="icons" alt="Delete bubble"></paper-icon-button>
+						          	<paper-icon-button icon="refresh" on-click="_refreshBubble" class="Icons" alt="Refresh bubble details"></paper-icon-button>
 								</td>
 							</tr>
 						</table>

@@ -37,80 +37,52 @@
 	var _selMgr        = null;
 	var _wrapper       = null;
 	var _ctrlId        = "viewer_container";
-	var _onSelect      = null;
-	var _onInit        = null;
-	var _onWrapperLoad = null;
-	var _scriptLoaded  = false;
-
-	var _features      = {};
-	var _contextRoot   = "/";
-	var _autoZoom      = false;
 
 	function loadWrapper(
 		viewer,     // Name of viewer to use  
 		onWrapperLoad
 	) {
+		var _forgeLoader = new ForgeLoader( onWrapperLoad );
+		
 		var jsLibrary    = document.createElement('SCRIPT' );
 		jsLibrary.type   = "text/javascript";
-		jsLibrary.onload = onScriptLoad;
+		jsLibrary.onload = ()=> { _forgeLoader.onLoad() };;
 		jsLibrary.src    = viewer + "ViewerWrapper.js";
 		var headers      = document.getElementsByTagName('head');
 		var head         = headers[0];
 		head.appendChild( jsLibrary );
-		_onWrapperLoad = onWrapperLoad;
 	}
 
-	function createWrapper() 
-	{
-		if( !_onInit || !_scriptLoaded ) return;
+	function ForgeLoader(
+		onForgeLoad
+	) {
+		var _onForgeLoad = onForgeLoad;
 		
-		var ctrl   = document.getElementById( _ctrlId );
-
-		var newViewer = false;
-		if( _wrapper == null )
+		this.onLoad = function()
 		{
-			_wrapper = new ViewerWrapper( ctrl, _features );
-			newViewer = true;
+			LoadForge( _onForgeLoad );
 		}
-
-		if( _modelMgr == null )
-		{
-			if( ctrl == null ) return null;
-			_modelMgr = new ModelManager( _ctrlId, null, _wrapper );
-		}
-
-		if( _selMgr == null )
-		{
-			_selMgr = new SelectionManager( _ctrlId, _wrapper, _onSelect );
-		}
-		
-		if( newViewer )
-		{
-			_wrapper.initialize( _modelMgr, _selMgr, _contextRoot );
-		}
-		
-		_onInit( _modelMgr );
 	}
 
 	function initModelManager(
 		onSelect, 
-		onInit, 
-		contextRoot,
+		locale,     // Locale for the viewer, or null to alllow the viewer to autodetect from the browser contxt
+		autoZoom,
 		features,  	// Object, if the object has a property matching the feature name, the feature is enabled
-		autoZoom
+		contextRoot
 	) {
-		_onSelect    = onSelect;
-		_onInit      = onInit;
-		_contextRoot = contextRoot;
-		_features    = features;
-		_autoZoom    = autoZoom;
-		createWrapper();
-	}
-	
-	function onScriptLoad()
-	{
-		_scriptLoaded = true;
-		createWrapper();
+        var list = document.getElementsByTagName( "body" );
+        if( list == null || list.lenght == 0 ) return;
+        list[0].id = _ctrlId;
+        var ctrl   = list[0]
+
+        var wrapper = new ViewerWrapper( ctrl, features );
+        var modelMgr = new ModelManager( _ctrlId, null, wrapper );
+        var selMgr = new SelectionManager( _ctrlId, wrapper, onSelect );
+        wrapper.initialize( modelMgr, selMgr, locale, contextRoot );
+        wrapper.setAutoZoom( autoZoom );
+       
+        return modelMgr;
 	}
 </script>
 
